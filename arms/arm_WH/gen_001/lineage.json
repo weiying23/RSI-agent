@@ -1,0 +1,81 @@
+{
+ "arm": "arm_WH",
+ "gen": 1,
+ "phase_a": {
+  "best_tag": "perturb_1",
+  "probe_note": "（0 上代未解 + 20 新题）",
+  "candidates": {
+   "perturb_1": {
+    "pass_at_k": 0.75,
+    "acc": 0.575,
+    "genome": {
+     "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+     "k_shots": 1,
+     "shot_policy": "recent_success",
+     "temperature": 0.7,
+     "top_p": 0.9,
+     "max_tokens": 384,
+     "retry_k": 2
+    }
+   },
+   "perturb_2": {
+    "pass_at_k": 0.5,
+    "acc": 0.5,
+    "genome": {
+     "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+     "k_shots": 0,
+     "shot_policy": "none",
+     "temperature": 0.8,
+     "top_p": 0.9,
+     "max_tokens": 384,
+     "retry_k": 1
+    }
+   },
+   "perturb_3": {
+    "pass_at_k": 0.75,
+    "acc": 0.5333,
+    "genome": {
+     "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+     "k_shots": 0,
+     "shot_policy": "none",
+     "temperature": 0.6,
+     "top_p": 0.9,
+     "max_tokens": 448,
+     "retry_k": 3
+    }
+   }
+  }
+ },
+ "phase_b": {
+  "n_problems": 80,
+  "n_attempts": 160,
+  "n_solved": 59,
+  "solve_rate": 0.7375,
+  "attempt_accuracy": 0.6,
+  "gen": 1
+ },
+ "phase_c": {
+  "sys": 0.52,
+  "w_only": 0.44,
+  "h_core": 0.54,
+  "h_full": 0.58
+ },
+ "phase_d_gate": {
+  "acc_new": 0.65,
+  "acc_old": 0.7,
+  "gain": -0.05,
+  "margin": 0.02,
+  "promoted": false
+ },
+ "w_used": null,
+ "h_next": {
+  "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+  "k_shots": 1,
+  "shot_policy": "recent_success",
+  "temperature": 0.7,
+  "top_p": 0.9,
+  "max_tokens": 384,
+  "retry_k": 2
+ },
+ "finished_at": "2026-11-01 17:20:09"
+}

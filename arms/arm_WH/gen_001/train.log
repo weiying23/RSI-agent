@@ -1,0 +1,29 @@
+# cmd: /Users/yingwei/Documents/code/lora/.venv/bin/python -m mlx_lm lora -c /Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_001/lora_config.yaml
+Loading configuration file /Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_001/lora_config.yaml
+Loading pretrained model
+Loading datasets
+Training
+Trainable parameters: 0.216% (6.652M/3085.939M)
+Starting training..., iters: 300
+Calculating loss...:   0%|          | 0/1 [00:00<?, ?it/s]Calculating loss...: 100%|██████████| 1/1 [00:01<00:00,  1.61s/it]Calculating loss...: 100%|██████████| 1/1 [00:01<00:00,  1.61s/it]
+Iter 1: Val loss 0.559, Val took 1.617s
+Iter 20: Train loss 0.399, Learning Rate 5.000e-05, It/sec 0.361, Tokens/sec 126.681, Trained Tokens 7023, Peak mem 3.465 GB
+Iter 40: Train loss 0.258, Learning Rate 5.000e-05, It/sec 0.375, Tokens/sec 134.177, Trained Tokens 14171, Peak mem 3.465 GB
+Iter 60: Train loss 0.169, Learning Rate 5.000e-05, It/sec 0.370, Tokens/sec 135.523, Trained Tokens 21499, Peak mem 3.465 GB
+Iter 80: Train loss 0.111, Learning Rate 5.000e-05, It/sec 0.371, Tokens/sec 135.864, Trained Tokens 28817, Peak mem 3.465 GB
+Iter 100: Train loss 0.091, Learning Rate 5.000e-05, It/sec 0.420, Tokens/sec 132.651, Trained Tokens 35132, Peak mem 3.465 GB
+Iter 120: Train loss 0.067, Learning Rate 5.000e-05, It/sec 0.377, Tokens/sec 136.668, Trained Tokens 42375, Peak mem 3.465 GB
+Iter 140: Train loss 0.065, Learning Rate 5.000e-05, It/sec 0.371, Tokens/sec 138.457, Trained Tokens 49835, Peak mem 3.465 GB
+Iter 160: Train loss 0.040, Learning Rate 5.000e-05, It/sec 0.373, Tokens/sec 138.878, Trained Tokens 57287, Peak mem 3.465 GB
+Iter 180: Train loss 0.033, Learning Rate 5.000e-05, It/sec 0.372, Tokens/sec 139.498, Trained Tokens 64785, Peak mem 3.465 GB
+Calculating loss...:   0%|          | 0/1 [00:00<?, ?it/s]Calculating loss...: 100%|██████████| 1/1 [00:00<00:00,  1.02it/s]Calculating loss...: 100%|██████████| 1/1 [00:00<00:00,  1.02it/s]
+Iter 200: Val loss 0.449, Val took 0.996s
+Iter 200: Train loss 0.035, Learning Rate 5.000e-05, It/sec 0.410, Tokens/sec 125.561, Trained Tokens 70909, Peak mem 3.465 GB
+Iter 220: Train loss 0.022, Learning Rate 5.000e-05, It/sec 0.371, Tokens/sec 138.176, Trained Tokens 78363, Peak mem 3.465 GB
+Iter 240: Train loss 0.020, Learning Rate 5.000e-05, It/sec 0.398, Tokens/sec 142.175, Trained Tokens 85500, Peak mem 3.465 GB
+Iter 260: Train loss 0.023, Learning Rate 5.000e-05, It/sec 0.397, Tokens/sec 131.008, Trained Tokens 92094, Peak mem 3.465 GB
+Iter 280: Train loss 0.021, Learning Rate 5.000e-05, It/sec 0.368, Tokens/sec 139.310, Trained Tokens 99670, Peak mem 3.465 GB
+Calculating loss...:   0%|          | 0/1 [00:00<?, ?it/s]Calculating loss...: 100%|██████████| 1/1 [00:00<00:00,  1.01it/s]Calculating loss...: 100%|██████████| 1/1 [00:00<00:00,  1.01it/s]
+Iter 300: Val loss 0.438, Val took 0.998s
+Iter 300: Train loss 0.018, Learning Rate 5.000e-05, It/sec 0.403, Tokens/sec 135.770, Trained Tokens 106413, Peak mem 3.465 GB
+Saved final weights to /Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_001/adapters/adapters.safetensors.

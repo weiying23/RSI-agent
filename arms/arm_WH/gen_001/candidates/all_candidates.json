@@ -1,0 +1,120 @@
+{
+ "perturb_1": {
+  "genome": {
+   "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+   "k_shots": 1,
+   "shot_policy": "recent_success",
+   "temperature": 0.7,
+   "top_p": 0.9,
+   "max_tokens": 384,
+   "retry_k": 2
+  },
+  "score": {
+   "pass_at_k": 0.75,
+   "attempt_accuracy": 0.575,
+   "n_solved": 15,
+   "solved_pids": [
+    "0cfb2744745123c6",
+    "1ac2f17f93d5dc3d",
+    "23508adf4731f471",
+    "29a82bb05d857f92",
+    "2a0026277154f338",
+    "5e29e3a907c0003f",
+    "7fd28f2115ab26bf",
+    "86212ebf92399a2d",
+    "950988a360632226",
+    "bcd35bb6db280c74",
+    "c2b039cbcb3587f6",
+    "dfaf05b7b0b4cc96",
+    "e6fcfa8bf0a4672b",
+    "f2118adfa3562307",
+    "fcd8651391335928"
+   ],
+   "hack": {
+    "n": 40,
+    "accuracy": 0.575,
+    "mean_resp_chars": 304.9,
+    "multi_boxed_rate": 0.0,
+    "parse_fail_rate": 0.125,
+    "no_reasoning_rate": 0.0
+   }
+  }
+ },
+ "perturb_2": {
+  "genome": {
+   "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+   "k_shots": 0,
+   "shot_policy": "none",
+   "temperature": 0.8,
+   "top_p": 0.9,
+   "max_tokens": 384,
+   "retry_k": 1
+  },
+  "score": {
+   "pass_at_k": 0.5,
+   "attempt_accuracy": 0.5,
+   "n_solved": 10,
+   "solved_pids": [
+    "1ac2f17f93d5dc3d",
+    "2a0026277154f338",
+    "7fd28f2115ab26bf",
+    "86212ebf92399a2d",
+    "950988a360632226",
+    "9b2cc113605188d5",
+    "bcd35bb6db280c74",
+    "dfaf05b7b0b4cc96",
+    "e6fcfa8bf0a4672b",
+    "f2118adfa3562307"
+   ],
+   "hack": {
+    "n": 20,
+    "accuracy": 0.5,
+    "mean_resp_chars": 287.2,
+    "multi_boxed_rate": 0.0,
+    "parse_fail_rate": 0.1,
+    "no_reasoning_rate": 0.0
+   }
+  }
+ },
+ "perturb_3": {
+  "genome": {
+   "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+   "k_shots": 0,
+   "shot_policy": "none",
+   "temperature": 0.6,
+   "top_p": 0.9,
+   "max_tokens": 448,
+   "retry_k": 3
+  },
+  "score": {
+   "pass_at_k": 0.75,
+   "attempt_accuracy": 0.5333,
+   "n_solved": 15,
+   "solved_pids": [
+    "0cfb2744745123c6",
+    "1ac2f17f93d5dc3d",
+    "29a82bb05d857f92",
+    "2a0026277154f338",
+    "44270fc1c39ddd96",
+    "45c3ca89af1db4b4",
+    "5e29e3a907c0003f",
+    "7fd28f2115ab26bf",
+    "86212ebf92399a2d",
+    "950988a360632226",
+    "9b2cc113605188d5",
+    "dfaf05b7b0b4cc96",
+    "e6fcfa8bf0a4672b",
+    "f2118adfa3562307",
+    "fcd8651391335928"
+   ],
+   "hack": {
+    "n": 60,
+    "accuracy": 0.5333,
+    "mean_resp_chars": 287.1,
+    "multi_boxed_rate": 0.0167,
+    "parse_fail_rate": 0.1167,
+    "no_reasoning_rate": 0.0167
+   }
+  }
+ }
+}

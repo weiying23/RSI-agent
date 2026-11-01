@@ -1,0 +1,83 @@
+{
+ "eval_n": 100,
+ "reps": 1,
+ "seed": 1,
+ "variants": [
+  {
+   "name": "sys",
+   "adapter": "/Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_001/adapters",
+   "genome": {
+    "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+    "k_shots": 1,
+    "shot_policy": "recent_success",
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "max_tokens": 384,
+    "retry_k": 2
+   },
+   "shots": [
+    {
+     "pid": "0244f3c4649ca96f",
+     "question": "一个长方形长 28 厘米，宽 67 厘米。若把宽增加 25 厘米，新长方形的面积是多少平方厘米？",
+     "solution": "初始的长方形面积为长乘以宽，即 $28 \\times 67$ 平方厘米。\n\n当宽增加 25 厘米后，新的宽为 $67 + 25 = 92$ 厘米。\n\n新的长方形面积为新长乘以新宽，即 $28 \\times 92$ 平方厘米。\n\n计算这个面积：\\[28 \\times 92 = 2576\\]\n\n因此，新长方形的面积是 $\\boxed{2576}$ 平方厘米。",
+     "difficulty": 5,
+     "template": "rect_area",
+     "success_rate": 1.0,
+     "gen": 1
+    }
+   ]
+  },
+  {
+   "name": "w_only",
+   "adapter": "/Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_001/adapters",
+   "genome": {
+    "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+    "k_shots": 0,
+    "shot_policy": "none",
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "max_tokens": 384,
+    "retry_k": 3
+   }
+  },
+  {
+   "name": "h_core",
+   "adapter": null,
+   "genome": {
+    "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+    "k_shots": 0,
+    "shot_policy": "none",
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "max_tokens": 384,
+    "retry_k": 2
+   }
+  },
+  {
+   "name": "h_full",
+   "adapter": null,
+   "genome": {
+    "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+    "k_shots": 1,
+    "shot_policy": "recent_success",
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "max_tokens": 384,
+    "retry_k": 2
+   },
+   "shots": [
+    {
+     "pid": "0244f3c4649ca96f",
+     "question": "一个长方形长 28 厘米，宽 67 厘米。若把宽增加 25 厘米，新长方形的面积是多少平方厘米？",
+     "solution": "初始的长方形面积为长乘以宽，即 $28 \\times 67$ 平方厘米。\n\n当宽增加 25 厘米后，新的宽为 $67 + 25 = 92$ 厘米。\n\n新的长方形面积为新长乘以新宽，即 $28 \\times 92$ 平方厘米。\n\n计算这个面积：\\[28 \\times 92 = 2576\\]\n\n因此，新长方形的面积是 $\\boxed{2576}$ 平方厘米。",
+     "difficulty": 5,
+     "template": "rect_area",
+     "success_rate": 1.0,
+     "gen": 1
+    }
+   ]
+  }
+ ],
+ "aliases": {},
+ "full_attribution": true
+}

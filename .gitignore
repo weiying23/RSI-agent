@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
+
+# 临时/中间产物（本机实验状态，含 pylibs 依赖与 smoke 产物，不推）
+scratch/
+state/
+
+# LoRA 权重（二进制，可由训练配置从基座再生）
+arms/*/gen_*/adapters/
+
+# 画图输出（本地生成）
+report/*.png
