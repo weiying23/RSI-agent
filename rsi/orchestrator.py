@@ -35,7 +35,7 @@ from . import config, distill, env_gen, grade, train
 from .engine import Engine
 from .genome import Genome, H0, perturb, select_shots
 
-PROMOVAL_N = 20
+PROMOVAL_N = 50
 PROBE_N = 20
 MARGIN_DELTA = 0.02  # 晋升门 margin δ（命题1 噪声感知规则的工程近似）
 EVAL_TREND_N = 100   # 趋势代：每代只测 sys 一个变体的考卷题数
@@ -56,7 +56,8 @@ META_PROMPT = """你是一个数学解题策略研究员。你当前用于指导
 
 请分析这些失败的共同模式，然后重写这条解题指令，让模型能避开这些失败模式。
 要求：
-- 保留原指令中有效的部分（如 \\boxed{{}} 答案格式要求、分数写法要求）
+- 【硬性要求】必须原样保留「最终答案写入 \\boxed{{}} 中」这句结尾格式指令，一字不得删除或改写——这是判分系统的唯一接口，没有它答案全部判零分
+- 保留原指令中有效的部分（分数写法要求等）
 - 新指令要具体针对失败模式，不要泛泛而谈
 - 长度不超过四句话
 - 只输出新指令的文本本身，不要任何解释、引号或标记"""
@@ -254,9 +255,13 @@ def run_phase_a(
         # 无失败样本（首代）：第三个候选也用扰动
         candidates.append(("perturb_3", perturb(h_n, rng)))
 
-    # ---- 逐候选评估 ----
+    # ---- 逐候选评估（先测当前 H_n 作基线，归档回滚的参照）----
     shot_pool = _read_jsonl(ctx["shot_pool_file"])
     scores = {}
+    base_sc = evaluate_candidate(engine, h_n, probs, "baseline_hn", cand_dir,
+                                 gen=ctx["gen"], shot_pool=shot_pool)
+    scores["baseline_hn"] = {"genome": h_n.to_dict(), "score": base_sc}
+    print(f"    [baseline_hn] pass@k={base_sc['pass_at_k']:.3f} acc={base_sc['attempt_accuracy']:.3f}")
     for tag, cand in candidates:
         sc = evaluate_candidate(engine, cand, probs, tag, cand_dir,
                                 gen=ctx["gen"], shot_pool=shot_pool)
@@ -264,13 +269,20 @@ def run_phase_a(
         print(f"    [{tag}] pass@k={sc['pass_at_k']:.3f} acc={sc['attempt_accuracy']:.3f}")
     best_tag = max(scores, key=lambda t: (scores[t]["score"]["pass_at_k"],
                                           scores[t]["score"]["attempt_accuracy"]))
-    h_next = Genome.from_dict(scores[best_tag]["genome"])
+    # 归档回滚：所有候选都不如当前 H_n，则回退保留 H_n
+    if best_tag == "baseline_hn":
+        h_next = h_n
+        best_shots = []
+        print(f"    Phase A{note}：候选全劣于 H_n → 回退保留 H_n")
+    else:
+        h_next = Genome.from_dict(scores[best_tag]["genome"])
+        best_shots = scores[best_tag]["score"].get("solved_shots", [])
+        print(f"    Phase A 完成{note} → H_{{n+1}} = {best_tag}")
     _jdump(cand_dir / "all_candidates.json", scores)
     _jdump(gen_dir / "genome.json", h_next.to_dict())
     # 胜出候选做对的题 → 积累进 few-shot 例题库（arm_H 无 Phase B，这是唯一来源）
-    best_shots = scores[best_tag]["score"].get("solved_shots", [])
-    pool_size = _update_shot_pool(ctx["shot_pool_file"], best_shots) if best_shots else 0
-    print(f"    Phase A 完成{note} → H_{{n+1}} = {best_tag}（例题库 +{len(best_shots)}，共 {pool_size}）")
+    pool_size = _update_shot_pool(ctx["shot_pool_file"], best_shots) if best_shots else len(shot_pool)
+    print(f"    （例题库 +{len(best_shots)}，共 {pool_size}）")
     return {"h_next": h_next, "best_tag": best_tag, "candidates": scores,
             "probe_note": note}
 
@@ -425,7 +437,7 @@ def run_phase_d(
             extra_seed=f"promo:{arm}:{ctx['gen']}",
         )
         h_eval = h_next if arm == "arm_WH" else H0()
-        # promo-val 快速门控：不注入 few-shot，两候选同条件
+        # promo-val 快速门控：不注入 few-shot，候选同条件
         engine = Engine(adapter_path=phase_b["adapter"])
         res_new = engine.generate_batch(probs, h_eval, k=1, shot_pool=None)
         engine.close()
@@ -433,22 +445,52 @@ def run_phase_d(
         res_old = engine.generate_batch(probs, h_eval, k=1, shot_pool=None)
         engine.close()
 
-        def acc_of(res):
+        def met_of(res):
             by = {p["id"]: p for p in probs}
             rs = [grade.grade_one(by[s["pid"]]["answer_frac"], s["response"])
                   for s in res]
-            return grade.summarize(rs)["accuracy"]
+            s = grade.summarize(rs)
+            return {"accuracy": s["accuracy"], "parse_fail": s["parse_fail_rate"]}
 
-        a_new, a_old = acc_of(res_new), acc_of(res_old)
-        promoted = (a_new - a_old) > MARGIN_DELTA
-        gate = {"acc_new": a_new, "acc_old": a_old,
-                "gain": round(a_new - a_old, 4), "margin": MARGIN_DELTA,
+        m_new, m_old = met_of(res_new), met_of(res_old)
+
+        # 检查点继承：历史最优 adapter 纳入对比（CoEvo-RSI）
+        best_file = config.ARMS_DIR / arm / "best_adapter.json"
+        best_adapter = None
+        if best_file.exists():
+            best_adapter = json.loads(best_file.read_text(encoding="utf-8")).get("adapter")
+        m_best = None
+        if best_adapter and best_adapter != ctx["w_current"] and best_adapter != phase_b["adapter"]:
+            engine = Engine(adapter_path=best_adapter)
+            res_best = engine.generate_batch(probs, h_eval, k=1, shot_pool=None)
+            engine.close()
+            m_best = met_of(res_best)
+
+        # TIMR 门控：新权重 parse_fail 不显著上升（>5pp）才允许晋升
+        timr_ok = m_new["parse_fail"] <= m_old["parse_fail"] + 0.05
+        promoted = (m_new["accuracy"] - m_old["accuracy"]) > MARGIN_DELTA and timr_ok
+        if promoted:
+            w_used = phase_b["adapter"]
+            _jdump(best_file, {"adapter": w_used, "accuracy": m_new["accuracy"],
+                               "gen": ctx["gen"]})
+        else:
+            # 回退：在上一代与历史最优之间选更好的（历史继承）
+            if m_best is not None and m_best["accuracy"] >= m_old["accuracy"]:
+                w_used = best_adapter
+            else:
+                w_used = ctx["w_current"]
+
+        gate = {"acc_new": m_new["accuracy"], "acc_old": m_old["accuracy"],
+                "acc_best": (m_best or {}).get("accuracy"),
+                "gain": round(m_new["accuracy"] - m_old["accuracy"], 4),
+                "margin": MARGIN_DELTA,
+                "timr_ok": timr_ok,
+                "parse_fail_new": m_new["parse_fail"],
+                "parse_fail_old": m_old["parse_fail"],
                 "promoted": promoted}
 
-    if phase_b is None or not promoted:
+    if phase_b is None:
         w_used = ctx["w_current"]
-    else:
-        w_used = phase_b["adapter"]
 
     lineage = {
         "arm": arm,

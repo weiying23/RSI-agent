@@ -74,6 +74,30 @@ class Engine:
         self.gen_seconds += dt
         return resp, n_tok
 
+    def generate_one_checked(
+        self, question: str, genome: Genome, shots: list[dict] | None = None,
+        max_retry: int = 1,
+    ) -> tuple[str, int]:
+        """生成 + 运行时控制逻辑（7.3：格式强制 + 空答案拦截 + 换策略重试）。
+
+        输出没写 \\boxed{} 或过短 → 升温换策略重试一次（harness 的运行时逻辑）。
+        held-out 评估走 run_eval 的裸 generate_one，不带此逻辑——归因不虚高。
+        """
+        from . import grade as _grade
+
+        resp, tok = self.generate_one(question, genome, shots)
+        for _ in range(max_retry):
+            boxed, n = _grade.extract_boxed(resp)
+            if n > 0 and len(resp.strip()) >= 20:
+                return resp, tok
+            g2 = genome.__class__(
+                **{**genome.to_dict(),
+                   "temperature": min(1.0, round(genome.temperature + 0.15, 3))}
+            )
+            resp2, tok2 = self.generate_one(question, g2, shots)
+            resp, tok = resp2, tok + tok2
+        return resp, tok
+
     def generate_batch(
         self,
         problems: list[dict],
@@ -90,7 +114,7 @@ class Engine:
         for i, p in enumerate(problems):
             shots = select_shots(shot_pool or [], genome)
             for attempt in range(1, k + 1):
-                resp, n_tok = self.generate_one(p["question"], genome, shots)
+                resp, n_tok = self.generate_one_checked(p["question"], genome, shots)
                 samples.append(
                     {
                         "pid": p["id"],
