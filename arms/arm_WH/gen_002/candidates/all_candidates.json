@@ -1,0 +1,99 @@
+{
+ "perturb_1": {
+  "genome": {
+   "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+   "k_shots": 1,
+   "shot_policy": "recent_success",
+   "temperature": 0.7,
+   "top_p": 0.9,
+   "max_tokens": 256,
+   "retry_k": 2
+  },
+  "score": {
+   "pass_at_k": 0.35,
+   "attempt_accuracy": 0.3,
+   "n_solved": 7,
+   "solved_pids": [
+    "510d2761cb12f4e8",
+    "69b0c52ae9ee8884",
+    "71542b9c108ce6ef",
+    "e15e506139fccdf6",
+    "e5184f99323efb6a",
+    "e541957c131185c1",
+    "f7eb0b3737e97534"
+   ],
+   "hack": {
+    "n": 40,
+    "accuracy": 0.3,
+    "mean_resp_chars": 291.4,
+    "multi_boxed_rate": 0.025,
+    "parse_fail_rate": 0.3,
+    "no_reasoning_rate": 0.0
+   }
+  }
+ },
+ "perturb_2": {
+  "genome": {
+   "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+   "k_shots": 0,
+   "shot_policy": "recent_success",
+   "temperature": 0.8,
+   "top_p": 0.9,
+   "max_tokens": 384,
+   "retry_k": 2
+  },
+  "score": {
+   "pass_at_k": 0.65,
+   "attempt_accuracy": 0.475,
+   "n_solved": 13,
+   "solved_pids": [
+    "0ce90ab741c5bc84",
+    "510d2761cb12f4e8",
+    "69b0c52ae9ee8884",
+    "70098e330ecba91e",
+    "70dcd0d9460e6a73",
+    "71542b9c108ce6ef",
+    "bbc206525718c5b7",
+    "bd18aa448fdfe946",
+    "e15e506139fccdf6",
+    "e5184f99323efb6a",
+    "e541957c131185c1",
+    "f423f8d84ad93c58",
+    "f7eb0b3737e97534"
+   ],
+   "hack": {
+    "n": 40,
+    "accuracy": 0.475,
+    "mean_resp_chars": 338.3,
+    "multi_boxed_rate": 0.025,
+    "parse_fail_rate": 0.125,
+    "no_reasoning_rate": 0.0
+   }
+  }
+ },
+ "self_rewrite": {
+  "genome": {
+   "instruction": "请逐步计算，最终答案写成最简分数形式 a/b。答案若为整数或小数，直接写出。",
+   "k_shots": 1,
+   "shot_policy": "recent_success",
+   "temperature": 0.7,
+   "top_p": 0.9,
+   "max_tokens": 384,
+   "retry_k": 2
+  },
+  "score": {
+   "pass_at_k": 0.0,
+   "attempt_accuracy": 0.0,
+   "n_solved": 0,
+   "solved_pids": [],
+   "hack": {
+    "n": 40,
+    "accuracy": 0.0,
+    "mean_resp_chars": 279.6,
+    "multi_boxed_rate": 0.0,
+    "parse_fail_rate": 1.0,
+    "no_reasoning_rate": 0.0
+   }
+  }
+ }
+}

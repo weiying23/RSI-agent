@@ -1,0 +1,83 @@
+{
+ "arm": "arm_WH",
+ "gen": 2,
+ "phase_a": {
+  "best_tag": "perturb_2",
+  "probe_note": "（10 上代未解 + 10 新题）",
+  "candidates": {
+   "perturb_1": {
+    "pass_at_k": 0.35,
+    "acc": 0.3,
+    "genome": {
+     "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+     "k_shots": 1,
+     "shot_policy": "recent_success",
+     "temperature": 0.7,
+     "top_p": 0.9,
+     "max_tokens": 256,
+     "retry_k": 2
+    }
+   },
+   "perturb_2": {
+    "pass_at_k": 0.65,
+    "acc": 0.475,
+    "genome": {
+     "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+     "k_shots": 0,
+     "shot_policy": "recent_success",
+     "temperature": 0.8,
+     "top_p": 0.9,
+     "max_tokens": 384,
+     "retry_k": 2
+    }
+   },
+   "self_rewrite": {
+    "pass_at_k": 0.0,
+    "acc": 0.0,
+    "genome": {
+     "instruction": "请逐步计算，最终答案写成最简分数形式 a/b。答案若为整数或小数，直接写出。",
+     "k_shots": 1,
+     "shot_policy": "recent_success",
+     "temperature": 0.7,
+     "top_p": 0.9,
+     "max_tokens": 384,
+     "retry_k": 2
+    }
+   }
+  }
+ },
+ "phase_b": {
+  "n_problems": 80,
+  "n_attempts": 160,
+  "n_solved": 29,
+  "solve_rate": 0.3625,
+  "attempt_accuracy": 0.5375,
+  "stable_rate": 0.3625,
+  "min_success_rate": 1.0,
+  "gen": 2
+ },
+ "phase_c": {
+  "sys": 0.49,
+  "w_only": 0.46,
+  "h_core": 0.57,
+  "h_full": 0.53
+ },
+ "phase_d_gate": {
+  "acc_new": 0.8,
+  "acc_old": 0.65,
+  "gain": 0.15,
+  "margin": 0.02,
+  "promoted": true
+ },
+ "w_used": "/Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_002/adapters",
+ "h_next": {
+  "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+  "k_shots": 0,
+  "shot_policy": "recent_success",
+  "temperature": 0.8,
+  "top_p": 0.9,
+  "max_tokens": 384,
+  "retry_k": 2
+ },
+ "finished_at": "2026-11-01 22:24:26"
+}

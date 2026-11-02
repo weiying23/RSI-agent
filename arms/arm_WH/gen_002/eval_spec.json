@@ -1,0 +1,63 @@
+{
+ "eval_n": 100,
+ "reps": 1,
+ "seed": 2,
+ "variants": [
+  {
+   "name": "sys",
+   "adapter": "/Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_002/adapters",
+   "genome": {
+    "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+    "k_shots": 0,
+    "shot_policy": "recent_success",
+    "temperature": 0.8,
+    "top_p": 0.9,
+    "max_tokens": 384,
+    "retry_k": 2
+   },
+   "shots": []
+  },
+  {
+   "name": "w_only",
+   "adapter": "/Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_002/adapters",
+   "genome": {
+    "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+    "k_shots": 0,
+    "shot_policy": "none",
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "max_tokens": 384,
+    "retry_k": 3
+   }
+  },
+  {
+   "name": "h_core",
+   "adapter": null,
+   "genome": {
+    "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+    "k_shots": 0,
+    "shot_policy": "none",
+    "temperature": 0.8,
+    "top_p": 0.9,
+    "max_tokens": 384,
+    "retry_k": 2
+   }
+  },
+  {
+   "name": "h_full",
+   "adapter": null,
+   "genome": {
+    "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+    "k_shots": 0,
+    "shot_policy": "recent_success",
+    "temperature": 0.8,
+    "top_p": 0.9,
+    "max_tokens": 384,
+    "retry_k": 2
+   },
+   "shots": []
+  }
+ ],
+ "aliases": {},
+ "full_attribution": true
+}

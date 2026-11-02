@@ -1,0 +1,23 @@
+adapter_path: /Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_002/adapters
+batch_size: 2
+data: /Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_002/data
+fine_tune_type: lora
+grad_accumulation_steps: 4
+grad_checkpoint: true
+iters: 80
+learning_rate: 5.0e-05
+lora_parameters:
+  dropout: 0.0
+  rank: 8
+  scale: 20.0
+mask_prompt: true
+max_seq_length: 1024
+model: mlx-community/Qwen2.5-3B-Instruct-4bit
+num_layers: 16
+optimizer: adam
+save_every: 100000
+seed: 2
+steps_per_eval: 200
+steps_per_report: 20
+train: true
+val_batches: 25

@@ -42,9 +42,9 @@ EVAL_TREND_N = 100   # 趋势代：每代只测 sys 一个变体的考卷题数
 EVAL_ATTR_N = 100    # 归因代：四变体全量考卷题数（只在指定代跑）
 
 GEN_SIZE = {
-    "standard": {"pool": 200, "iters": 500, "lr": 5e-5},
-    "small": {"pool": 80, "iters": 300, "lr": 5e-5},
-    "tiny": {"pool": 40, "iters": 200, "lr": 5e-5},
+    "standard": {"pool": 200, "iters": 120, "lr": 5e-5},
+    "small": {"pool": 80, "iters": 80, "lr": 5e-5},
+    "tiny": {"pool": 40, "iters": 60, "lr": 5e-5},
 }
 
 META_PROMPT = """你是一个数学解题策略研究员。你当前用于指导模型解数学题的指令是：
@@ -148,28 +148,68 @@ def self_rewrite_instruction(
 
 
 def evaluate_candidate(
-    engine: Engine, cand: Genome, probs: list[dict], tag: str, out_dir: Path
+    engine: Engine, cand: Genome, probs: list[dict], tag: str, out_dir: Path,
+    gen: int = 0, shot_pool: list[dict] | None = None,
 ) -> dict:
-    """候选基因组在 probe 上的 pass@retry_k + accuracy。"""
-    samples = engine.generate_batch(probs, cand, k=cand.retry_k)
+    """候选基因组在 probe 上的 pass@retry_k + accuracy。
+
+    同时收集做对的解（每题保留最短正确解）→ 供几-shot 例题库积累。
+    这是 arm_H（无 Phase B）few-shot 通道的唯一来源。
+    """
+    samples = engine.generate_batch(probs, cand, k=cand.retry_k, shot_pool=shot_pool)
     _write_jsonl(out_dir / f"{tag}_samples.jsonl", samples)
     prob_by_id = {p["id"]: p for p in probs}
-    per_attempt, solved, results = [], set(), []
+    by_pid: dict[str, list[dict]] = {}
     for s in samples:
-        r = grade.grade_one(prob_by_id[s["pid"]]["answer_frac"], s["response"])
-        r["pid"] = s["pid"]
-        results.append(r)
-        per_attempt.append(r["correct"])
-        if r["correct"]:
-            solved.add(s["pid"])
+        by_pid.setdefault(s["pid"], []).append(s)
+    solved: set[str] = set()
+    results: list[dict] = []
+    solved_shots: list[dict] = []
+    for pid, atts in by_pid.items():
+        p = prob_by_id[pid]
+        corrects: list[dict] = []
+        for s in atts:
+            r = grade.grade_one(p["answer_frac"], s["response"])
+            r["pid"] = pid
+            results.append(r)
+            if r["correct"]:
+                corrects.append(s)
+        if corrects:
+            solved.add(pid)
+            best = min(corrects, key=lambda s: len(s["response"]))
+            solved_shots.append(
+                {
+                    "pid": pid,
+                    "question": p["question"],
+                    "solution": best["response"],
+                    "difficulty": p.get("difficulty"),
+                    "template": p.get("template"),
+                    "success_rate": len(corrects) / len(atts),
+                    "gen": gen,
+                }
+            )
     summary = grade.summarize(results)
     return {
         "pass_at_k": len(solved) / len(probs),
         "attempt_accuracy": summary["accuracy"],
         "n_solved": len(solved),
         "solved_pids": sorted(solved),
+        "solved_shots": solved_shots,
         "hack": summary,
     }
+
+
+def _update_shot_pool(shot_pool_file: Path, new_shots: list[dict]) -> int:
+    """把新做对的解合入例题库（按 pid 去重，保留最短解）。"""
+    existing = _read_jsonl(shot_pool_file)
+    by_pid = {s["pid"]: s for s in existing}
+    for s in new_shots:
+        if s["pid"] not in by_pid:
+            by_pid[s["pid"]] = s
+        elif len(s["solution"]) < len(by_pid[s["pid"]]["solution"]):
+            by_pid[s["pid"]] = s
+    _write_jsonl(shot_pool_file, list(by_pid.values()))
+    return len(by_pid)
 
 
 def run_phase_a(
@@ -215,9 +255,11 @@ def run_phase_a(
         candidates.append(("perturb_3", perturb(h_n, rng)))
 
     # ---- 逐候选评估 ----
+    shot_pool = _read_jsonl(ctx["shot_pool_file"])
     scores = {}
     for tag, cand in candidates:
-        sc = evaluate_candidate(engine, cand, probs, tag, cand_dir)
+        sc = evaluate_candidate(engine, cand, probs, tag, cand_dir,
+                                gen=ctx["gen"], shot_pool=shot_pool)
         scores[tag] = {"genome": cand.to_dict(), "score": sc}
         print(f"    [{tag}] pass@k={sc['pass_at_k']:.3f} acc={sc['attempt_accuracy']:.3f}")
     best_tag = max(scores, key=lambda t: (scores[t]["score"]["pass_at_k"],
@@ -225,7 +267,10 @@ def run_phase_a(
     h_next = Genome.from_dict(scores[best_tag]["genome"])
     _jdump(cand_dir / "all_candidates.json", scores)
     _jdump(gen_dir / "genome.json", h_next.to_dict())
-    print(f"    Phase A 完成{note} → H_{{n+1}} = {best_tag}")
+    # 胜出候选做对的题 → 积累进 few-shot 例题库（arm_H 无 Phase B，这是唯一来源）
+    best_shots = scores[best_tag]["score"].get("solved_shots", [])
+    pool_size = _update_shot_pool(ctx["shot_pool_file"], best_shots) if best_shots else 0
+    print(f"    Phase A 完成{note} → H_{{n+1}} = {best_tag}（例题库 +{len(best_shots)}，共 {pool_size}）")
     return {"h_next": h_next, "best_tag": best_tag, "candidates": scores,
             "probe_note": note}
 
@@ -480,9 +525,12 @@ def run_generation(arm: str, gen: int, state: dict, size: dict, eval_n: int, rep
             engine.close()
             _mark(gen_dir, "A")
         else:
-            phase_a = {"h_next": Genome.from_dict(
-                json.loads(gen_dir / "genome.json").read_text(encoding="utf-8")),
-                "best_tag": "(resumed)", "candidates": {}, "probe_note": "(resumed)"}
+            phase_a = {
+                "h_next": Genome.from_dict(
+                    json.loads((gen_dir / "genome.json").read_text(encoding="utf-8"))
+                ),
+                "best_tag": "(resumed)", "candidates": {}, "probe_note": "(resumed)",
+            }
     else:  # arm_W：H 恒为 H_0
         phase_a = {"h_next": H0(), "best_tag": "H_0_frozen", "candidates": {}, "probe_note": ""}
     h_next: Genome = phase_a["h_next"]

@@ -1,0 +1,1357 @@
+{
+ "eval_n": 100,
+ "reps": 1,
+ "variants": {
+  "sys": {
+   "adapter": "/Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_002/adapters",
+   "genome": {
+    "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+    "k_shots": 0,
+    "shot_policy": "recent_success",
+    "temperature": 0.8,
+    "top_p": 0.9,
+    "max_tokens": 384,
+    "retry_k": 2
+   },
+   "k_shots": 0,
+   "accuracy_mean": 0.49,
+   "accuracy_std": 0.0,
+   "per_rep_accuracy": [
+    0.49
+   ],
+   "hack_summary": {
+    "n": 100,
+    "accuracy": 0.49,
+    "mean_resp_chars": 284.8,
+    "multi_boxed_rate": 0.05,
+    "parse_fail_rate": 0.11,
+    "no_reasoning_rate": 0.0
+   },
+   "per_problem": {
+    "bbb541a1d1523326": [
+     true
+    ],
+    "8cbddf977795e1d6": [
+     true
+    ],
+    "4789aad8f48d3b2b": [
+     true
+    ],
+    "a82458d137c477ff": [
+     false
+    ],
+    "aefc0c68adb7377c": [
+     true
+    ],
+    "2fbf21b89a80278f": [
+     true
+    ],
+    "d343b61ce376496b": [
+     false
+    ],
+    "be8d43bdc86baeee": [
+     false
+    ],
+    "9b26e7e7b2752b96": [
+     true
+    ],
+    "52ad02e70a0911bb": [
+     false
+    ],
+    "dd87896ed66c7fe0": [
+     false
+    ],
+    "2d1dbed55ee38ba5": [
+     true
+    ],
+    "ec24ed147e131319": [
+     true
+    ],
+    "ac833a8b7ccba244": [
+     true
+    ],
+    "728d1fc9f1413823": [
+     true
+    ],
+    "1eb3a2b36441656e": [
+     true
+    ],
+    "b39b3c1a669b93d0": [
+     false
+    ],
+    "8390b5a29c9db0dd": [
+     false
+    ],
+    "eb23c26aa0372c01": [
+     false
+    ],
+    "6b2848ca8d85251e": [
+     true
+    ],
+    "fb4fec8cccde4150": [
+     false
+    ],
+    "b03ed76ab62501b1": [
+     false
+    ],
+    "96c17439e05c1e25": [
+     false
+    ],
+    "e184c58535ab254c": [
+     false
+    ],
+    "57e09b3a5fa6da95": [
+     true
+    ],
+    "9e932cd0deaaf224": [
+     true
+    ],
+    "72a9db85d9716677": [
+     false
+    ],
+    "d3631e0e4c2eb409": [
+     false
+    ],
+    "1c788828e5ddc70d": [
+     false
+    ],
+    "2996c0cfa603d5ec": [
+     false
+    ],
+    "4b0d73286de557e5": [
+     false
+    ],
+    "2acefcc84d47f922": [
+     true
+    ],
+    "33dbc772398b9a9b": [
+     true
+    ],
+    "27ec7b9d4b7d856a": [
+     false
+    ],
+    "361c71059f936d37": [
+     true
+    ],
+    "d27480d811145af8": [
+     true
+    ],
+    "649b8177edec8c73": [
+     true
+    ],
+    "593953b33754829b": [
+     false
+    ],
+    "d5e75485fd960c71": [
+     false
+    ],
+    "54825affb8f86121": [
+     true
+    ],
+    "dc9a511dc0d785cf": [
+     true
+    ],
+    "fb05a5b9281b00f2": [
+     false
+    ],
+    "e524117fe95896c1": [
+     true
+    ],
+    "8c8ed2a3ac07a9d2": [
+     true
+    ],
+    "c09da4ad035517b1": [
+     false
+    ],
+    "f3f82012459778da": [
+     true
+    ],
+    "4f085335d67aaa9a": [
+     true
+    ],
+    "0c80f0a4e545a45d": [
+     false
+    ],
+    "b8039995285536a4": [
+     false
+    ],
+    "cbdecc13329ef54d": [
+     true
+    ],
+    "b668dc20d568f0d8": [
+     false
+    ],
+    "8893dff65a198cd1": [
+     true
+    ],
+    "8aaff59e53651ec2": [
+     true
+    ],
+    "3f35f989487fff96": [
+     false
+    ],
+    "fb07dc5eb652e1ac": [
+     true
+    ],
+    "ae6c399e9cd39ed0": [
+     true
+    ],
+    "1af44e387c9fdf41": [
+     false
+    ],
+    "e802d560ca30b494": [
+     false
+    ],
+    "ee13f658fd5fb882": [
+     false
+    ],
+    "c82ce68254b0294e": [
+     true
+    ],
+    "bd63000431fd89f5": [
+     false
+    ],
+    "d6e4144f2f286d50": [
+     false
+    ],
+    "a6e50e650561a375": [
+     true
+    ],
+    "9feb6fb88fbc205d": [
+     true
+    ],
+    "b71480cf49522571": [
+     true
+    ],
+    "5ca7a3f8c5ff2682": [
+     true
+    ],
+    "e8d683a5e6092e2d": [
+     false
+    ],
+    "fedbdaea56c029a7": [
+     false
+    ],
+    "dcd5749889ecf0b7": [
+     true
+    ],
+    "9ba7c1d93d78eed0": [
+     true
+    ],
+    "c1c09ca15f07f9b9": [
+     true
+    ],
+    "189b8fdd032c6bbf": [
+     true
+    ],
+    "26e468cfeb02e1f5": [
+     true
+    ],
+    "ee0fd02e26200149": [
+     true
+    ],
+    "13e38fae22452414": [
+     true
+    ],
+    "6a21a2747e2f1a08": [
+     true
+    ],
+    "50a8ccf4fb7ffca5": [
+     false
+    ],
+    "fa1554840204fde4": [
+     false
+    ],
+    "21e034f9ea585d9a": [
+     false
+    ],
+    "04a0f552134ea01c": [
+     true
+    ],
+    "ff8c3400df9ff0cf": [
+     false
+    ],
+    "a06ab9c51ff01dca": [
+     false
+    ],
+    "42236b3438af9e6d": [
+     false
+    ],
+    "8bf2ba9c8f9e4ec5": [
+     false
+    ],
+    "7ce9e4a914c16808": [
+     true
+    ],
+    "980671285c51942b": [
+     true
+    ],
+    "448128549cc9e474": [
+     true
+    ],
+    "37609cabb148e461": [
+     false
+    ],
+    "874a5e1681b3ea35": [
+     false
+    ],
+    "517a7065f731433f": [
+     false
+    ],
+    "fcb83053ffa637f8": [
+     false
+    ],
+    "f5d6d6ebef1fbd5d": [
+     false
+    ],
+    "69cfc321ac58b9a5": [
+     true
+    ],
+    "47e21e636f2da8fd": [
+     false
+    ],
+    "f3eb984caa0790de": [
+     false
+    ],
+    "6ac74faf4f3ea153": [
+     true
+    ],
+    "8fb713619e2553b4": [
+     false
+    ],
+    "cab27583bac3351e": [
+     false
+    ],
+    "bf47c22970d8fd32": [
+     false
+    ],
+    "81f4b6af2603778a": [
+     false
+    ]
+   }
+  },
+  "w_only": {
+   "adapter": "/Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_002/adapters",
+   "genome": {
+    "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+    "k_shots": 0,
+    "shot_policy": "none",
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "max_tokens": 384,
+    "retry_k": 3
+   },
+   "k_shots": 0,
+   "accuracy_mean": 0.46,
+   "accuracy_std": 0.0,
+   "per_rep_accuracy": [
+    0.46
+   ],
+   "hack_summary": {
+    "n": 100,
+    "accuracy": 0.46,
+    "mean_resp_chars": 291.5,
+    "multi_boxed_rate": 0.02,
+    "parse_fail_rate": 0.07,
+    "no_reasoning_rate": 0.0
+   },
+   "per_problem": {
+    "bbb541a1d1523326": [
+     true
+    ],
+    "8cbddf977795e1d6": [
+     false
+    ],
+    "4789aad8f48d3b2b": [
+     false
+    ],
+    "a82458d137c477ff": [
+     false
+    ],
+    "aefc0c68adb7377c": [
+     true
+    ],
+    "2fbf21b89a80278f": [
+     true
+    ],
+    "d343b61ce376496b": [
+     true
+    ],
+    "be8d43bdc86baeee": [
+     false
+    ],
+    "9b26e7e7b2752b96": [
+     false
+    ],
+    "52ad02e70a0911bb": [
+     false
+    ],
+    "dd87896ed66c7fe0": [
+     true
+    ],
+    "2d1dbed55ee38ba5": [
+     false
+    ],
+    "ec24ed147e131319": [
+     true
+    ],
+    "ac833a8b7ccba244": [
+     false
+    ],
+    "728d1fc9f1413823": [
+     true
+    ],
+    "1eb3a2b36441656e": [
+     true
+    ],
+    "b39b3c1a669b93d0": [
+     false
+    ],
+    "8390b5a29c9db0dd": [
+     false
+    ],
+    "eb23c26aa0372c01": [
+     true
+    ],
+    "6b2848ca8d85251e": [
+     true
+    ],
+    "fb4fec8cccde4150": [
+     true
+    ],
+    "b03ed76ab62501b1": [
+     false
+    ],
+    "96c17439e05c1e25": [
+     false
+    ],
+    "e184c58535ab254c": [
+     false
+    ],
+    "57e09b3a5fa6da95": [
+     true
+    ],
+    "9e932cd0deaaf224": [
+     true
+    ],
+    "72a9db85d9716677": [
+     false
+    ],
+    "d3631e0e4c2eb409": [
+     false
+    ],
+    "1c788828e5ddc70d": [
+     false
+    ],
+    "2996c0cfa603d5ec": [
+     true
+    ],
+    "4b0d73286de557e5": [
+     false
+    ],
+    "2acefcc84d47f922": [
+     true
+    ],
+    "33dbc772398b9a9b": [
+     true
+    ],
+    "27ec7b9d4b7d856a": [
+     false
+    ],
+    "361c71059f936d37": [
+     true
+    ],
+    "d27480d811145af8": [
+     false
+    ],
+    "649b8177edec8c73": [
+     true
+    ],
+    "593953b33754829b": [
+     false
+    ],
+    "d5e75485fd960c71": [
+     false
+    ],
+    "54825affb8f86121": [
+     true
+    ],
+    "dc9a511dc0d785cf": [
+     true
+    ],
+    "fb05a5b9281b00f2": [
+     false
+    ],
+    "e524117fe95896c1": [
+     true
+    ],
+    "8c8ed2a3ac07a9d2": [
+     true
+    ],
+    "c09da4ad035517b1": [
+     false
+    ],
+    "f3f82012459778da": [
+     true
+    ],
+    "4f085335d67aaa9a": [
+     false
+    ],
+    "0c80f0a4e545a45d": [
+     false
+    ],
+    "b8039995285536a4": [
+     false
+    ],
+    "cbdecc13329ef54d": [
+     true
+    ],
+    "b668dc20d568f0d8": [
+     false
+    ],
+    "8893dff65a198cd1": [
+     true
+    ],
+    "8aaff59e53651ec2": [
+     true
+    ],
+    "3f35f989487fff96": [
+     false
+    ],
+    "fb07dc5eb652e1ac": [
+     true
+    ],
+    "ae6c399e9cd39ed0": [
+     true
+    ],
+    "1af44e387c9fdf41": [
+     false
+    ],
+    "e802d560ca30b494": [
+     false
+    ],
+    "ee13f658fd5fb882": [
+     false
+    ],
+    "c82ce68254b0294e": [
+     true
+    ],
+    "bd63000431fd89f5": [
+     false
+    ],
+    "d6e4144f2f286d50": [
+     false
+    ],
+    "a6e50e650561a375": [
+     true
+    ],
+    "9feb6fb88fbc205d": [
+     true
+    ],
+    "b71480cf49522571": [
+     true
+    ],
+    "5ca7a3f8c5ff2682": [
+     true
+    ],
+    "e8d683a5e6092e2d": [
+     false
+    ],
+    "fedbdaea56c029a7": [
+     false
+    ],
+    "dcd5749889ecf0b7": [
+     false
+    ],
+    "9ba7c1d93d78eed0": [
+     false
+    ],
+    "c1c09ca15f07f9b9": [
+     true
+    ],
+    "189b8fdd032c6bbf": [
+     false
+    ],
+    "26e468cfeb02e1f5": [
+     true
+    ],
+    "ee0fd02e26200149": [
+     true
+    ],
+    "13e38fae22452414": [
+     true
+    ],
+    "6a21a2747e2f1a08": [
+     true
+    ],
+    "50a8ccf4fb7ffca5": [
+     false
+    ],
+    "fa1554840204fde4": [
+     false
+    ],
+    "21e034f9ea585d9a": [
+     false
+    ],
+    "04a0f552134ea01c": [
+     false
+    ],
+    "ff8c3400df9ff0cf": [
+     false
+    ],
+    "a06ab9c51ff01dca": [
+     false
+    ],
+    "42236b3438af9e6d": [
+     false
+    ],
+    "8bf2ba9c8f9e4ec5": [
+     false
+    ],
+    "7ce9e4a914c16808": [
+     true
+    ],
+    "980671285c51942b": [
+     true
+    ],
+    "448128549cc9e474": [
+     true
+    ],
+    "37609cabb148e461": [
+     false
+    ],
+    "874a5e1681b3ea35": [
+     false
+    ],
+    "517a7065f731433f": [
+     true
+    ],
+    "fcb83053ffa637f8": [
+     true
+    ],
+    "f5d6d6ebef1fbd5d": [
+     false
+    ],
+    "69cfc321ac58b9a5": [
+     true
+    ],
+    "47e21e636f2da8fd": [
+     true
+    ],
+    "f3eb984caa0790de": [
+     false
+    ],
+    "6ac74faf4f3ea153": [
+     true
+    ],
+    "8fb713619e2553b4": [
+     false
+    ],
+    "cab27583bac3351e": [
+     false
+    ],
+    "bf47c22970d8fd32": [
+     false
+    ],
+    "81f4b6af2603778a": [
+     false
+    ]
+   }
+  },
+  "h_core": {
+   "adapter": null,
+   "genome": {
+    "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+    "k_shots": 0,
+    "shot_policy": "none",
+    "temperature": 0.8,
+    "top_p": 0.9,
+    "max_tokens": 384,
+    "retry_k": 2
+   },
+   "k_shots": 0,
+   "accuracy_mean": 0.57,
+   "accuracy_std": 0.0,
+   "per_rep_accuracy": [
+    0.57
+   ],
+   "hack_summary": {
+    "n": 100,
+    "accuracy": 0.57,
+    "mean_resp_chars": 308.8,
+    "multi_boxed_rate": 0.03,
+    "parse_fail_rate": 0.09,
+    "no_reasoning_rate": 0.0
+   },
+   "per_problem": {
+    "bbb541a1d1523326": [
+     false
+    ],
+    "8cbddf977795e1d6": [
+     false
+    ],
+    "4789aad8f48d3b2b": [
+     true
+    ],
+    "a82458d137c477ff": [
+     true
+    ],
+    "aefc0c68adb7377c": [
+     true
+    ],
+    "2fbf21b89a80278f": [
+     true
+    ],
+    "d343b61ce376496b": [
+     true
+    ],
+    "be8d43bdc86baeee": [
+     false
+    ],
+    "9b26e7e7b2752b96": [
+     true
+    ],
+    "52ad02e70a0911bb": [
+     true
+    ],
+    "dd87896ed66c7fe0": [
+     false
+    ],
+    "2d1dbed55ee38ba5": [
+     true
+    ],
+    "ec24ed147e131319": [
+     false
+    ],
+    "ac833a8b7ccba244": [
+     false
+    ],
+    "728d1fc9f1413823": [
+     true
+    ],
+    "1eb3a2b36441656e": [
+     false
+    ],
+    "b39b3c1a669b93d0": [
+     false
+    ],
+    "8390b5a29c9db0dd": [
+     false
+    ],
+    "eb23c26aa0372c01": [
+     false
+    ],
+    "6b2848ca8d85251e": [
+     false
+    ],
+    "fb4fec8cccde4150": [
+     false
+    ],
+    "b03ed76ab62501b1": [
+     true
+    ],
+    "96c17439e05c1e25": [
+     false
+    ],
+    "e184c58535ab254c": [
+     true
+    ],
+    "57e09b3a5fa6da95": [
+     true
+    ],
+    "9e932cd0deaaf224": [
+     true
+    ],
+    "72a9db85d9716677": [
+     false
+    ],
+    "d3631e0e4c2eb409": [
+     false
+    ],
+    "1c788828e5ddc70d": [
+     false
+    ],
+    "2996c0cfa603d5ec": [
+     false
+    ],
+    "4b0d73286de557e5": [
+     false
+    ],
+    "2acefcc84d47f922": [
+     true
+    ],
+    "33dbc772398b9a9b": [
+     true
+    ],
+    "27ec7b9d4b7d856a": [
+     false
+    ],
+    "361c71059f936d37": [
+     true
+    ],
+    "d27480d811145af8": [
+     false
+    ],
+    "649b8177edec8c73": [
+     true
+    ],
+    "593953b33754829b": [
+     false
+    ],
+    "d5e75485fd960c71": [
+     false
+    ],
+    "54825affb8f86121": [
+     true
+    ],
+    "dc9a511dc0d785cf": [
+     true
+    ],
+    "fb05a5b9281b00f2": [
+     false
+    ],
+    "e524117fe95896c1": [
+     true
+    ],
+    "8c8ed2a3ac07a9d2": [
+     true
+    ],
+    "c09da4ad035517b1": [
+     false
+    ],
+    "f3f82012459778da": [
+     true
+    ],
+    "4f085335d67aaa9a": [
+     false
+    ],
+    "0c80f0a4e545a45d": [
+     false
+    ],
+    "b8039995285536a4": [
+     true
+    ],
+    "cbdecc13329ef54d": [
+     true
+    ],
+    "b668dc20d568f0d8": [
+     false
+    ],
+    "8893dff65a198cd1": [
+     true
+    ],
+    "8aaff59e53651ec2": [
+     true
+    ],
+    "3f35f989487fff96": [
+     true
+    ],
+    "fb07dc5eb652e1ac": [
+     true
+    ],
+    "ae6c399e9cd39ed0": [
+     false
+    ],
+    "1af44e387c9fdf41": [
+     false
+    ],
+    "e802d560ca30b494": [
+     false
+    ],
+    "ee13f658fd5fb882": [
+     false
+    ],
+    "c82ce68254b0294e": [
+     true
+    ],
+    "bd63000431fd89f5": [
+     false
+    ],
+    "d6e4144f2f286d50": [
+     true
+    ],
+    "a6e50e650561a375": [
+     true
+    ],
+    "9feb6fb88fbc205d": [
+     true
+    ],
+    "b71480cf49522571": [
+     true
+    ],
+    "5ca7a3f8c5ff2682": [
+     true
+    ],
+    "e8d683a5e6092e2d": [
+     true
+    ],
+    "fedbdaea56c029a7": [
+     true
+    ],
+    "dcd5749889ecf0b7": [
+     false
+    ],
+    "9ba7c1d93d78eed0": [
+     true
+    ],
+    "c1c09ca15f07f9b9": [
+     true
+    ],
+    "189b8fdd032c6bbf": [
+     true
+    ],
+    "26e468cfeb02e1f5": [
+     true
+    ],
+    "ee0fd02e26200149": [
+     false
+    ],
+    "13e38fae22452414": [
+     true
+    ],
+    "6a21a2747e2f1a08": [
+     true
+    ],
+    "50a8ccf4fb7ffca5": [
+     false
+    ],
+    "fa1554840204fde4": [
+     false
+    ],
+    "21e034f9ea585d9a": [
+     true
+    ],
+    "04a0f552134ea01c": [
+     true
+    ],
+    "ff8c3400df9ff0cf": [
+     true
+    ],
+    "a06ab9c51ff01dca": [
+     false
+    ],
+    "42236b3438af9e6d": [
+     true
+    ],
+    "8bf2ba9c8f9e4ec5": [
+     true
+    ],
+    "7ce9e4a914c16808": [
+     true
+    ],
+    "980671285c51942b": [
+     true
+    ],
+    "448128549cc9e474": [
+     true
+    ],
+    "37609cabb148e461": [
+     false
+    ],
+    "874a5e1681b3ea35": [
+     false
+    ],
+    "517a7065f731433f": [
+     false
+    ],
+    "fcb83053ffa637f8": [
+     true
+    ],
+    "f5d6d6ebef1fbd5d": [
+     true
+    ],
+    "69cfc321ac58b9a5": [
+     true
+    ],
+    "47e21e636f2da8fd": [
+     false
+    ],
+    "f3eb984caa0790de": [
+     false
+    ],
+    "6ac74faf4f3ea153": [
+     true
+    ],
+    "8fb713619e2553b4": [
+     true
+    ],
+    "cab27583bac3351e": [
+     false
+    ],
+    "bf47c22970d8fd32": [
+     true
+    ],
+    "81f4b6af2603778a": [
+     true
+    ]
+   }
+  },
+  "h_full": {
+   "adapter": null,
+   "genome": {
+    "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+    "k_shots": 0,
+    "shot_policy": "recent_success",
+    "temperature": 0.8,
+    "top_p": 0.9,
+    "max_tokens": 384,
+    "retry_k": 2
+   },
+   "k_shots": 0,
+   "accuracy_mean": 0.53,
+   "accuracy_std": 0.0,
+   "per_rep_accuracy": [
+    0.53
+   ],
+   "hack_summary": {
+    "n": 100,
+    "accuracy": 0.53,
+    "mean_resp_chars": 300.0,
+    "multi_boxed_rate": 0.01,
+    "parse_fail_rate": 0.13,
+    "no_reasoning_rate": 0.0
+   },
+   "per_problem": {
+    "bbb541a1d1523326": [
+     false
+    ],
+    "8cbddf977795e1d6": [
+     true
+    ],
+    "4789aad8f48d3b2b": [
+     true
+    ],
+    "a82458d137c477ff": [
+     true
+    ],
+    "aefc0c68adb7377c": [
+     true
+    ],
+    "2fbf21b89a80278f": [
+     true
+    ],
+    "d343b61ce376496b": [
+     false
+    ],
+    "be8d43bdc86baeee": [
+     false
+    ],
+    "9b26e7e7b2752b96": [
+     true
+    ],
+    "52ad02e70a0911bb": [
+     false
+    ],
+    "dd87896ed66c7fe0": [
+     false
+    ],
+    "2d1dbed55ee38ba5": [
+     true
+    ],
+    "ec24ed147e131319": [
+     true
+    ],
+    "ac833a8b7ccba244": [
+     false
+    ],
+    "728d1fc9f1413823": [
+     true
+    ],
+    "1eb3a2b36441656e": [
+     true
+    ],
+    "b39b3c1a669b93d0": [
+     false
+    ],
+    "8390b5a29c9db0dd": [
+     false
+    ],
+    "eb23c26aa0372c01": [
+     false
+    ],
+    "6b2848ca8d85251e": [
+     false
+    ],
+    "fb4fec8cccde4150": [
+     false
+    ],
+    "b03ed76ab62501b1": [
+     false
+    ],
+    "96c17439e05c1e25": [
+     false
+    ],
+    "e184c58535ab254c": [
+     true
+    ],
+    "57e09b3a5fa6da95": [
+     true
+    ],
+    "9e932cd0deaaf224": [
+     true
+    ],
+    "72a9db85d9716677": [
+     false
+    ],
+    "d3631e0e4c2eb409": [
+     false
+    ],
+    "1c788828e5ddc70d": [
+     false
+    ],
+    "2996c0cfa603d5ec": [
+     false
+    ],
+    "4b0d73286de557e5": [
+     false
+    ],
+    "2acefcc84d47f922": [
+     true
+    ],
+    "33dbc772398b9a9b": [
+     true
+    ],
+    "27ec7b9d4b7d856a": [
+     true
+    ],
+    "361c71059f936d37": [
+     false
+    ],
+    "d27480d811145af8": [
+     false
+    ],
+    "649b8177edec8c73": [
+     true
+    ],
+    "593953b33754829b": [
+     false
+    ],
+    "d5e75485fd960c71": [
+     false
+    ],
+    "54825affb8f86121": [
+     true
+    ],
+    "dc9a511dc0d785cf": [
+     false
+    ],
+    "fb05a5b9281b00f2": [
+     true
+    ],
+    "e524117fe95896c1": [
+     true
+    ],
+    "8c8ed2a3ac07a9d2": [
+     true
+    ],
+    "c09da4ad035517b1": [
+     true
+    ],
+    "f3f82012459778da": [
+     false
+    ],
+    "4f085335d67aaa9a": [
+     false
+    ],
+    "0c80f0a4e545a45d": [
+     false
+    ],
+    "b8039995285536a4": [
+     false
+    ],
+    "cbdecc13329ef54d": [
+     true
+    ],
+    "b668dc20d568f0d8": [
+     false
+    ],
+    "8893dff65a198cd1": [
+     true
+    ],
+    "8aaff59e53651ec2": [
+     true
+    ],
+    "3f35f989487fff96": [
+     true
+    ],
+    "fb07dc5eb652e1ac": [
+     false
+    ],
+    "ae6c399e9cd39ed0": [
+     true
+    ],
+    "1af44e387c9fdf41": [
+     true
+    ],
+    "e802d560ca30b494": [
+     false
+    ],
+    "ee13f658fd5fb882": [
+     true
+    ],
+    "c82ce68254b0294e": [
+     true
+    ],
+    "bd63000431fd89f5": [
+     false
+    ],
+    "d6e4144f2f286d50": [
+     true
+    ],
+    "a6e50e650561a375": [
+     true
+    ],
+    "9feb6fb88fbc205d": [
+     true
+    ],
+    "b71480cf49522571": [
+     true
+    ],
+    "5ca7a3f8c5ff2682": [
+     true
+    ],
+    "e8d683a5e6092e2d": [
+     true
+    ],
+    "fedbdaea56c029a7": [
+     false
+    ],
+    "dcd5749889ecf0b7": [
+     false
+    ],
+    "9ba7c1d93d78eed0": [
+     true
+    ],
+    "c1c09ca15f07f9b9": [
+     false
+    ],
+    "189b8fdd032c6bbf": [
+     true
+    ],
+    "26e468cfeb02e1f5": [
+     true
+    ],
+    "ee0fd02e26200149": [
+     true
+    ],
+    "13e38fae22452414": [
+     true
+    ],
+    "6a21a2747e2f1a08": [
+     true
+    ],
+    "50a8ccf4fb7ffca5": [
+     false
+    ],
+    "fa1554840204fde4": [
+     false
+    ],
+    "21e034f9ea585d9a": [
+     false
+    ],
+    "04a0f552134ea01c": [
+     true
+    ],
+    "ff8c3400df9ff0cf": [
+     false
+    ],
+    "a06ab9c51ff01dca": [
+     false
+    ],
+    "42236b3438af9e6d": [
+     true
+    ],
+    "8bf2ba9c8f9e4ec5": [
+     false
+    ],
+    "7ce9e4a914c16808": [
+     true
+    ],
+    "980671285c51942b": [
+     true
+    ],
+    "448128549cc9e474": [
+     true
+    ],
+    "37609cabb148e461": [
+     false
+    ],
+    "874a5e1681b3ea35": [
+     false
+    ],
+    "517a7065f731433f": [
+     true
+    ],
+    "fcb83053ffa637f8": [
+     true
+    ],
+    "f5d6d6ebef1fbd5d": [
+     true
+    ],
+    "69cfc321ac58b9a5": [
+     true
+    ],
+    "47e21e636f2da8fd": [
+     false
+    ],
+    "f3eb984caa0790de": [
+     true
+    ],
+    "6ac74faf4f3ea153": [
+     false
+    ],
+    "8fb713619e2553b4": [
+     true
+    ],
+    "cab27583bac3351e": [
+     false
+    ],
+    "bf47c22970d8fd32": [
+     false
+    ],
+    "81f4b6af2603778a": [
+     false
+    ]
+   }
+  }
+ },
+ "engine_stats": [
+  {
+   "n_generated": 100,
+   "tokens_generated": 19369,
+   "gen_seconds": 744.6,
+   "tok_per_sec": 26.0,
+   "adapter": "/Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_002/adapters",
+   "model": "mlx-community/Qwen2.5-3B-Instruct-4bit",
+   "load_seconds": 1.0
+  },
+  {
+   "n_generated": 100,
+   "tokens_generated": 19437,
+   "gen_seconds": 4564.5,
+   "tok_per_sec": 4.3,
+   "adapter": "/Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_002/adapters",
+   "model": "mlx-community/Qwen2.5-3B-Instruct-4bit",
+   "load_seconds": 0.8
+  },
+  {
+   "n_generated": 100,
+   "tokens_generated": 20816,
+   "gen_seconds": 734.0,
+   "tok_per_sec": 28.4,
+   "adapter": null,
+   "model": "mlx-community/Qwen2.5-3B-Instruct-4bit",
+   "load_seconds": 0.8
+  },
+  {
+   "n_generated": 100,
+   "tokens_generated": 20145,
+   "gen_seconds": 2590.9,
+   "tok_per_sec": 7.8,
+   "adapter": null,
+   "model": "mlx-community/Qwen2.5-3B-Instruct-4bit",
+   "load_seconds": 1.0
+  }
+ ],
+ "finished_at": "2026-11-01 22:01:23"
+}

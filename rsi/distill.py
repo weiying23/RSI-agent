@@ -2,11 +2,13 @@
 
 规则（HANDOFF §3.2 Phase B / §3.5 决策5）：
 - 只收 判对 ∧ lint 过 的解
+- 【稳定性过滤】只收 success_rate=1.0 的题（k 次采样每次都对）——
+  「蒙对一次」的解会教坏模型，是过拟合/灾难性遗忘的来源之一（RFT 信号）
 - 每题只留最短正确解（防风格坍缩）
 - messages = [user: 题目, assistant: 解答]——不含 system：
   权重学的是「行为」，指令是 harness 侧的「框架」，这样归因才干净
 - 90/10 切分；10% valid 仅作 MLX loss 监控，禁入任何结论（纪律§4）
-- 未解出的题 → unsolved_pids，交给 Phase A 做失败条件化 probe（Self-HPO）
+- 未稳定解出的题（全错 + 蒙对部分）→ unsolved_pids，交 Phase A 失败条件化
 """
 from __future__ import annotations
 
@@ -22,12 +24,14 @@ def distill(
     seed: int = 0,
     valid_frac: float = 0.1,
     existing_count: int = 0,
+    min_success_rate: float = 1.0,
 ) -> dict:
     """蒸馏一批样本。
 
     problems: 题目记录（id/question/answer_frac/difficulty/...）
     samples: 引擎采样记录（pid/attempt/response）
     existing_count: 已有的累积训练条数（切分去偏用）
+    min_success_rate: 进训练集的最低稳定性（1.0 = 每次采样都对）
     返回 {"train","valid","shot_pool_add","unsolved_pids","stats"}
     """
     by_pid: dict[str, list[dict]] = {}
@@ -42,6 +46,7 @@ def distill(
     shot_add: list[dict] = []
     unsolved: list[str] = []
     n_correct_attempts = 0
+    n_stable = 0
 
     for pid, attempts in by_pid.items():
         p = prob_by_id[pid]
@@ -52,10 +57,13 @@ def distill(
                 n_correct_attempts += 1
             ok, _reasons = grade.lint_one(s["response"], r)
             graded.append((s, r, ok and r["correct"]))
-        winners = [g for g in graded if g[2]]
-        if not winners:
+        sr = sum(1 for g in graded if g[1]["correct"]) / len(graded)
+        winners = [g for g in graded if g[2]]  # correct ∧ lint
+        # 稳定性过滤：蒙对的部分（sr<1.0）足以判对但不足以为师，弃为失败题
+        if not winners or sr < min_success_rate:
             unsolved.append(pid)
             continue
+        n_stable += 1
         # 每题只留最短正确解
         s_best, r_best, _ = min(winners, key=lambda g: len(g[0]["response"]))
         rec = {
@@ -75,13 +83,13 @@ def distill(
                 "solution": s_best["response"],
                 "difficulty": p.get("difficulty"),
                 "template": p.get("template"),
-                "success_rate": sum(1 for g in graded if g[1]["correct"]) / len(graded),
+                "success_rate": sr,
                 "gen": gen,
             }
         )
 
     n_attempts = len(samples)
-    n_solved = len(by_pid) - len(unsolved)
+    n_solved = n_stable  # 稳定解出的题数（进训练集的口径）
     return {
         "train": train_recs,
         "valid": valid_recs,
@@ -93,6 +101,8 @@ def distill(
             "n_solved": n_solved,
             "solve_rate": round(n_solved / len(by_pid), 4) if by_pid else 0.0,
             "attempt_accuracy": round(n_correct_attempts / n_attempts, 4) if n_attempts else 0.0,
+            "stable_rate": round(n_stable / len(by_pid), 4) if by_pid else 0.0,
+            "min_success_rate": min_success_rate,
             "gen": gen,
         },
     }

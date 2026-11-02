@@ -1,0 +1,9 @@
+{
+ "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+ "k_shots": 0,
+ "shot_policy": "recent_success",
+ "temperature": 0.8,
+ "top_p": 0.9,
+ "max_tokens": 384,
+ "retry_k": 2
+}
