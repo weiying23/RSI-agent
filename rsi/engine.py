@@ -90,9 +90,11 @@ class Engine:
             boxed, n = _grade.extract_boxed(resp)
             if n > 0 and len(resp.strip()) >= 20:
                 return resp, tok
+            # 换策略重试：低温 + 短输出（重试只是补格式，不需完整推理）
             g2 = genome.__class__(
                 **{**genome.to_dict(),
-                   "temperature": min(1.0, round(genome.temperature + 0.15, 3))}
+                   "temperature": 0.3,
+                   "max_tokens": min(genome.max_tokens, 128)}
             )
             resp2, tok2 = self.generate_one(question, g2, shots)
             resp, tok = resp2, tok + tok2

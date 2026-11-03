@@ -1,0 +1,16 @@
+# cmd: /Users/yingwei/Documents/code/lora/.venv/bin/python -m mlx_lm lora -c /Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_003/lora_config.yaml
+Loading configuration file /Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_003/lora_config.yaml
+Loading pretrained model
+Loading datasets
+Training
+Trainable parameters: 0.216% (6.652M/3085.939M)
+Starting training..., iters: 80
+Calculating loss...:   0%|          | 0/2 [00:00<?, ?it/s]Calculating loss...:  50%|█████     | 1/2 [00:01<00:01,  1.47s/it]Calculating loss...: 100%|██████████| 2/2 [00:02<00:00,  1.44s/it]Calculating loss...: 100%|██████████| 2/2 [00:02<00:00,  1.44s/it]
+Iter 1: Val loss 0.675, Val took 2.944s
+Iter 20: Train loss 0.423, Learning Rate 5.000e-05, It/sec 0.435, Tokens/sec 122.808, Trained Tokens 5644, Peak mem 3.188 GB
+Iter 40: Train loss 0.258, Learning Rate 5.000e-05, It/sec 0.416, Tokens/sec 130.979, Trained Tokens 11939, Peak mem 3.252 GB
+Iter 60: Train loss 0.236, Learning Rate 5.000e-05, It/sec 0.481, Tokens/sec 132.571, Trained Tokens 17454, Peak mem 3.252 GB
+Calculating loss...:   0%|          | 0/2 [00:00<?, ?it/s]Calculating loss...:  50%|█████     | 1/2 [00:01<00:01,  1.30s/it]Calculating loss...: 100%|██████████| 2/2 [00:02<00:00,  1.00it/s]Calculating loss...: 100%|██████████| 2/2 [00:02<00:00,  1.04s/it]
+Iter 80: Val loss 0.122, Val took 2.098s
+Iter 80: Train loss 0.153, Learning Rate 5.000e-05, It/sec 0.441, Tokens/sec 131.407, Trained Tokens 23414, Peak mem 3.320 GB
+Saved final weights to /Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_003/adapters/adapters.safetensors.
