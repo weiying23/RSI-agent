@@ -1,0 +1,38 @@
+{
+ "arm": "arm_WH",
+ "gen": 3,
+ "phase_a": {
+  "best_tag": "(resumed)",
+  "probe_note": "(resumed)",
+  "candidates": {}
+ },
+ "phase_b": null,
+ "phase_c": {
+  "sys": 0.5333,
+  "w_only": 0.5,
+  "h_core": 0.4833,
+  "h_full": 0.5
+ },
+ "phase_d_gate": {
+  "acc_new": 0.62,
+  "acc_old": 0.62,
+  "acc_best": null,
+  "gain": 0.0,
+  "margin": 0.02,
+  "timr_ok": false,
+  "parse_fail_new": 0.12,
+  "parse_fail_old": 0.04,
+  "promoted": false
+ },
+ "w_used": "/Users/yingwei/Documents/code/agent/test-RSI/arms/arm_WH/gen_002/adapters",
+ "h_next": {
+  "instruction": "解下面的数学题，确保计算过程准确无误。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+  "k_shots": 0,
+  "shot_policy": "recent_success",
+  "temperature": 0.8,
+  "top_p": 0.9,
+  "max_tokens": 384,
+  "retry_k": 2
+ },
+ "finished_at": "2026-11-03 16:40:35"
+}

@@ -53,7 +53,7 @@ def sanitize_proxy_env() -> None:
     """
     import re
 
-    os.environ.setdefault("HF_HUB_OFFLINE", "1")
+    os.environ["HF_HUB_OFFLINE"] = "1"  # 强制覆盖：代理断连时确保走本地缓存
     for key in ("NO_PROXY", "no_proxy"):
         val = os.environ.get(key)
         if val and "[" in val:
