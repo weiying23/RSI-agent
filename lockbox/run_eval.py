@@ -5,19 +5,19 @@
 
 spec 格式：
 {
-  "variants": [                       # 四变体（HANDOFF §3.2 Phase C）
-    {"name": "sys",    "adapter": "arms/.../adapters", "genome": {...}},
-    {"name": "w_only", "adapter": "...",               "genome": {H_0, k_shots:0}},
-    {"name": "h_core", "adapter": null,               "genome": {H_n, 关 few-shot}},
-    {"name": "h_full", "adapter": null,               "genome": {H_n 完整}}
-  ],
-  "eval_n": 450,       # 评估题数（固定前缀子集）
-  "reps": 3,           # avg@3
-  "seed": 0
+  "variants": [ ... ],
+  "eval_n": 450,
+  "reps": 3,
+  "seed": 0,
+  "call_timeout_sec": 90,
+  "task_timeout_sec": 180
 }
 
-输出 eval.json：每变体 accuracy(mean±std) + hack 指标 + 逐题对错（供配对检验）。
-评估期的全部生成归档于 eval 目录（轨迹档案），但永不进入蒸馏（纪律§4）。
+超时纪律：
+- 每道题、每个 rep 都有独立任务截止时间；
+- 超时响应写入 responses_repN.jsonl 并标记 timed_out=true；
+- 超时计为错误，分母绝不删除；
+- 续跑时默认不重跑已超时题；显式 --retry-timeouts 才重跑。
 """
 from __future__ import annotations
 
@@ -35,12 +35,27 @@ from lockbox.common import load_problems
 from rsi import grade
 from rsi.engine import Engine
 from rsi.genome import Genome
+from rsi.timeouts import Deadline, GenerationTimeout
+
+
+def _read_done(path: Path) -> dict[str, dict]:
+    done: dict[str, dict] = {}
+    if not path.exists():
+        return done
+    for ln in path.read_text(encoding="utf-8").splitlines():
+        if not ln.strip():
+            continue
+        obj = json.loads(ln)
+        done[obj["pid"]] = obj
+    return done
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--spec", type=Path, required=True)
     ap.add_argument("--out-dir", type=Path, required=True)
+    ap.add_argument("--retry-timeouts", action="store_true",
+                    help="续跑时重跑已标记超时的题（默认复用超时结果）")
     args = ap.parse_args()
 
     spec = json.loads(args.spec.read_text(encoding="utf-8"))
@@ -50,52 +65,108 @@ def main() -> None:
     problems = load_problems(spec.get("eval_n"))
     print(f"[run_eval] held-out 校验通过：{len(problems)} 题")
 
-    report: dict = {"eval_n": len(problems), "reps": spec.get("reps", 1), "variants": {}}
+    call_timeout = float(spec.get("call_timeout_sec", 90.0))
+    task_timeout = float(spec.get("task_timeout_sec", 180.0))
+    runtime_mode = spec.get("runtime_mode", "bare")
+    if runtime_mode not in ("bare", "checked"):
+        raise ValueError("runtime_mode must be bare or checked")
+    reps = int(spec.get("reps", 1))
+    report: dict = {
+        "eval_n": len(problems),
+        "reps": reps,
+        "call_timeout_sec": call_timeout,
+        "task_timeout_sec": task_timeout,
+        "runtime_mode": runtime_mode,
+        "variants": {},
+    }
     all_stats: list[dict] = []
 
     for v in spec["variants"]:
         name = v["name"]
         genome = Genome.from_dict(v["genome"])
-        shots = v.get("shots") or []  # h_full 的 few-shot 由 spec 提供（属 H 的状态）
+        shots = v.get("shots") or []
         vdir = out_dir / name
         vdir.mkdir(parents=True, exist_ok=True)
 
         print(f"[run_eval] 变体 {name}: adapter={v.get('adapter') or 'BASE'}")
-        engine = Engine(adapter_path=v.get("adapter"))
+        engine = Engine(
+            adapter_path=v.get("adapter"),
+            call_timeout_sec=call_timeout,
+            task_timeout_sec=task_timeout,
+        )
         reps_acc: list[float] = []
         per_problem: dict[str, list[bool]] = {}
         rep_summaries: list[dict] = []
+        total_timeouts = 0
 
-        for r in range(1, spec.get("reps", 1) + 1):
+        for r in range(1, reps + 1):
             results = []
             path_resp = vdir / f"responses_rep{r}.jsonl"
-            # 断点续跑：已生成的响应直接复用（判分始终重新执行——单一判分实现）
-            done: dict[str, str] = {}
-            if path_resp.exists():
-                for ln in path_resp.read_text(encoding="utf-8").splitlines():
-                    if ln.strip():
-                        o = json.loads(ln)
-                        done[o["pid"]] = o["response"]
-            with open(path_resp, "a" if done else "w", encoding="utf-8") as rf:
+            done = _read_done(path_resp)
+            mode = "a" if done else "w"
+            with open(path_resp, mode, encoding="utf-8") as rf:
                 for i, p in enumerate(problems):
-                    if p["id"] in done:
-                        resp = done[p["id"]]
+                    rec = done.get(p["id"])
+                    timed_out = False
+                    elapsed = 0.0
+                    timeout_scope = None
+
+                    if rec is not None and rec.get("timed_out") and args.retry_timeouts:
+                        rec = None
+                        done.pop(p["id"], None)
+
+                    if rec is not None:
+                        resp = rec.get("response", "")
+                        timed_out = bool(rec.get("timed_out"))
+                        elapsed = float(rec.get("elapsed_sec", 0.0))
+                        timeout_scope = rec.get("timeout_scope")
                     else:
-                        resp, _tok = engine.generate_one(p["question"], genome, shots)
-                        rf.write(
-                            json.dumps(
-                                {"pid": p["id"], "response": resp},
-                                ensure_ascii=False,
-                            )
-                            + "\n"
-                        )
+                        deadline = Deadline(task_timeout)
+                        t0 = time.monotonic()
+                        try:
+                            if runtime_mode == "checked":
+                                resp, _tok = engine.generate_one_checked(
+                                    p["question"], genome, shots,
+                                    max_retry=genome.format_retry,
+                                    timeout_sec=min(call_timeout, deadline.remaining),
+                                    deadline=deadline,
+                                )
+                            else:
+                                resp, _tok = engine.generate_one(
+                                    p["question"], genome, shots,
+                                    timeout_sec=min(call_timeout, deadline.remaining),
+                                )
+                            if deadline.expired:
+                                raise GenerationTimeout(task_timeout, scope="task")
+                        except GenerationTimeout as exc:
+                            timed_out = True
+                            timeout_scope = getattr(exc, "scope", "call")
+                            resp = ""
+                        elapsed = time.monotonic() - t0
+                        out = {
+                            "pid": p["id"],
+                            "response": resp,
+                            "timed_out": timed_out,
+                            "status": "timeout" if timed_out else "ok",
+                            "timeout_scope": timeout_scope,
+                            "elapsed_sec": round(elapsed, 3),
+                        }
+                        rf.write(json.dumps(out, ensure_ascii=False) + "\n")
                         rf.flush()
+
                     res = grade.grade_one(p["answer_frac"], resp)
-                    res.update({"pid": p["id"]})
+                    res.update({"pid": p["id"], "timed_out": timed_out,
+                                "elapsed_sec": round(elapsed, 3),
+                                "timeout_scope": timeout_scope})
                     results.append(res)
+                    if timed_out:
+                        total_timeouts += 1
                     if (i + 1) % 50 == 0:
                         print(f"  [{name}] rep{r}: {i+1}/{len(problems)}", flush=True)
+
             s = grade.summarize(results)
+            s["timeout_count"] = sum(1 for x in results if x.get("timed_out"))
+            s["timeout_rate"] = round(s["timeout_count"] / len(results), 4) if results else 0.0
             reps_acc.append(s["accuracy"])
             rep_summaries.append(s)
             for res in results:
@@ -115,9 +186,12 @@ def main() -> None:
             "accuracy_std": round(acc_std, 4),
             "per_rep_accuracy": [round(a, 4) for a in reps_acc],
             "hack_summary": rep_summaries[-1],
+            "timeout_count": total_timeouts,
+            "timeout_rate": round(total_timeouts / (len(problems) * reps), 4),
             "per_problem": {pid: vals for pid, vals in per_problem.items()},
         }
-        print(f"  [{name}] accuracy = {acc_mean:.4f} ± {acc_std:.4f}")
+        print(f"  [{name}] accuracy = {acc_mean:.4f} ± {acc_std:.4f} "
+              f"timeouts={total_timeouts}/{len(problems) * reps}")
 
     report["engine_stats"] = all_stats
     report["finished_at"] = time.strftime("%Y-%m-%d %H:%M:%S")

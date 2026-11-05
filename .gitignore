@@ -15,3 +15,6 @@ arms/*/gen_*/adapters/
 
 # 画图输出（本地生成）
 report/*.png
+# 本轮固定题库实验的运行产物（体积大，本地保留）
+arms_fixed/
+logs/

@@ -38,6 +38,11 @@ BASE_MODEL = "mlx-community/Qwen2.5-3B-Instruct-4bit"  # 已缓存，零下载
 # ---- 数据纪律常量 ----
 GRADE_TOL_ABS = 1e-6   # 答案绝对容差（HARDOFF §3.4）
 GRADE_TOL_REL = 1e-9    # 相对容差兜底（大数值）
+
+# ---- 超时预算（所有臂/候选共享，不进入 harness 可搜索空间）----
+DEFAULT_CALL_TIMEOUT_SEC = 90.0   # 单次模型生成上限
+DEFAULT_TASK_TIMEOUT_SEC = 180.0  # 单道题所有尝试/工具步合计上限
+DEFAULT_PHASE_TIMEOUT_SEC = 0.0   # 0 = 不设阶段级硬超时（由 CLI 覆盖）
 MIN_REASONING_CHARS = 30  # lint：boxed 前的最少推理字符数
 GLOBAL_ROLES = {"heldout", "calib"}  # 全局排除的角色（跨臂共享账本）
 

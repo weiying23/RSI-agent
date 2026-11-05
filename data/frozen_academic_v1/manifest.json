@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "bank": "frozen_academic_v1",
+  "created_at": "2026-11-04 00:00:01",
+  "master_seed": 20261101,
+  "difficulty": 5,
+  "gens": 5,
+  "counts": {
+    "train_per_gen": 200,
+    "probe_per_gen": 50,
+    "promo_per_gen": 50,
+    "total_generated": 1500
+  },
+  "splits": {
+    "train/gen_001": {
+      "role": "train",
+      "gen": 1,
+      "path": "train/train_gen_001.jsonl",
+      "n": 200,
+      "sha256": "ff43b194d3ab67e167a997c2db8b91990ce44d3c41d9fcb400f0bcd9419d56e5"
+    },
+    "probe/gen_001": {
+      "role": "probe",
+      "gen": 1,
+      "path": "probe/probe_gen_001.jsonl",
+      "n": 50,
+      "sha256": "faaec1ee3f109cd3a8e613e07fa5f1f0a060bacf0160cde16698642da36eae9f"
+    },
+    "promo/gen_001": {
+      "role": "promo",
+      "gen": 1,
+      "path": "promo/promo_gen_001.jsonl",
+      "n": 50,
+      "sha256": "73faaf5710a4ff2906fecb36cd67fe8b7829ceb2de75859197b124df53a7bf52"
+    },
+    "train/gen_002": {
+      "role": "train",
+      "gen": 2,
+      "path": "train/train_gen_002.jsonl",
+      "n": 200,
+      "sha256": "a68f62682cf331cada0225aade18948c94e694dbbb67c183f24a1fa3df861e1b"
+    },
+    "probe/gen_002": {
+      "role": "probe",
+      "gen": 2,
+      "path": "probe/probe_gen_002.jsonl",
+      "n": 50,
+      "sha256": "7d9f74623073078637a3a4b0aada13f87aa0012b2562d8877b9f571c2bb672fa"
+    },
+    "promo/gen_002": {
+      "role": "promo",
+      "gen": 2,
+      "path": "promo/promo_gen_002.jsonl",
+      "n": 50,
+      "sha256": "e31a16a88b0d0e4c1615d52cf2fa9260fac4eec66ab538d18b7e8e8a9392b9db"
+    },
+    "train/gen_003": {
+      "role": "train",
+      "gen": 3,
+      "path": "train/train_gen_003.jsonl",
+      "n": 200,
+      "sha256": "570d479d91446c9aa4a5f265c0393eab22b106bb36549dad0e12a7582cd7e91c"
+    },
+    "probe/gen_003": {
+      "role": "probe",
+      "gen": 3,
+      "path": "probe/probe_gen_003.jsonl",
+      "n": 50,
+      "sha256": "03d1753f72551e9cf499dfa1b63ccb683288a50632c4b9b4d1582c376acb2d1e"
+    },
+    "promo/gen_003": {
+      "role": "promo",
+      "gen": 3,
+      "path": "promo/promo_gen_003.jsonl",
+      "n": 50,
+      "sha256": "32ab1102f20129bf7187991ed17d779c1b8529c6e3e6b613b00ee9c2016ef9fc"
+    },
+    "train/gen_004": {
+      "role": "train",
+      "gen": 4,
+      "path": "train/train_gen_004.jsonl",
+      "n": 200,
+      "sha256": "107d4df103dda9ca3994848f2b25584e2ad53d31bce379309bb81eee05a7a920"
+    },
+    "probe/gen_004": {
+      "role": "probe",
+      "gen": 4,
+      "path": "probe/probe_gen_004.jsonl",
+      "n": 50,
+      "sha256": "d156feaf3a09571c2a6e33fdc8a9025a1cafdd387767b26f9eab28a7c1a4ea72"
+    },
+    "promo/gen_004": {
+      "role": "promo",
+      "gen": 4,
+      "path": "promo/promo_gen_004.jsonl",
+      "n": 50,
+      "sha256": "f4e6932214cb2f498c5ba930f9d9d6d53bfbfd9351c991c33a2fa8dad3913e14"
+    },
+    "train/gen_005": {
+      "role": "train",
+      "gen": 5,
+      "path": "train/train_gen_005.jsonl",
+      "n": 200,
+      "sha256": "ccfb2a0c687dcb28f555f7ba123b51058241da2fc1211fb8b6a5859679a8b247"
+    },
+    "probe/gen_005": {
+      "role": "probe",
+      "gen": 5,
+      "path": "probe/probe_gen_005.jsonl",
+      "n": 50,
+      "sha256": "fc4fbfa4b43bb94f5755fe96827b01b74766205bb6e91a67072acd64b88265af"
+    },
+    "promo/gen_005": {
+      "role": "promo",
+      "gen": 5,
+      "path": "promo/promo_gen_005.jsonl",
+      "n": 50,
+      "sha256": "5fd1e629289d6fd1064609dee9ca5f210f1aca49c38ecf09620e568d8a67a38d"
+    }
+  },
+  "heldout": {
+    "path": "lockbox/heldout_v1.jsonl",
+    "n": 450,
+    "sha256": "483c0e78f0a8b7f200666e8a7b345d35c63588a279e3231a36e8e79ae1cded84"
+  },
+  "sharing_rule": "三臂共享题目清单；轨迹、训练数据和 adapter 按臂独立。",
+  "manifest_sha256": "61b3b3f46e1b12f2a4031dab325b2d5d668295c5acbb1d666277bc8431110f6b"
+}

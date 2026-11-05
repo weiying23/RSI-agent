@@ -31,7 +31,7 @@ import subprocess
 import time
 from pathlib import Path
 
-from . import config, distill, env_gen, grade, train
+from . import config, distill, env_gen, grade, taskbank, train
 from .engine import Engine
 from .genome import Genome, H0, perturb, select_shots
 
@@ -190,6 +190,9 @@ def evaluate_candidate(
                 }
             )
     summary = grade.summarize(results)
+    n_timeout = sum(1 for x in samples if x.get("status") == "timeout")
+    summary["timeout_count"] = n_timeout
+    summary["timeout_rate"] = round(n_timeout / len(samples), 4) if samples else 0.0
     return {
         "pass_at_k": len(solved) / len(probs),
         "attempt_accuracy": summary["accuracy"],
@@ -197,6 +200,8 @@ def evaluate_candidate(
         "solved_pids": sorted(solved),
         "solved_shots": solved_shots,
         "hack": summary,
+        "timeout_count": n_timeout,
+        "timeout_rate": round(n_timeout / len(samples), 4) if samples else 0.0,
     }
 
 
@@ -223,18 +228,22 @@ def run_phase_a(
     rng = random.Random(f"phaseA:{ctx['arm']}:{ctx['gen']}")
 
     # ---- probe 集：失败条件化（上代未解题优先）----
+    # 题目来自一次性冻结的 task bank；三臂共享同一 probe 分片。
     prev_probs_by_id = {p["id"]: p for p in ctx.get("all_prev_pool", [])}
     hard_ids = [pid for pid in prev_unsolved if pid in prev_probs_by_id]
     rng.shuffle(hard_ids)
     hard_probs = [prev_probs_by_id[pid] for pid in hard_ids[: n_probe // 2]]
     n_fresh = n_probe - len(hard_probs)
-    fresh = env_gen.sample(
-        n_fresh, difficulty, role="probe", arm=arm,
-        extra_seed=f"probe:{arm}:{ctx['gen']}",
+
+    probe_shard = taskbank.load_split(
+        "probe", ctx["gen"], root=ctx["task_bank_root"], expected_n=n_fresh
     )
+    # fresh 部分在代内固定、三臂一致；hard 部分由各臂自己的失败轨迹决定。
+    probe_rng = random.Random(f"taskbank-probe:{ctx['gen']}")
+    fresh = probe_rng.sample(probe_shard, n_fresh)
     probs = hard_probs + fresh
     _write_jsonl(gen_dir / "probe.jsonl", probs)
-    note = f"（{len(hard_probs)} 上代未解 + {n_fresh} 新题）"
+    note = f"（{len(hard_probs)} 上代未解 + {n_fresh} 固定题库新题）"
 
     # ---- 候选：扰动 ×2 + 自改指令 ×1 ----
     h_n = ctx["genome_n"]
@@ -297,10 +306,12 @@ def run_phase_b(ctx: dict, engine: Engine, h_next: Genome, gen_dir: Path) -> dic
     difficulty = state["difficulty"]
     size = ctx["size"]
 
-    probs = env_gen.sample(
-        size["pool"], difficulty, role="pool", arm=arm,
-        extra_seed=f"pool:{arm}:{ctx['gen']}",
+    # 固定训练题分片：三臂共享同一份题目清单；模型轨迹按臂独立生成。
+    probs = taskbank.load_split(
+        "train", ctx["gen"], root=ctx["task_bank_root"], expected_n=size["pool"]
     )
+    if len(probs) > size["pool"]:
+        probs = probs[: size["pool"]]
     _write_jsonl(gen_dir / "pool.jsonl", probs)
 
     shot_pool = _read_jsonl(ctx["shot_pool_file"])
@@ -351,7 +362,16 @@ def run_phase_c(ctx: dict, h_next: Genome, w_candidate: str | None, gen_dir: Pat
     """
     arm = ctx["arm"]
     eval_n = ctx["eval_attr_n"] if full_attribution else ctx["eval_trend_n"]
-    spec: dict = {"eval_n": eval_n, "reps": ctx["reps"], "seed": ctx["gen"]}
+    spec: dict = {
+        "eval_n": eval_n,
+        "reps": ctx["reps"],
+        "seed": ctx["gen"],
+        "call_timeout_sec": ctx["call_timeout_sec"],
+        "task_timeout_sec": ctx["task_timeout_sec"],
+        # 训练/候选生成使用运行时 harness（格式重试/投票/换策略），
+        # held-out 评估也必须同一套，否则方向级 HPO 复现会高估或低估 harness。
+        "runtime_mode": "checked",
+    }
 
     shot_pool = _read_jsonl(ctx["shot_pool_file"])
     shots = select_shots(shot_pool, h_next)
@@ -396,11 +416,18 @@ def run_phase_c(ctx: dict, h_next: Genome, w_candidate: str | None, gen_dir: Pat
     spec_path = gen_dir / "eval_spec.json"
     _jdump(spec_path, {**spec, "aliases": alias, "full_attribution": full_attribution})
     venv_py = ctx["state"].get("venv_python") or str(config.VENV_PYTHON)
-    proc = subprocess.run(
-        [venv_py, str(config.LOCKBOX_DIR / "run_eval.py"),
-         "--spec", str(spec_path), "--out-dir", str(gen_dir / "eval")],
-        cwd=str(config.ROOT), env=_subprocess_env(),
-    )
+    phase_timeout = float(ctx.get("phase_timeout_sec") or 0.0)
+    try:
+        proc = subprocess.run(
+            [venv_py, str(config.LOCKBOX_DIR / "run_eval.py"),
+             "--spec", str(spec_path), "--out-dir", str(gen_dir / "eval")],
+            cwd=str(config.ROOT), env=_subprocess_env(),
+            timeout=(phase_timeout if phase_timeout > 0 else None),
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(
+            f"Phase C 超过阶段超时 {phase_timeout:.0f}s；响应文件已保留，可断点续跑。"
+        ) from exc
     if proc.returncode != 0:
         raise RuntimeError("lockbox 评估失败")
     rep = json.loads((gen_dir / "eval" / "eval.json").read_text(encoding="utf-8"))
@@ -432,16 +459,24 @@ def run_phase_d(
     if phase_b is None:
         promoted, gate = False, {"skipped": "arm_H has no weight channel"}
     else:
-        probs = env_gen.sample(
-            PROMOVAL_N, difficulty, role="promo-val", arm=arm,
-            extra_seed=f"promo:{arm}:{ctx['gen']}",
-        )
+        # 固定 promo 分片：三臂共享题目清单。
+        probs = taskbank.load_split(
+            "promo", ctx["gen"], root=ctx["task_bank_root"], expected_n=PROMOVAL_N
+        )[:PROMOVAL_N]
         h_eval = h_next if arm == "arm_WH" else H0()
         # promo-val 快速门控：不注入 few-shot，候选同条件
-        engine = Engine(adapter_path=phase_b["adapter"])
+        engine = Engine(
+            adapter_path=phase_b["adapter"],
+            call_timeout_sec=ctx["call_timeout_sec"],
+            task_timeout_sec=ctx["task_timeout_sec"],
+        )
         res_new = engine.generate_batch(probs, h_eval, k=1, shot_pool=None)
         engine.close()
-        engine = Engine(adapter_path=ctx["w_current"])
+        engine = Engine(
+            adapter_path=ctx["w_current"],
+            call_timeout_sec=ctx["call_timeout_sec"],
+            task_timeout_sec=ctx["task_timeout_sec"],
+        )
         res_old = engine.generate_batch(probs, h_eval, k=1, shot_pool=None)
         engine.close()
 
@@ -450,18 +485,28 @@ def run_phase_d(
             rs = [grade.grade_one(by[s["pid"]]["answer_frac"], s["response"])
                   for s in res]
             s = grade.summarize(rs)
-            return {"accuracy": s["accuracy"], "parse_fail": s["parse_fail_rate"]}
+            n_timeout = sum(1 for x in res if x.get("status") == "timeout")
+            return {
+                "accuracy": s["accuracy"],
+                "parse_fail": s["parse_fail_rate"],
+                "timeout_count": n_timeout,
+                "timeout_rate": round(n_timeout / len(res), 4) if res else 0.0,
+            }
 
         m_new, m_old = met_of(res_new), met_of(res_old)
 
         # 检查点继承：历史最优 adapter 纳入对比（CoEvo-RSI）
-        best_file = config.ARMS_DIR / arm / "best_adapter.json"
+        best_file = ctx["arm_dir"] / "best_adapter.json"
         best_adapter = None
         if best_file.exists():
             best_adapter = json.loads(best_file.read_text(encoding="utf-8")).get("adapter")
         m_best = None
         if best_adapter and best_adapter != ctx["w_current"] and best_adapter != phase_b["adapter"]:
-            engine = Engine(adapter_path=best_adapter)
+            engine = Engine(
+                adapter_path=best_adapter,
+                call_timeout_sec=ctx["call_timeout_sec"],
+                task_timeout_sec=ctx["task_timeout_sec"],
+            )
             res_best = engine.generate_batch(probs, h_eval, k=1, shot_pool=None)
             engine.close()
             m_best = met_of(res_best)
@@ -487,6 +532,10 @@ def run_phase_d(
                 "timr_ok": timr_ok,
                 "parse_fail_new": m_new["parse_fail"],
                 "parse_fail_old": m_old["parse_fail"],
+                "timeout_new": m_new["timeout_count"],
+                "timeout_old": m_old["timeout_count"],
+                "timeout_rate_new": m_new["timeout_rate"],
+                "timeout_rate_old": m_old["timeout_rate"],
                 "promoted": promoted}
 
     if phase_b is None:
@@ -505,6 +554,18 @@ def run_phase_d(
         "phase_d_gate": gate,
         "w_used": w_used,
         "h_next": h_next.to_dict(),
+        "task_bank": {
+            "root": str(ctx["task_bank_root"]),
+            "manifest_sha256": ctx.get("task_bank_manifest_sha"),
+            "train_split": f"train/gen_{ctx['gen']:03d}",
+            "probe_split": f"probe/gen_{ctx['gen']:03d}",
+            "promo_split": f"promo/gen_{ctx['gen']:03d}",
+        },
+        "timeouts": {
+            "call_timeout_sec": ctx["call_timeout_sec"],
+            "task_timeout_sec": ctx["task_timeout_sec"],
+            "phase_timeout_sec": ctx["phase_timeout_sec"],
+        },
         "finished_at": time.strftime("%Y-%m-%d %H:%M:%S"),
     }
     _jdump(gen_dir / "lineage.json", lineage)
@@ -515,18 +576,42 @@ def run_phase_d(
 # 主循环
 # ---------------------------------------------------------------------------
 
-def run_generation(arm: str, gen: int, state: dict, size: dict, eval_n: int, reps: int,
-                   eval_attr_n: int = EVAL_ATTR_N, total_gens: int | None = None) -> None:
-    arm_dir = config.ARMS_DIR / arm
+def run_generation(
+    arm: str,
+    gen: int,
+    state: dict,
+    size: dict,
+    eval_n: int,
+    reps: int,
+    eval_attr_n: int = EVAL_ATTR_N,
+    total_gens: int | None = None,
+    arms_root: Path | str | None = None,
+    task_bank_root: Path | str | None = None,
+    task_bank_manifest_sha: str | None = None,
+    probe_n: int = PROBE_N,
+    call_timeout_sec: float = config.DEFAULT_CALL_TIMEOUT_SEC,
+    task_timeout_sec: float = config.DEFAULT_TASK_TIMEOUT_SEC,
+    phase_timeout_sec: float = config.DEFAULT_PHASE_TIMEOUT_SEC,
+) -> None:
+    arms_root = Path(arms_root) if arms_root else config.ARMS_DIR
+    task_bank_root = Path(task_bank_root) if task_bank_root else taskbank.DEFAULT_BANK_ROOT
+    arm_dir = arms_root / arm
     arm_dir.mkdir(parents=True, exist_ok=True)
     gen_dir = arm_dir / f"gen_{gen:03d}"
     gen_dir.mkdir(parents=True, exist_ok=True)
     ctx = {
         "arm": arm, "gen": gen, "state": state, "size": size,
         "eval_trend_n": eval_n, "eval_attr_n": eval_attr_n, "reps": reps,
-        "probe_n": PROBE_N,
+        "probe_n": int(probe_n),
         "shot_pool_file": arm_dir / "shot_pool.jsonl",
         "train_cum_file": arm_dir / "train_cum.jsonl",
+        "arm_dir": arm_dir,
+        "arms_root": arms_root,
+        "task_bank_root": task_bank_root,
+        "task_bank_manifest_sha": task_bank_manifest_sha,
+        "call_timeout_sec": float(call_timeout_sec),
+        "task_timeout_sec": float(task_timeout_sec),
+        "phase_timeout_sec": float(phase_timeout_sec),
     }
     # 归因代 = 最后一代码（该代四变体全量），其余代只测 sys 趋势
     full_attr = (gen == total_gens) if total_gens is not None else False
@@ -544,10 +629,17 @@ def run_generation(arm: str, gen: int, state: dict, size: dict, eval_n: int, rep
 
     prev_dir = arm_dir / f"gen_{gen-1:03d}"
     prev_lineage = json.loads((prev_dir / "lineage.json").read_text(encoding="utf-8"))
-    # H_n：gen_000 的 genome.json 恰为 H_0，直接读即可
-    ctx["genome_n"] = Genome.from_dict(
-        json.loads((prev_dir / "genome.json").read_text(encoding="utf-8"))
-    )
+    # arm_W 的 harness 恒为 H_0，不需要读取上一代 genome；其余臂从上一代读取。
+    if arm == "arm_W":
+        ctx["genome_n"] = H0()
+    else:
+        prev_genome = prev_dir / "genome.json"
+        if prev_genome.exists():
+            ctx["genome_n"] = Genome.from_dict(
+                json.loads(prev_genome.read_text(encoding="utf-8"))
+            )
+        else:
+            ctx["genome_n"] = H0()
     ctx["w_current"] = prev_lineage.get("w_used")
 
     # 上代未解题 + 失败样例（失败条件化的原料）
@@ -562,7 +654,11 @@ def run_generation(arm: str, gen: int, state: dict, size: dict, eval_n: int, rep
     if arm in ("arm_WH", "arm_H"):
         if not _done(gen_dir, "A"):
             print(f"[{arm}] gen_{gen:03d} Phase A：harness 搜索")
-            engine = Engine(adapter_path=ctx["w_current"] if arm == "arm_WH" else None)
+            engine = Engine(
+                adapter_path=ctx["w_current"] if arm == "arm_WH" else None,
+                call_timeout_sec=ctx["call_timeout_sec"],
+                task_timeout_sec=ctx["task_timeout_sec"],
+            )
             phase_a = run_phase_a(ctx, engine, unsolved_prev, gen_dir)
             engine.close()
             _mark(gen_dir, "A")
@@ -573,6 +669,19 @@ def run_generation(arm: str, gen: int, state: dict, size: dict, eval_n: int, rep
                 ),
                 "best_tag": "(resumed)", "candidates": {}, "probe_note": "(resumed)",
             }
+            cand_file = gen_dir / "candidates" / "all_candidates.json"
+            if cand_file.exists():
+                raw = json.loads(cand_file.read_text(encoding="utf-8"))
+                phase_a["candidates"] = {
+                    k: {"pass_at_k": v["score"]["pass_at_k"],
+                        "acc": v["score"]["attempt_accuracy"],
+                        "genome": v["genome"]}
+                    for k, v in raw.items()
+                }
+                phase_a["best_tag"] = max(
+                    raw, key=lambda k: (raw[k]["score"]["pass_at_k"],
+                                        raw[k]["score"]["attempt_accuracy"])
+                )
     else:  # arm_W：H 恒为 H_0
         phase_a = {"h_next": H0(), "best_tag": "H_0_frozen", "candidates": {}, "probe_note": ""}
     h_next: Genome = phase_a["h_next"]
@@ -581,13 +690,25 @@ def run_generation(arm: str, gen: int, state: dict, size: dict, eval_n: int, rep
     if arm in ("arm_WH", "arm_W"):
         if not _done(gen_dir, "B"):
             print(f"[{arm}] gen_{gen:03d} Phase B：数据生成 + LoRA")
-            engine = Engine(adapter_path=ctx["w_current"])
+            engine = Engine(
+                adapter_path=ctx["w_current"],
+                call_timeout_sec=ctx["call_timeout_sec"],
+                task_timeout_sec=ctx["task_timeout_sec"],
+            )
             phase_b = run_phase_b(ctx, engine, h_next, gen_dir)
             engine.close()
             _mark(gen_dir, "B")
         else:
-            phase_b = {"distill_stats": None, "train_res": None,
-                      "unsolved": [], "adapter": str(gen_dir / "adapters")}
+            phase_b = {
+                "distill_stats": None, "train_res": None,
+                "unsolved": [], "adapter": str(gen_dir / "adapters"),
+            }
+            pool = _read_jsonl(gen_dir / "pool.jsonl")
+            samples = _read_jsonl(gen_dir / "samples.jsonl")
+            if pool and samples:
+                dis = distill.distill(pool, samples, gen=ctx["gen"], seed=ctx["gen"])
+                phase_b["distill_stats"] = dis["stats"]
+                phase_b["unsolved"] = dis["unsolved_pids"]
     else:
         phase_b = None
 
@@ -646,25 +767,71 @@ def _failure_examples(probs: list[dict], samples: list[dict]) -> list[dict]:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--arm", choices=["W", "H", "WH"], required=True)
-    ap.add_argument("--gens", type=int, default=5, help="总代数（含 gen_000）")
+    ap.add_argument("--gens", type=int, default=5,
+                    help="更新代数；gen_000 是初始状态，实际目录为 gen_000..gen_N")
     ap.add_argument("--gen-size", choices=list(GEN_SIZE), default="small")
     ap.add_argument("--eval-n", type=int, default=EVAL_TREND_N,
                     help="趋势代考卷题数（sys 单变体）")
     ap.add_argument("--eval-attr-n", type=int, default=EVAL_ATTR_N,
                     help="归因代（最后一代）四变体考卷题数")
     ap.add_argument("--reps", type=int, default=1)
+    ap.add_argument("--task-bank", type=Path, default=taskbank.DEFAULT_BANK_ROOT,
+                    help="一次性冻结的题库目录")
+    ap.add_argument("--arms-root", type=Path, default=config.ARMS_DIR,
+                    help="输出目录；新实验建议用 arms_fixed，避免覆盖旧结果")
+    ap.add_argument("--probe-n", type=int, default=PROBE_N,
+                    help="每个候选 harness 的 probe 题数")
+    ap.add_argument("--call-timeout", type=float, default=config.DEFAULT_CALL_TIMEOUT_SEC,
+                    help="单次模型生成 wall-clock 上限（秒）")
+    ap.add_argument("--task-timeout", type=float, default=config.DEFAULT_TASK_TIMEOUT_SEC,
+                    help="单道题所有尝试/重试合计上限（秒）")
+    ap.add_argument("--phase-timeout", type=float, default=config.DEFAULT_PHASE_TIMEOUT_SEC,
+                    help="Phase C 子进程上限（秒）；0=不设")
     args = ap.parse_args()
 
     state = config.load_state()
     if not state.get("frozen", {}).get("heldout"):
         raise SystemExit("held-out 未冻结：先完成 P0（calibrate + freeze）")
+
+    # 固定题库必须先存在且通过校验；实验中途禁止临时出题。
+    manifest = taskbank.load_manifest(args.task_bank, verify=True)
+    if manifest["gens"] < args.gens:
+        raise SystemExit(
+            f"题库只支持 {manifest['gens']} 代，但请求 {args.gens} 代；重建题库或减少 --gens"
+        )
+    if manifest["counts"]["probe_per_gen"] < args.probe_n:
+        raise SystemExit(
+            f"每代 probe 只有 {manifest['counts']['probe_per_gen']} 题，"
+            f"不够 --probe-n {args.probe_n}"
+        )
+
     size = GEN_SIZE[args.gen_size]
+    if manifest["counts"]["train_per_gen"] < size["pool"]:
+        raise SystemExit(
+            f"每代训练题只有 {manifest['counts']['train_per_gen']} 题，"
+            f"不够 gen-size={args.gen_size} 的 pool={size['pool']}"
+        )
     eval_n = args.eval_n
 
     arm = f"arm_{args.arm}"
+    print(
+        f"[{arm}] 固定题库={args.task_bank} manifest={manifest['manifest_sha256'][:12]}… "
+        f"call_timeout={args.call_timeout}s task_timeout={args.task_timeout}s "
+        f"phase_timeout={args.phase_timeout}s"
+    )
     for gen in range(0, args.gens + 1):
-        run_generation(arm, gen, state, size, eval_n, args.reps,
-                       eval_attr_n=args.eval_attr_n, total_gens=args.gens)
+        run_generation(
+            arm, gen, state, size, eval_n, args.reps,
+            eval_attr_n=args.eval_attr_n,
+            total_gens=args.gens,
+            arms_root=args.arms_root,
+            task_bank_root=args.task_bank,
+            task_bank_manifest_sha=manifest["manifest_sha256"],
+            probe_n=args.probe_n,
+            call_timeout_sec=args.call_timeout,
+            task_timeout_sec=args.task_timeout,
+            phase_timeout_sec=args.phase_timeout,
+        )
     print(f"[{arm}] 全部 {args.gens} 代完成")
 
 

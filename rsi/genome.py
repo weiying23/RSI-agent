@@ -30,6 +30,9 @@ class Genome:
     top_p: float = 0.9
     max_tokens: int = 384
     retry_k: int = 3
+    # 运行时 harness（H 的一部分，不是实验基础设施）
+    format_retry: int = 1          # 格式失败后的内部重试次数
+    self_consistency_k: int = 1    # >1 时做答案多数投票
 
     # ---- 边界（HANDOFF §3.3）----
     BOUNDS = {
@@ -38,6 +41,8 @@ class Genome:
         "top_p": (0.8, 0.95),
         "max_tokens": (256, 512),
         "retry_k": (1, 4),
+        "format_retry": (0, 2),
+        "self_consistency_k": (1, 3),
     }
 
     def validate(self) -> None:
@@ -75,7 +80,10 @@ def H0() -> Genome:
 
 def perturb(base: Genome, rng: random.Random, n_params: int = 2) -> Genome:
     """对 1~n_params 个数值参数做随机扰动，返回新基因组（保持边界）。"""
-    fields_avail = ["k_shots", "temperature", "top_p", "max_tokens", "retry_k"]
+    fields_avail = [
+        "k_shots", "temperature", "top_p", "max_tokens", "retry_k",
+        "format_retry", "self_consistency_k",
+    ]
     k = rng.randint(1, n_params)
     chosen = rng.sample(fields_avail, k)
     changes: dict = {}
@@ -84,6 +92,9 @@ def perturb(base: Genome, rng: random.Random, n_params: int = 2) -> Genome:
         cur = getattr(base, f)
         if f in ("k_shots", "retry_k"):  # 整数参数
             step = rng.choice([-2, -1, 1, 2])
+            new = max(lo, min(hi, cur + step))
+        elif f in ("format_retry", "self_consistency_k"):  # 运行时整数开关
+            step = rng.choice([-1, 1])
             new = max(lo, min(hi, cur + step))
         elif f == "max_tokens":
             step = rng.choice([-128, -64, 64, 128])

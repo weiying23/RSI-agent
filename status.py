@@ -26,25 +26,31 @@ def snapshot() -> dict:
     out["ledger"] = ledger.stats()
 
     gens = []
-    for arm_dir in sorted((ROOT / "arms").glob("arm_*")):
+    arm_roots = [ROOT / "arms", ROOT / "arms_fixed"]
+    arm_dirs = []
+    for r in arm_roots:
+        if r.exists():
+            arm_dirs.extend(sorted(r.glob("arm_*")))
+    for arm_dir in arm_dirs:
         for gen_dir in sorted(arm_dir.glob("gen_*")):
-            markers = {
+            phases = sum(1 for p in ("A", "B", "C", "D")
+                         if (gen_dir / f".phase_{p}_done").exists())
+            artifacts = {
                 "genome": (gen_dir / "genome.json").exists(),
                 "samples": (gen_dir / "samples.jsonl").exists(),
-                "train": (gen_dir / "train.jsonl").exists(),
                 "adapters": (gen_dir / "adapters" / "adapters.safetensors").exists(),
                 "eval": (gen_dir / "eval" / "eval.json").exists(),
                 "lineage": (gen_dir / "lineage.json").exists(),
             }
             age_min = (time.time() - gen_dir.stat().st_mtime) / 60
-            stage = sum(markers.values())
             gens.append(
                 {
                     "arm": arm_dir.name,
                     "gen": gen_dir.name,
-                    "stage": f"{stage}/6",
+                    "phases": f"{phases}/4",
+                    "artifacts": artifacts,
                     "idle_min": round(age_min, 1),
-                    "stalled": age_min > 90 and stage < 6,
+                    "stalled": age_min > 90 and phases < 4 and not artifacts["lineage"],
                 }
             )
     out["generations"] = gens

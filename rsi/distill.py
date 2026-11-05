@@ -89,6 +89,7 @@ def distill(
         )
 
     n_attempts = len(samples)
+    n_timeout = sum(1 for s in samples if s.get("status") == "timeout")
     n_solved = n_stable  # 稳定解出的题数（进训练集的口径）
     return {
         "train": train_recs,
@@ -103,6 +104,8 @@ def distill(
             "attempt_accuracy": round(n_correct_attempts / n_attempts, 4) if n_attempts else 0.0,
             "stable_rate": round(n_stable / len(by_pid), 4) if by_pid else 0.0,
             "min_success_rate": min_success_rate,
+            "timeout_attempts": n_timeout,
+            "timeout_rate": round(n_timeout / n_attempts, 4) if n_attempts else 0.0,
             "gen": gen,
         },
     }

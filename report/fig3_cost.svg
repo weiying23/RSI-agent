@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="440">
+<rect width="100%" height="100%" fill="white"/>
+<text x="380.0" y="30" font-size="18" font-family="sans-serif" text-anchor="middle" font-weight="bold">Fig 3. 成本曲线：held-out 评估生成 token</text>
+<line x1="70" y1="370.0" x2="730" y2="370.0" stroke="#ddd"/>
+<text x="62" y="374.0" font-size="12" font-family="sans-serif" text-anchor="end">0K</text>
+<line x1="70" y1="290.0" x2="730" y2="290.0" stroke="#ddd"/>
+<text x="62" y="294.0" font-size="12" font-family="sans-serif" text-anchor="end">25K</text>
+<line x1="70" y1="210.0" x2="730" y2="210.0" stroke="#ddd"/>
+<text x="62" y="214.0" font-size="12" font-family="sans-serif" text-anchor="end">50K</text>
+<line x1="70" y1="130.0" x2="730" y2="130.0" stroke="#ddd"/>
+<text x="62" y="134.0" font-size="12" font-family="sans-serif" text-anchor="end">75K</text>
+<line x1="70" y1="50.0" x2="730" y2="50.0" stroke="#ddd"/>
+<text x="62" y="54.0" font-size="12" font-family="sans-serif" text-anchor="end">100K</text>
+<text x="70.0" y="392" font-size="12" font-family="sans-serif" text-anchor="middle">gen 1</text>
+<text x="235.0" y="392" font-size="12" font-family="sans-serif" text-anchor="middle">gen 2</text>
+<text x="400.0" y="392" font-size="12" font-family="sans-serif" text-anchor="middle">gen 3</text>
+<text x="565.0" y="392" font-size="12" font-family="sans-serif" text-anchor="middle">gen 4</text>
+<text x="730.0" y="392" font-size="12" font-family="sans-serif" text-anchor="middle">gen 5</text>
+<path d="M 70.0,302.1 L 235.0,301.3 L 400.0,299.8 L 565.0,299.7 L 730.0,98.2" fill="none" stroke="#2ca02c" stroke-width="2.5"/>
+<text x="736.0" y="98.2" font-size="13" font-family="sans-serif" fill="#2ca02c">arm_H</text>
+<path d="M 70.0,305.9 L 235.0,317.2 L 400.0,319.1 L 565.0,306.9 L 730.0,318.2" fill="none" stroke="#1f77b4" stroke-width="2.5"/>
+<text x="736.0" y="318.2" font-size="13" font-family="sans-serif" fill="#1f77b4">arm_W</text>
+<path d="M 70.0,310.4 L 235.0,307.7 L 400.0,307.3 L 565.0,314.0 L 730.0,180.0" fill="none" stroke="#d62728" stroke-width="2.5"/>
+<text x="736.0" y="180.0" font-size="13" font-family="sans-serif" fill="#d62728">arm_WH</text>
+</svg>
