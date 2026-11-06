@@ -318,7 +318,8 @@ def run_phase_b(ctx: dict, engine: Engine, h_next: Genome, gen_dir: Path) -> dic
     samples = engine.generate_batch(probs, h_next, shot_pool=shot_pool)
     _write_jsonl(gen_dir / "samples.jsonl", samples)
 
-    dis = distill.distill(probs, samples, gen=ctx["gen"], seed=ctx["gen"])
+    dis = distill.distill(probs, samples, gen=ctx["gen"], seed=ctx["gen"],
+                          with_hints=ctx.get("with_hints", False))
     # 累积回放：上一代累积 + 本代新增（账本保证 pid 天然不重复）
     prev_train = _read_jsonl(ctx["train_cum_file"])
     train_recs = prev_train + dis["train"]
@@ -592,6 +593,7 @@ def run_generation(
     call_timeout_sec: float = config.DEFAULT_CALL_TIMEOUT_SEC,
     task_timeout_sec: float = config.DEFAULT_TASK_TIMEOUT_SEC,
     phase_timeout_sec: float = config.DEFAULT_PHASE_TIMEOUT_SEC,
+    with_hints: bool = False,
 ) -> None:
     arms_root = Path(arms_root) if arms_root else config.ARMS_DIR
     task_bank_root = Path(task_bank_root) if task_bank_root else taskbank.DEFAULT_BANK_ROOT
@@ -612,6 +614,7 @@ def run_generation(
         "call_timeout_sec": float(call_timeout_sec),
         "task_timeout_sec": float(task_timeout_sec),
         "phase_timeout_sec": float(phase_timeout_sec),
+        "with_hints": bool(with_hints),
     }
     # 归因代 = 最后一代码（该代四变体全量），其余代只测 sys 趋势
     full_attr = (gen == total_gens) if total_gens is not None else False
@@ -781,6 +784,8 @@ def main() -> None:
                     help="输出目录；新实验建议用 arms_fixed，避免覆盖旧结果")
     ap.add_argument("--probe-n", type=int, default=PROBE_N,
                     help="每个候选 harness 的 probe 题数")
+    ap.add_argument("--with-hints", action="store_true",
+                    help="LoRA 训练数据中给题目追加解题提示")
     ap.add_argument("--call-timeout", type=float, default=config.DEFAULT_CALL_TIMEOUT_SEC,
                     help="单次模型生成 wall-clock 上限（秒）")
     ap.add_argument("--task-timeout", type=float, default=config.DEFAULT_TASK_TIMEOUT_SEC,
@@ -831,6 +836,7 @@ def main() -> None:
             call_timeout_sec=args.call_timeout,
             task_timeout_sec=args.task_timeout,
             phase_timeout_sec=args.phase_timeout,
+            with_hints=args.with_hints,
         )
     print(f"[{arm}] 全部 {args.gens} 代完成")
 
