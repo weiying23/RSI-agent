@@ -17,4 +17,5 @@ arms/*/gen_*/adapters/
 report/*.png
 # 本轮固定题库实验的运行产物（体积大，本地保留）
 arms_fixed/
+arms_rl/
 logs/
