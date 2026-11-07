@@ -19,3 +19,8 @@ report/*.png
 arms_fixed/
 arms_rl/
 logs/
+arms_hints/
+arms_mix/
+arms_sft/
+nohup.out
+data/sft_balanced_v1/
