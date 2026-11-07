@@ -85,7 +85,7 @@ def _write_jsonl(path: Path, recs: list[dict]) -> None:
 def _read_jsonl(path: Path) -> list[dict]:
     if not path.exists():
         return []
-    return [json.loads(x) for x in path.read_text(encoding="utf-8").splitlines() if x.strip()]
+    return [json.loads(x) for x in path.read_text(encoding="utf-8").split("\n") if x.strip()]
 
 
 def _jdump(path: Path, obj: dict) -> None:

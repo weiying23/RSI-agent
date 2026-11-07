@@ -42,7 +42,7 @@ def _read_done(path: Path) -> dict[str, dict]:
     done: dict[str, dict] = {}
     if not path.exists():
         return done
-    for ln in path.read_text(encoding="utf-8").splitlines():
+    for ln in path.read_text(encoding="utf-8").split("\n"):
         if not ln.strip():
             continue
         obj = json.loads(ln)

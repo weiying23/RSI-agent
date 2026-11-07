@@ -33,7 +33,7 @@ def main() -> None:
     problems = {p["id"]: p for p in load_problems(args.eval_n)}
     outputs = [
         json.loads(ln)
-        for ln in args.outputs.read_text(encoding="utf-8").splitlines()
+        for ln in args.outputs.read_text(encoding="utf-8").split("\n")
         if ln.strip()
     ]
 

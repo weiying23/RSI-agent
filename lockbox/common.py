@@ -39,7 +39,7 @@ def verify_heldout() -> dict:
         )
     problems = [
         json.loads(ln)
-        for ln in HELDOUT_FILE.read_text(encoding="utf-8").splitlines()
+        for ln in HELDOUT_FILE.read_text(encoding="utf-8").split("\n")
         if ln.strip()
     ]
     return {"n": len(problems), "problems": problems, "sha256": actual}

@@ -59,7 +59,7 @@ def _write_jsonl(path: Path, records: list[dict]) -> None:
 def _read_jsonl(path: Path) -> list[dict]:
     return [
         json.loads(line)
-        for line in Path(path).read_text(encoding="utf-8").splitlines()
+        for line in Path(path).read_text(encoding="utf-8").split("\n")
         if line.strip()
     ]
 
