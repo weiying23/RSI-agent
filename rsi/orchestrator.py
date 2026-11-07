@@ -324,6 +324,22 @@ def run_phase_b(ctx: dict, engine: Engine, h_next: Genome, gen_dir: Path) -> dic
     prev_train = _read_jsonl(ctx["train_cum_file"])
     train_recs = prev_train + dis["train"]
     valid_recs = dis["valid"]
+
+    # 外部数学训练数据混合（Plan B）：
+    # external_mix = -1 表示与当轮自生成训练数据等量；>0 表示固定条数；0 关闭。
+    ext_train_path = ctx.get("external_train")
+    ext_mix = int(ctx.get("external_mix") or 0)
+    ext_added = 0
+    if ext_train_path and ext_mix != 0:
+        ext_recs = _read_jsonl(Path(ext_train_path))
+        if ext_recs:
+            n_ext = len(train_recs) if ext_mix == -1 else min(ext_mix, len(ext_recs))
+            rng_ext = random.Random(f"external-mix:{ctx['gen']}:{n_ext}")
+            ext_sample = rng_ext.sample(ext_recs, n_ext)
+            train_recs = train_recs + ext_sample
+            if not valid_recs:
+                valid_recs = ext_sample[: max(1, n_ext // 10)]
+            ext_added = n_ext
     data_dir = gen_dir / "data"
     train.write_data_files(data_dir, train_recs, valid_recs)
     _write_jsonl(ctx["train_cum_file"], train_recs)  # 更新 arm 级累积
@@ -342,9 +358,10 @@ def run_phase_b(ctx: dict, engine: Engine, h_next: Genome, gen_dir: Path) -> dic
     if not res["ok"]:
         raise RuntimeError(f"训练失败，见 {res['log']}")
     print(f"    Phase B 完成：pool={len(probs)} solved={dis['stats']['n_solved']} "
-          f"cum_train={len(train_recs)} train={res['seconds']}s")
+          f"self_train={len(prev_train)+len(dis['train'])} ext_added={ext_added} "
+          f"total_train={len(train_recs)} train={res['seconds']}s")
     return {"distill_stats": dis["stats"], "train_res": res, "unsolved": dis["unsolved_pids"],
-            "adapter": str(gen_dir / "adapters")}
+            "adapter": str(gen_dir / "adapters"), "external_added": ext_added}
 
 
 # ---------------------------------------------------------------------------
@@ -594,6 +611,8 @@ def run_generation(
     task_timeout_sec: float = config.DEFAULT_TASK_TIMEOUT_SEC,
     phase_timeout_sec: float = config.DEFAULT_PHASE_TIMEOUT_SEC,
     with_hints: bool = False,
+    external_train: str | None = None,
+    external_mix: int = 0,
 ) -> None:
     arms_root = Path(arms_root) if arms_root else config.ARMS_DIR
     task_bank_root = Path(task_bank_root) if task_bank_root else taskbank.DEFAULT_BANK_ROOT
@@ -615,6 +634,8 @@ def run_generation(
         "task_timeout_sec": float(task_timeout_sec),
         "phase_timeout_sec": float(phase_timeout_sec),
         "with_hints": bool(with_hints),
+        "external_train": external_train,
+        "external_mix": external_mix,
     }
     # 归因代 = 最后一代码（该代四变体全量），其余代只测 sys 趋势
     full_attr = (gen == total_gens) if total_gens is not None else False
@@ -786,6 +807,10 @@ def main() -> None:
                     help="每个候选 harness 的 probe 题数")
     ap.add_argument("--with-hints", action="store_true",
                     help="LoRA 训练数据中给题目追加解题提示")
+    ap.add_argument("--external-train", type=str, default=None,
+                    help="外部数学训练 JSONL（messages 格式），用于和自生成数据混合")
+    ap.add_argument("--external-mix", type=int, default=0,
+                    help="每代混入外部数据的条数；-1 表示和当轮自生成训练数据同样多；0 关闭")
     ap.add_argument("--call-timeout", type=float, default=config.DEFAULT_CALL_TIMEOUT_SEC,
                     help="单次模型生成 wall-clock 上限（秒）")
     ap.add_argument("--task-timeout", type=float, default=config.DEFAULT_TASK_TIMEOUT_SEC,
@@ -837,6 +862,8 @@ def main() -> None:
             task_timeout_sec=args.task_timeout,
             phase_timeout_sec=args.phase_timeout,
             with_hints=args.with_hints,
+            external_train=args.external_train,
+            external_mix=args.external_mix,
         )
     print(f"[{arm}] 全部 {args.gens} 代完成")
 
