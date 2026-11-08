@@ -24,3 +24,4 @@ arms_mix/
 arms_sft/
 nohup.out
 data/sft_balanced_v1/
+data/sft_full_external_v1/

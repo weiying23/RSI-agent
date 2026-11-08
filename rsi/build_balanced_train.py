@@ -66,6 +66,8 @@ def main() -> None:
                     help="RSR 增强中文数据，可选")
     ap.add_argument("--balance-templates", action="store_true",
                     help="外部数据按题型配额采样，避免某类题过多")
+    ap.add_argument("--all-external", action="store_true",
+                    help="使用全部外部训练数据，自生成数据只作为小比例正则保留")
     ap.add_argument("--external-ratio", type=float, default=0.35)
     ap.add_argument("--out-dir", type=Path,
                     default=config.ROOT / "data/sft_balanced_v1")
@@ -101,7 +103,9 @@ def main() -> None:
     n_ext = int(round(len(clean_self) * args.external_ratio / max(1e-6, 1.0 - args.external_ratio)))
     n_ext = min(n_ext, len(clean_ext))
     rng = random.Random(args.seed)
-    if args.balance_templates:
+    if args.all_external:
+        ext_selected = list(clean_ext)
+    elif args.balance_templates:
         by_tpl = defaultdict(list)
         for rec in clean_ext:
             tpl = infer_template_zh(user_text(rec))
@@ -144,10 +148,12 @@ def main() -> None:
         "external_source": str(args.external_data),
         "self_count": len(clean_self),
         "external_count": len(clean_ext),
-        "external_selected": n_ext,
+        "external_selected": len(ext_selected),
         "train_count": len(train_recs),
         "valid_count": len(valid_recs),
-        "external_ratio": args.external_ratio,
+        "external_ratio": round(len(ext_selected)/(len(clean_self)+len(ext_selected)), 4) if (clean_self or ext_selected) else 0.0,
+        "all_external": bool(args.all_external),
+        "external_share": round(len(ext_selected)/(len(clean_self)+len(ext_selected)), 4) if (clean_self or ext_selected) else 0.0,
         "seed": args.seed,
     }
     (out_dir / "manifest.json").write_text(
