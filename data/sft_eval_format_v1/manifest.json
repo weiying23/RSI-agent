@@ -1,0 +1,10 @@
+{
+  "input_records": 1500,
+  "output_records": 1500,
+  "train_records": 1350,
+  "valid_records": 150,
+  "rejected": {},
+  "format": "system=H0, user=question_only, assistant=direct_solution_with_boxed",
+  "pool": "/Users/yingwei/Documents/code/agent/test-RSI/arms_sft/arm_W_internal_1500/rsr_pool.jsonl",
+  "seed": 20261110
+}
