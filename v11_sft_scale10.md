@@ -14,3 +14,8 @@ promo accuracy=58.00%，parse_fail=19.00%，composite=0.5325。
 
 - scale 从 20 降为 10，目的是减小权重漂移并改善格式稳定性。
 - 选择指标为 accuracy − 0.25 × parse_fail_rate。
+
+## 最终结论
+
+- E 的原 held-out 为 62.44%，外部 52.00%，混合 59.23%，均低于 D。
+- scale=10 并未带来比 scale=20 更好的格式稳定性，后续不采用。
