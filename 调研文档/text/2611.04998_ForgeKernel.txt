@@ -1,0 +1,1072 @@
+                                                         ForgeKernel: Self-Evolving Kernels
+                                                     Catching and Surpassing Experts and Agents
+                                                          Yaojian Chen∗                                      Dazhi Peng∗                             Yiyun Zheng∗
+                                                   Tsinghua University                                       ModelBest Inc.                         ModelBest Inc.
+                                                      Beijing, China                                         Beijing, China                         Beijing, China
+                                             yj-chen21@mails.tsinghua.edu.cn                            pengdazhi@modelbest.cn                 zhengyiyun@modelbest.cn
+
+                                                            Zhui Zhu                                        Shengye Xiang                              Leshan Li
+                                                    Tsinghua University                                   Tsinghua University                      Tsinghua University
+                                                       Beijing, China                                        Beijing, China                           Beijing, China
+                                               z-zhu22@mails.tsinghua.edu.cn                          xcy23@mails.tsinghua.edu.cn             lils25@mails.tsinghua.edu.cn
+
+
+
+
+arXiv:2611.04998v1 [cs.DC] 3 Nov 2026
+                                                              Zhen Li                                      Xianglong Deng                             Haojun Sun
+                                                          ModelBest Inc.                          University of Chinese Academy of                   ModelBest Inc.
+                                                          Beijing, China                                       Sciences                              Beijing, China
+                                                      lizhen@modelbest.cn                                   Beijing, China                      sunhaojun@modelbest.cn
+                                                                                                    dengxianglong02@gmail.com
+
+                                                          Qingfeng He                                        Shangzhan Li                              Yifei Shen
+                                                     Tsinghua University                              Harbin Institute of Technology                 ModelBest Inc.
+                                                        Beijing, China                                        Harbin, China                          Beijing, China
+                                                heqf21@mails.tsinghua.edu.cn                                szli@ir.hit.edu.cn                   shenyifei@modelbest.cn
+
+                                                             Lin Gan                                          Yuxuan Li†                                Xu Han†
+                                                       Tsinghua University                                   ModelBest Inc.                       Tsinghua University
+                                                          Beijing, China                                     Beijing, China                          Beijing, China
+                                                    lingan@tsinghua.edu.cn                               yxuanl1995@gmail.com                   han-xu@tsinghua.edu.cn
+
+                                                                                                             Zhiyuan Liu†
+                                                                                                           Tsinghua University
+                                                                                                              Beijing, China
+                                                                                                         liuzy@tsinghua.edu.cn
+
+                                        Abstract                                                                           We present ForgeKernel, a kernel-generation system
+                                        Purpose-built kernel agents can now write high-performance                      for continued optimization. It is designed to accumulate
+                                        GPU kernels. As base models grow stronger, though, even                         and reuse knowledge across runs while enabling contin-
+                                        a naive agentic loop beats human experts on many oper-                          ued evolution of kernel architectures. It combines two
+                                        ators, so both the purpose of a kernel agent and the way                        mechanisms. First, it analyzes the hardware behavior of
+                                        it should be designed need rethinking. Yet existing kernel                      a high-performance reference and distills its validated ar-
+                                        agents generally lack cross-run knowledge accumulation                          chitectural decisions into reusable knowledge of hardware
+                                        and reuse, as well as continued evolution at the architectural                  mechanisms rather than imitating its source code. Second, it
+                                        level: each run starts from the same initial knowledge and                      self-evolves by sealing a kernel that passes correctness and
+                                        merely outputs the best-performing kernel found during that                     performance validation and using it as the reference for the
+                                        search, without retaining the knowledge gained through op-                      next optimization run, allowing the optimization results of
+                                        timization for subsequent runs; meanwhile, once the kernel                      one run to inform subsequent runs and providing a basis for
+                                        architecture is fixed early, later iterations are largely confined              revisiting and adjusting the kernel architecture.
+                                        to local optimization within it.                                                   Across 27 operators and 29 input configurations on
+                                                                                                                        NVIDIA Hopper and Blackwell GPUs, ForgeKernel matches
+                                        ∗ The first three authors contributed equally to this work.
+                                        † Corresponding authors.
+                                                                                                                        or beats its expert reference on 25 of them, for a +10%
+                                                                                                                        geometric mean. On Ascend 910C, on the public case set of
+                                        Preprint, arXiv                                                                 all 8 level-4 operators in the CANN-Bench Season 1 final
+                                        2026.
+                                                                                                                    1
+Yaojian Chen, Dazhi Peng, Yiyun Zheng, Zhui Zhu, Shengye Xiang, Leshan Li, Zhen Li, Xianglong Deng, Haojun Sun, Qingfeng He, Shangzhan Li, Yifei Shen,
+Preprint, 2026, arXiv                                                                                    Lin Gan, Yuxuan Li, Xu Han, and Zhiyuan Liu
+
+leaderboard, ForgeKernel leads the per-operator public best,
+with a +25.1% geometric-mean lead, while its full-suite                                                                 (a) One goal-mode run
+                                                                                                             the architecture is fixed early, nothing outlives the run
+submission ranks first on that benchmark’s A3 leader-
+                                                                                                         Architecture settles                          Knowledge is discarded
+
+
+                                                                                device time, faster ↓
+board. As of 2026-10-30, public submissions generated by
+ForgeKernel rank first on all three CANN-Bench 2.0 solution                                                                                                            run 1
+
+
+                                                                                                                                              pretraining                             discarded
+leaderboards (Ascend 910C, 950DT, and 950PR) and on the                                                     “kernel complete”
+                                                                                                                                                                       run 2
+SOL-ExecBench FlashInfer-Bench track.
+                                                                                                        hardware ceiling, unknown                                      run 3
+Keywords: GPU kernels, code generation, large language
+                                                                                          × the architecture settles early                       × a run leaves a kernel,
+models, self-evolution, performance optimization                                                                                                      not knowledge
+                                                                                               local tuning fills the rest of the             every generation pays again for
+                                                                                                  run and cannot change it                       what the last one learned
+1    Introduction
+                                                                                                                       promote                                    forge
+Modern machine-learning systems increasingly demand
+high-performance GPU kernels. New operators and model
+
+
+
+                                                                                                                                            prescribe / harvest
+architectures, including sparse attention indexers [8], gated                   gen 0 = sealed ref.
+                                                                                                                                                                          op A
+delta networks [28], and latent-attention variants [7], con-                                                       gen 1
+                                                                                                                                                                          op B
+                                                                                                                        gen 2
+tinue to appear and further expand the computational                                                                                                                      op C
+patterns that require optimization. Each such pattern is a                                                                roofline                                õ knowledge base
+new optimization task: work partitioning, dataflow, and
+                                                                                                ✓ each accepted kernel                                        ✓ each generation starts
+pipeline organization have to be determined again for the                                          is the next reference                                         where the last ended
+concrete operator, input shape, and hardware.                                                 halts when a generation’s gain                                 findings organized by GPU,
+   Faced with this continuing demand for kernel develop-                                        falls below the noise floor                                    shared across operators
+
+ment, agents that automatically write and optimize operators                                                      (b) Self-evolving operator agent
+                                                                                                           both loops continue; the hardware stops them, not the run
+have drawn attention. Prior work has built agents dedicated
+to kernel optimization [4, 9, 10, 14, 25, 26], organizing gen-
+eration, evaluation, and iterative improvement into a dedi-
+                                                                              Figure 1. Single-run optimization and cross-run self-
+cated workflow, and has surpassed expert implementations
+                                                                              evolution.
+on some tasks. These workflows still have two structural
+limits. On tasks that fall short of the expert reference, opti-
+mization traces show that architectural decisions, such as                    architectural decisions so that optimization is not confined
+work partitioning, dataflow, and pipeline organization, are                   to code-level tuning within a fixed architecture. Building on
+often fixed in the early attempts. Subsequent iterations tune                 this separation, self-evolution enables continual reflection
+within that architecture and rarely revise these decisions                    on the architecture as a whole and iterative improvement,
+from performance feedback. In addition, producing a high-                     reducing the risk of becoming trapped in local optima.
+performance kernel in a single run does not mean that its                        For knowledge accumulation, ForgeKernel distills mecha-
+validated findings have become cross-run knowledge that                       nisms discovered during optimization and validated through
+can guide later architectural design and implementation.                      independent experiments on the target hardware into cross-
+   Overall, an operator-specific agent should close these two                 run knowledge that guides architectural design and imple-
+limits. First, performance feedback should revise architec-                   mentation in subsequent tasks. Reference updates provide
+tural decisions, rather than leaving optimization inside an                   new performance baselines, while accumulated knowledge
+early choice of work partitioning, dataflow, and pipeline or-                 provides reusable evidence for optimization decisions; to-
+ganization. Second, validated findings should become cross-                   gether, they support continued optimization.
+run knowledge that guides later architectural design and                         We evaluate ForgeKernel on NVIDIA Hopper and Black-
+implementation.                                                               well GPUs across 29 test configurations covering 27 op-
+   Guided by these design objectives, we introduce ForgeK-                    erators. ForgeKernel matches or exceeds reference perfor-
+ernel, a self-evolving operator agent system (Figure 1). To                   mance on 25 configurations, achieving a geometric-mean
+address these two problems, ForgeKernel starts optimization                   speedup of 1.10× over reference implementations from ex-
+from architectural design rather than existing code, and uses                 pert libraries and other kernel-generation systems. On As-
+a hardware knowledge base to retain and reuse measurement-                    cend, ForgeKernel outperforms the per-operator public best
+validated optimization experience.                                            on the public case set of all 8 level-4 operators in the CANN-
+   For architectural design, ForgeKernel uses a high-                         Bench Season 1 final leaderboard. In experiments comparing
+performance reference implementation as a design reference                    against kernels generated by a general-purpose coding agent,
+and starting point. It separates architecture from coding,                    ForgeKernel achieves performance gains of up to 9.5%. In ad-
+with a dedicated architecture agent reviewing and adjusting                   dition, knowledge-provenance records demonstrate reuse of
+                                                                          2
+ForgeKernel: Self-Evolving Kernels                                                                               Preprint, 2026, arXiv
+
+
+validated optimization knowledge across runs and operators,          memory access overhead, and hardware resource utilization,
+while knowledge-base ablations show that this knowledge              so different implementations of the same operator can ex-
+helps improve generated kernel performance on some evalu-            hibit substantial performance differences.
+ated tasks. As external validation beyond these controlled              Kernel optimization involves both revising these structural
+experiments, as of 2026-10-30, public submissions gener-             design choices and refining instructions, synchronization
+ated by ForgeKernel rank first on all four leaderboards: the         operations, and resource configurations within a given struc-
+three CANN-Bench 2.0 solution leaderboards (Ascend 910C,             ture. When performance is limited by work partitioning, data
+950DT, and 950PR) and the SOL-ExecBench FlashInfer-Bench             layout, or pipeline organization, local parameter tuning alone
+track [2, 20].                                                       may be insufficient to eliminate the bottleneck, requiring
+   The ForgeKernel source code is publicly available at https:       the corresponding design choices to be reconsidered. Kernel
+//github.com/OpenBMB/ForgeKernel.                                    optimization therefore involves not only parameter search
+   This paper makes the following contributions:                     but also analysis and modification of the implementation
+      • We propose a kernel optimization method centered             structure.
+        on architectural decisions. It separates architectural
+        design from code implementation, guides implemen-            2.2   Kernel Agent
+        tation through explicit architectural decisions, and         As large language models (LLMs) improve in code genera-
+        revises these decisions based on performance feedback.       tion and reasoning, researchers have begun using specialized
+        When optimization encounters a structural bottleneck,        LLM-based agents to write and optimize kernels. These sys-
+        the method revisits work partitioning, dataflow, or          tems are referred to as kernel agents. Given an operator,
+        pipeline organization rather than only tuning locally        an input configuration, and a target GPU, a kernel agent
+        within a fixed architecture. Across runs, it also re-        generates candidate implementations, compiles them and
+        assesses an existing implementation’s architecture           checks their correctness, measures execution performance,
+        rather than directly carrying it forward.                    and iteratively revises the code based on feedback to search
+      • We propose a measurement-validated mechanism for             for a functionally correct and high-performance kernel.
+        accumulating and reusing knowledge across runs.
+        Hardware mechanisms discovered during optimiza-              3     Design
+        tion are validated through independent probes on the         ForgeKernel separates architectural planning from kernel
+        target GPU before being stored in a knowledge base           implementation, coordinating an architecture agent and a
+        shared across operators and input shapes. This knowl-        coding agent through design plans and measurement feed-
+        edge guides architectural design and implementation          back. Figure 2 shows the system architecture.
+        planning in subsequent runs, converting findings from
+        individual runs into reusable knowledge.                     3.1   Overview
+      • We implement ForgeKernel, a self-evolving operator
+        optimization system that integrates architectural re-        Kernel optimization requires both structural design and de-
+        vision, reference updates, and knowledge reuse. Eval-        tailed implementation. Structural design determines how
+        uation on NVIDIA Hopper and Blackwell GPUs and               computation and data movement are organized on the tar-
+        Ascend demonstrates performance gains over expert            get hardware; implementation turns those choices into cor-
+        and generated references, including a 1.10× geometric-       rect, executable code. Combining both responsibilities in
+        mean speedup on NVIDIA GPUs. As of 2026-10-30,               one agent risks allowing compilation, debugging, and local
+        submissions generated by ForgeKernel rank first on all       edits to dominate the design context and anchoring further
+        four leaderboards: the three CANN-Bench 2.0 solution         optimization to the current implementation. ForgeKernel
+        leaderboards (Ascend 910C, 950DT, and 950PR) and             separates these responsibilities so that architectural choices
+        the SOL-ExecBench FlashInfer-Bench track.                    can be reconsidered from measurement evidence without
+                                                                     making the existing code structure the starting point for
+                                                                     every revision.
+2     Background                                                        The architecture agent owns design decisions and plan
+2.1    Kernel Design                                                 revisions. Given the operator definition, input configuration,
+GPU kernel design requires mapping an operator’s compu-              target hardware, and reference evidence, it determines com-
+tation onto the parallel execution and memory structures of          putation organization, dataflow, scheduling, and hardware
+the target hardware. For a given operator and input configu-         mapping, and specifies what evidence would validate these
+ration, designers must determine how to partition compu-             choices. Its output is a milestone plan. The coding agent owns
+tation across thread blocks and threads, lay out data across         realization of that plan: it implements the required computa-
+memory levels, and pipeline data transfers with computa-             tion, data access, and synchronization, handles compilation
+tion [17–19, 21, 23]. These choices jointly affect data reuse,       and debugging, and performs local optimization within the
+                                                                 3
+Yaojian Chen, Dazhi Peng, Yiyun Zheng, Zhui Zhu, Shengye Xiang, Leshan Li, Zhen Li, Xianglong Deng, Haojun Sun, Qingfeng He, Shangzhan Li, Yifei Shen,
+Preprint, 2026, arXiv                                                                                    Lin Gan, Yuxuan Li, Xu Han, and Zhiyuan Liu
+
+
+                                      ¨ ARCH AGENT
+                    analyse: NCU /
+                    timeline probes        Reference                                                                 certified recipes              õ Knowledge
+   > Reference
+     kernel                                 analysis                                                                                                base (hw_kb)
+
+                                                   evidence
+                                                                                                                    Ð CODING AGENT
+
+                                          Milestone                                             ...                   Implement
+                                                                    M0       M1           M2                                                               harvest:
+                                         construction                                                                decision row                          probe-certified
+
+                                                                   M0: architecture decisions                                   candidate, timed
+                                                                                                         fail   1               vs ref in one
+                                                                                                                                GPU job
+                                                                                                                                             pass
+                                                                                                                    Milestone gate            3
+                                                                                                                                                     Ç Shipped
+                                                                                                                                                      kernel
+                                                                      plateau → re-analyse + re-distil
+                                                                                      2
+
+
+
+
+                                  a shipped kernel becomes the next optimization run’s reference
+
+
+
+                                                         Figure 2. ForgeKernel architecture.
+
+plan’s constraints. Changes to those architectural constraints                            layouts. Together, these choices specify how computation
+are handled through plan revision by the architecture agent.                              and data movement interact.
+   The interface between the agents is a design plan in one                                  Architectural decisions must state the design choices, sup-
+direction and implementation feedback with measurement                                    porting evidence, and expected effects, distinguishing direct
+evidence in the other. The coding agent receives design re-                               observations from hypotheses that remain to be tested. The
+quirements, interfaces, and acceptance conditions, but not                                reference implementation’s measured performance deter-
+the reference kernel implementation. The execution harness                                mines relative performance targets, while its resource usage
+enforces this boundary, checks correctness, measures per-                                 and execution characteristics inform subsequent mechanism
+formance, and validates the mechanisms required by the                                    validation. Knowledge entries used in the design are explic-
+plan. These checks determine whether implementation can                                   itly cited in the plan.
+advance or needs further repair; when optimization stalls or
+the plan cannot proceed, the trajectory and measurements
+return to the architecture agent for reassessment.
+   This separation assigns architectural reasoning, code re-
+alization, and measured acceptance to distinct parts of the                                  Milestone planning. The architecture agent organizes
+system while retaining a feedback loop between them. Sec-                                 architectural decisions and subsequent optimization tasks
+tions 3.2 and 3.3 describe the two agents in detail. Self-                                into an ordered milestone sequence 𝑀0, 𝑀1, . . . , 𝑀𝑘 . The ini-
+evolution extends the loop through plan revision and ref-                                 tial milestone 𝑀0 requires the implementation of the key
+erence updates (§3.4), while the hardware knowledge base                                  structural decisions above to produce a verifiable initial im-
+retains validated mechanisms for reuse (§3.5).                                            plementation; subsequent milestones perform fine-grained
+                                                                                          tuning within that structure.
+                                                                                             Each milestone specifies implementation tasks, decision
+3.2   Architecture Agent                                                                  rationales, expected costs, and prerequisite dependencies,
+The architecture agent combines operator requirements, ref-                               together with correctness, performance, and mechanism-
+erence measurements, and existing hardware knowledge                                      validation conditions. Dependencies between decisions de-
+to formulate architectural decisions and milestone plans.                                 termine the implementation order, and decisions that must
+Feedback-driven design revision is described in §3.4.                                     be implemented together to take effect form a single im-
+                                                                                          plementation unit. In particular, 𝑀0 focuses on correctness
+   Architectural decisions. The architecture agent first de-                              and architectural constraints without imposing an absolute
+termines the candidate implementation’s computation or-                                   performance threshold; subsequent milestones are assessed
+ganization, dataflow, and mapping to the target hardware.                                 against their respective optimization objectives. Milestones
+Decisions cover kernel decomposition, data dependencies,                                  describe tasks through design requirements and interface
+and intermediate-result storage, as well as computational                                 contracts, without including the operator’s implementation
+tiling, thread roles, register budgets, and shared-memory                                 code.
+                                                                                  4
+ForgeKernel: Self-Evolving Kernels                                                                                Preprint, 2026, arXiv
+
+
+3.3   Coding Agent                                                   without requiring a new external expert implementation.
+The coding agent translates design requirements into an op-          This implementation participates in the subsequent run as
+erator implementation according to the architecture agent’s          a measurable black box, with its source code unavailable
+milestone plan. It follows decision dependencies and con-            to that run’s agents. The architecture agent analyzes the
+sults the knowledge entries cited in the plan to implement           updated reference and uses it to formulate architectural deci-
+the computation, data access, and synchronization required           sions and performance targets. The coding agent generates
+by the current milestone. The harness checks candidate cor-          a new implementation according to the corresponding mile-
+rectness, performs paired timing of the candidate and its            stone plan, while validated knowledge is retained and reused
+declared reference within the same measurement job when              through the knowledge base. Cross-run iteration terminates
+that reference can run alongside the candidate, and collects         when the performance gain in a subsequent run is confirmed
+the execution and resource characteristics needed for mecha-         not to exceed the measurement noise threshold, or when the
+nism validation. Reference-free black-box arms use separate          budget is exhausted.
+post-stop confirmation channels instead.
+   The harness determines whether a candidate passes accep-
+                                                                     3.5   Knowledge Validation and Reuse
+tance based on correctness-test results and the milestone’s
+performance and mechanism-validation conditions. For ac-             The hardware knowledge base stores hardware mechanisms
+ceptance items that require a performance improvement,               distilled during optimization and diagnosis, organized by
+the measurements described above determine whether the               target hardware architecture. Each entry records the mecha-
+gain exceeds the measurement noise threshold. Mechanism              nism, applicability conditions, trigger symptoms, a minimal
+validation checks the execution or resource characteristics          runnable example, and known limitations. A candidate mech-
+specified in the plan to determine whether the implemen-             anism is admitted after passing independent probe validation
+tation satisfies the corresponding design constraints and            on the target hardware and providing supporting measure-
+exhibits the expected behavioral changes. After acceptance,          ment evidence.
+the coding agent advances to the next milestone; otherwise,             During subsequent optimization, the architecture agent
+it continues modifying the implementation based on the               selects relevant knowledge based on the task’s measured
+check results. If optimization stagnates or acceptance cannot        characteristics and the entries’ applicability conditions, and
+proceed, the system returns the implementation trajectory            explicitly cites the entries in milestones for the coding agent
+and measurement evidence to the architecture agent for the           to implement the corresponding mechanisms. Milestone ac-
+revision process described in §3.4.                                  ceptance still checks their effects in the current task. The
+                                                                     system records the creation and use of entries to support
+                                                                     traceability and reuse across runs.
+3.4   Self-Evolution
+Self-evolution encompasses plan revision within an optimiza-
+tion run and reference updates across runs.                          4     Evaluation
+   When optimization stagnates, the executable optimization          This chapter evaluates the performance of ForgeKernel-
+decisions in the current plan are exhausted without reach-           generated implementations and the roles of architecture
+ing the target, or milestone acceptance cannot proceed, the          planning, feedback-driven revision, and knowledge reuse.
+system triggers reassessment of the current design by the            §4.1 describes the setup; §4.2 reports public-benchmark
+architecture agent. The architecture agent combines imple-           results and comparisons with expert libraries and artifacts
+mentation trajectories, measurement evidence, and supple-            from other generation systems; §4.3 evaluates self-evolution;
+mentary probe experiments to revise architectural decisions          §4.4 examines the individual designs; and §4.5 uses GQA
+and the corresponding milestone plan.                                and DSA cases to examine the roles of the architecture agent
+   The revised plan is re-executed according to decision de-         and self-evolution in architecture changes.
+pendencies. Local adjustments resume from the relevant
+tasks; structural changes to computation organization or
+dataflow restart implementation from the earliest affected           4.1   Experimental Setup
+decision, including 𝑀0 when necessary. Subsequent imple-             Hardware and tasks. NVIDIA experiments run on Hopper
+mentation and measurement evaluate each revision. If no              H100 80 GB (SXM, 132 SMs) and Blackwell B200 (148 SMs)
+performance improvement can be attributed to the change,             nodes in a shared cluster, covering attention, matrix multi-
+the change is reverted and its failure conditions are recorded       plication, convolution, GDN, and DSA. Ascend experiments
+to inform subsequent diagnosis.                                      run on 910C; the per-operator comparison covers all 8 level-4
+   Beyond revising the current plan, the system can use an ac-       operators in CANN-Bench 1.1.2. Coverage is reported sepa-
+cepted implementation as the reference for the next optimiza-        rately for public leaderboards and per-operator experiments.
+tion run, extending optimization through its own outputs             Input shapes and data types are listed in Appendix C.
+                                                                 5
+Yaojian Chen, Dazhi Peng, Yiyun Zheng, Zhui Zhu, Shengye Xiang, Leshan Li, Zhen Li, Xianglong Deng, Haojun Sun, Qingfeng He, Shangzhan Li, Yifei Shen,
+Preprint, 2026, arXiv                                                                                    Lin Gan, Yuxuan Li, Xu Han, and Zhiyuan Liu
+
+   Comparison targets. Per-operator experiments use expert                    an operator-specific workflow and with a 24-hour budget
+library implementations and kernels released by other gener-                  per task. Prompts use a fixed format specifying the operator
+ation systems as references. Libraries include FlashAttention-                signature, input shapes, target hardware (one H100), and
+4, DeepGEMM, cuBLAS, cuDNN, FlashInfer, FlashMLA, and                         optimization goal; copying code from the web is prohibited.
+FlashQLA; generation systems include K-Search, Kernel De-                     No existing implementation is supplied as a reference. Gen-
+sign Agents, and CAKE. Reference versions are pinned in                       erated implementations are subsequently evaluated against
+the execution environment image and re-timed in our en-                       expert libraries. The objective has no preset speedup ceiling.
+vironment. Comparisons with generation systems evaluate                       Optimization state is not retained across sessions, and ac-
+their released artifacts. Versions and entry points are listed                quired knowledge is not transferred between runs. Selected
+in Appendix B.                                                                artifacts serve as initial references for some self-evolution
+   Models and run protocol. The arch agent and coding agent                   experiments in §4.3.
+of ForgeKernel (§3.1) use Claude Fable 5.1 and Claude Opus 5,
+respectively. By default, ForgeKernel receives a sealed ref-                  4.2    Performance Comparison
+erence that can be run, timed, profiled, and disassembled,                       Overall performance on public benchmarks. As
+without source access. The knowledge base accumulates                         of 2026-10-30, public submissions generated by ForgeK-
+across runs, so its initial state can differ between runs. Per-               ernel rank first on all three CANN-Bench 2.0 solution
+formance targets and budgets are set per task; runs end when                  leaderboards— Ascend 910C, 950DT, and 950PR—and on
+the target is reached, the budget is exhausted, or the run is                 the SOL-ExecBench FlashInfer-Bench collection leader-
+stopped manually. Expert-library experiments target parity,                   board [2, 20]. Table 1 reports coverage, speedups, and
+while self-evolution typically targets +5% over the preceding                 ranks. Speedups use each benchmark’s own baseline and
+generation; specific targets and stopping reasons follow the                  aggregation rule. Ranks follow the official scores reported
+individual run records. Main performance results select the                   below.
+best optimization run per configuration. The full system and                     For the detailed historical result retained in this paper, on
+each variant in the module ablation are run separately for                    the CANN-Bench Season 1 A3 (Ascend 910C) 1.1 leaderboard,
+that experiment.                                                              ForgeKernel covers all 53 operators across levels 1–4, includ-
+   Correctness validation. Candidates must pass the official                  ing elementwise operations, normalization, matrix multipli-
+or benchmark tolerance test associated with their operator                    cation, convolution, attention, and fused operators. It passes
+source before performance measurement. Operators cov-                         all 1,060 standard-set cases and 4,185 of 4,240 hidden-set
+ered by FlashInfer-Bench, including the operators in the                      cases. The two sets score 4362.7547 and 4203.3563, respec-
+SOL-ExecBench FlashInfer-Bench collection, use FlashInfer-                    tively, yielding a first-place total of 8566.1110. Geometric-
+Bench’s tolerance tests; FlashAttention operators use the                     mean speedups over the benchmark reference are 1.759× on
+official FlashAttention tolerance tests; other operators like-                the standard set and 1.854× on the hidden set; the leader-
+wise use the tolerance criterion of their source benchmark                    board reports a combined baseline speedup of 1.835×, com-
+or implementation. The harness also rejects candidates that                   puted as their weighted geometric mean with weights of 20%
+call the reference implementation directly or delegate com-                   and 80%, respectively [2].
+putation to it. The source-specific criteria are summarized                      On SOL-ExecBench, the FlashInfer-Bench collection cov-
+in Appendix A.                                                                ers normalization, matrix multiplication, GQA/MLA atten-
+   Timing method. On NVIDIA hardware, we measure device                       tion, and MoE kernels. With evaluation stack v1.1 on NVIDIA
+execution time under cold-𝐿2 cache conditions. Average de-                    B200, ForgeKernel solves all 26 kernels, spanning 660 work-
+vice time per call is the total GPU time over repeated calls                  loads, and achieves a SOL Score of 0.815204. Beyond this
+divided by the call count. The candidate and reference use the                first-place score, Fast1 = 647/660, or 98.03%, shows that the
+same timing protocol and cache conditions. Results are based                  generated implementations outperform the scoring baseline
+on repeated measurements. Speedup is 𝑆 = 𝑇ref /𝑇candidate ,                   on almost all workloads. The leaderboard reports an Avg
+where the numerator and denominator are the device ex-                        Speedup of 5.54× over that baseline, providing a complemen-
+ecution times of the reference and candidate, respectively;                   tary measure of acceleration magnitude rather than only the
+performance gain is (𝑆 − 1) × 100%.                                           fraction of workloads improved [20].
+   Ascend experiments use the hosted evaluation harness                          Here, Fast1 is the fraction of workloads strictly faster than
+of CANN-Bench, with device execution time recorded in                         the baseline, aggregated across kernels.
+msprof’s kernel_details. Baselines, hardware perfor-
+mance bounds, and scoring rules follow the corresponding                         Operator-level performance comparison. Beyond the
+benchmark version. Scores are computed by the hosted                          overall public-benchmark results, we evaluate representa-
+service; results are aggregated separately for each platform.                 tive operators to compare ForgeKernel with expert-library
+   The /goal configuration. The /goal agent follows the goal-                 implementations, artifacts from existing generation systems,
+driven setting of JustGoal [5], using Claude Fable 5.1 without                and per-operator public-best submissions.
+                                                                          6
+ForgeKernel: Self-Evolving Kernels                                                                                                  Preprint, 2026, arXiv
+
+
+              Table 1. Public-benchmark results.                                                     Hopper H100
+
+
+Benchmark           Coverage                    Speedup Rank                           Attention
+                                                                                  GQA fwd (16:1)
+CANN-Bench          53 operators                   1.84×      1                                                       +0.3%
+v1.1                Standard: 1,060/1,060                                              MHA bwd                                    +5.1%
+Ascend 910C         Hidden: 4,185/4,240                                            GQA bwd (8:1)
+                                                                                                                            +2.7%
+SOL-ExecBench       26/26 kernels                  5.54×      1                           GEMM
+NVIDIA B200         660 workloads                                                     FP8 GEMM                           +0.8%
+                                                                             FP8 grouped GEMM
+                                                                                                                      +0.3%
+                                                                                     FP16 GEMM                           +0.9%
+   Across 22 configurations on Hopper and Blackwell,                               Convolution
+                                                                                                           − 0.5%
+ForgeKernel matches or exceeds the expert implementa-                                Conv2D fwd
+tion in 18, with another 3 within 1% of the reference. The                   Conv2D weight grad
+                                                                                                                         +1.0%
+geometric-mean performance gain across all configurations                     Conv2D input grad
+                                                                                                                         +0.7%
+is +1.6% (Figure 3). Each bar in Figures 3 and 4 represents                          Conv3D fwd                                        +7.6%
+the best optimization run for an operator, input shape, and                           DSA chain
+hardware configuration, using the measurement protocol                          DSA indexer fwd                             +2.9%
+in §4.1. The vertical zero line marks parity; the Hopper and                   DSA indexer top-k
+                                                                                                                           +2.2%
+Blackwell panels in Figure 3 share a scale.                                                                − 0.5%
+                                                                             DSA sparse attn fwd
+   Beyond expert libraries, ForgeKernel matches or exceeds
+                                                                             DSA sparse attn bwd
+all 7 published kernels from K-Search [3], Kernel Design                                                                  +1.4%
+                                                                            DSA score recompute
+Agents [13], and CAKE [30], with a geometric-mean gain                                                                              +6.2%
+of +39.4% (Figure 4). Hopper references are K-Search’s                          DSA indexer bwd                             +2.5%
+FlashInfer-Bench and TriMul implementations; Blackwell                                      GDN
+                                                                                                            − 0.2%
+references are KDA-v0.5 [32] and CAKE implementations.                           GDN prefill fwd
+   We further evaluate ForgeKernel on Ascend 910C, us-                           GDN prefill bwd
+                                                                                                                         +1.1%
+ing the public case sets of all 8 level-4 operators in the                                           Blackwell B200
+CANN-Bench Season 1 final leaderboard. The ForgeKernel-
+generated implementations outperform the per-operator                                  Attention
+public best, with a geometric-mean performance gain of
+                                                                                       MHA bwd                              +2.5%
++25.1% (Figure 5). Each bar reports the percentage perfor-                                                − 1.3%
+                                                                              MLA prefill (sparse)
+mance gain over the per-operator public best, computed from
+                                                                              Attn + RoPE + cast
+the ratio of their speedups against the same baseline. The                                                           +0.0%
+                                                                                          GEMM
+zero line marks parity; the final row reports the geometric-
+                                                                             FP4 grouped GEMM
+mean speedup converted to a percentage gain. Public-best                                                                 +0.6%
+submissions come from the same final leaderboard and are                                                  −4%       0%       4%       8%
+not optimization inputs. The benchmark evaluates 20 public                                             Gain over the sealed expert library
+cases per operator, weighting compilation, accuracy, and
+hardware-attainable performance by 0.2, 0.3, and 0.5, respec-          Figure 3. Performance gains over expert libraries on Hopper
+tively.                                                                and Blackwell.
+4.3   Self-Evolution Experiments
+This section evaluates reference updates across runs: an exist-        an expert-library implementation as its reference to gener-
+ing implementation becomes the next run’s reference. In the            ate generation 0, then uses the preceding generation as the
+default ForgeKernel protocol, this reference is measurable             reference for self-evolution. Generation 0 is the output of
+but source-hidden, and the arch agent analyzes it to develop           the first optimization run.
+a new plan for the coding agent to implement. The DeepSeek-               Table 2 reports initial performance, subsequent round
+V4.1 case below uses a source-visible generated reference              gains, and final cumulative gains. Initial performance is ex-
+and a single coding agent, as specified in its case description.       pressed as a percentage gain relative to the expert library;
+We evaluate two paths. In the first, an initial implementation         final gains use the same expert baseline. Round 1 is relative
+is generated without any existing implementation as a refer-           to the initial implementation, and round 2 to the round 1
+ence; ForgeKernel then uses that artifact as its reference for         output. Final gains for the DeepSeek-V4.1 case are measured
+further optimization. In the second, ForgeKernel first uses            directly against FlashMLA; the remaining final cumulative
+                                                                   7
+Yaojian Chen, Dazhi Peng, Yiyun Zheng, Zhui Zhu, Shengye Xiang, Leshan Li, Zhen Li, Xianglong Deng, Haojun Sun, Qingfeng He, Shangzhan Li, Yifei Shen,
+Preprint, 2026, arXiv                                                                                    Lin Gan, Yuxuan Li, Xu Han, and Zhiyuan Liu
+
+ Hopper H100                 Ref.                                                            of the GQA experiment beginning with reference-free
+ GQA decode (paged)          K-Search
+                                                                                             generation.
+                                                   +24.5%
+ MLA decode (paged)          K-Search
+                                                                               +170.6%          Self-evolution on a complex fused operator. We ex-
+ MLA prefill (paged)         K-Search
+                                                                            +146.1%          amine self-evolution on a complex fused operator using
+ TriMul                      K-Search           +8.7%
+                                                                                             DeepSeek-V4.1 fused sparse-attention prefill. Its fused struc-
+ Blackwell B200              Ref.                                                            ture provides a demanding test of ForgeKernel’s capability.
+ DSA sparse attn (paged)     KDA                                                             The experiment uses a single coding agent (Claude Opus 5.5,
+                                                +7.0%
+ GDN prefill (varlen)        KDA
+                                                                                             high effort) for approximately 24 hours per generation on
+                                                +5.8%
+ KDA prefill (recurrent)     CAKE
+                                                                                             B200. The workload fixes 𝑠𝑞 = 4096, ℎ𝑞 = 128, 𝑠 kv = 32768,
+                                             +0.4%
+                                                                                             and topk = 640, with an attention sink. FlashMLA is used
+                                           0%        50%         100%   150%                 for evaluation only; the agent cannot inspect its source or
+                                           Gain over the sealed system kernel                run it during generation and optimization. The first gen-
+                                                                                             eration is produced in /goal mode. The next generation
+Figure 4. Performance gains over published kernels from                                      can read the first generation’s source, but not its optimiza-
+other generation systems.                                                                    tion notes. The initial gain of +5.3% over FlashMLA is the
+                                                                                             median of three independent same-card retests. The first-
+                                    Ascend 910C
+                                                                                             round gain +10.0% and final gain +15.5% are the separate
+                                                                                             medians of four acceptance measurements of the final imple-
+                           GQA                                     +41.8%                    mentation against the initial implementation and FlashMLA,
+       GMM-SwiGLU-Quant                                    +32.2%
+                                                                                             respectively. All four final acceptances pass the five official
+                                                                                             correctness cases and the in-place-overwrite re-check. The
+                           GRU                                      +44.8%
+                                                                                             task-specific benchmark reports cold-𝐿2 device time. The
+                        LSTM              +9.8%
+                                                                                             operator combines Q RoPE, sparse MQA attention with an
+                           MHA                          +26.2%
+                                                                                             attention sink, conjugate output RoPE, and FP8 casting. The
+                           MLA             +12.4%
+                                                                                             CUDA C++ implementation fuses these operations into one
+                 MLA-Prolog               +10.1%                                             kernel on B200. Its architecture uses a persistent pair of CTAs
+                    SparseFA                             +28.5%                              to process each query token, cooperatively gathers KV data,
+                                                                                             and assigns separate warp roles to data movement, matrix
+                  Geo. mean                          +25.1%                                  multiplication, softmax, and the epilogue.
+                                                                                                Specific architecture changes during cross-run optimiza-
+                                    0%       20%              40%            60%
+                                                                                             tion and their decision processes are examined in §4.5.
+                                         Gain over the public best
+
+                                                                                             4.4   Ablation Study
+Figure 5. Performance gains over public-best submissions                                     This section examines architecture planning and revision, dis-
+on Ascend 910C.                                                                              assembly, and the knowledge base. We evaluate within-run
+                                                                                             plan revision separately from cross-run reference updates,
+                                                                                             whose results appear in §4.3. The experimental conditions
+gains are estimated by compounding the initial and sub-
+                                                                                             and results follow.
+sequent speedups. A dash denotes a round that was not
+conducted.                                                                                      Architecture planning and revision. Table 3 compares
+   For the path beginning with reference-free generation,                                    the full system with configurations that individually remove
+starting from the /goal implementations of GDN prefill                                       the milestone template, plan revision, SASS disassembly,
+forward and GQA attention forward, ForgeKernel obtains                                       or the knowledge base. Each cell reports the performance
+further gains of +9.5% and +5.0%, respectively. Combined                                     gain over the expert reference from one optimization run.
+with the initial implementations’ performance relative to ex-                                Retaining only the initial plan without revision reduces per-
+pert libraries, the cumulative gains are approximately +100%                                 formance on all three tasks relative to the full system, sup-
+and +29%.                                                                                    porting the role of feedback-driven revision on these tasks.
+   For the path beginning with an expert-library reference,                                  Removing the milestone template substantially reduces GDN
+the initial optimization is followed by one or two self-                                     prefill-forward performance, with a smaller change for DSA
+evolution rounds. GQA attention forward involves three                                       sparse attention forward. The attention-backward implemen-
+ForgeKernel runs in total: the initial run produces genera-                                  tation without the template passes output-error checks but
+tion 0, and the next two produce generations 1 and 2, with                                   lowers internal precision (marked † ). The DSA run without
+cumulative gains over the expert library of approximately                                    the knowledge base uses different inputs, and its result is
++10% and +15%, respectively. This sequence is independent                                    reported separately.
+                                                                                         8
+ForgeKernel: Self-Evolving Kernels                                                                                         Preprint, 2026, arXiv
+
+
+                          Table 2. Initial performance and subsequent gains along two optimization paths.
+
+                                                            Initial performance        Round 1 gain       Round 2 gain       Final gain
+       Operator                                                        vs. expert         vs. initial       vs. round 1      vs. expert
+       Reference-free generation, then optimization (ForgeKernel optimizes the generated implementation)
+       GDN prefill fwd                                                   +82.6%                +9.5%                  —         +100%
+       GQA fwd (16:1)                                                    +22.8%                +5.0%                  —          +29%
+       DeepSeek-V4.1 fused sparse-attention prefill                       +5.3%               +10.0%                  —         +15.5%
+       Expert-reference optimization, then self-evolution (ForgeKernel throughout)
+       DSA sparse attn fwd                                                   −0.5%             +7.2%                  —            +7%
+       GDN prefill bwd                                                       +1.1%             +2.0%                  —            +3%
+       GQA fwd (16:1)                                                        +0.3%             +9.9%              +4.2%           +15%
+
+
+Table 3. Performance gains over expert references in com-                      self-evolution case focuses on using an accepted implemen-
+ponent ablations.                                                              tation as the reference for a subsequent run, with renewed
+                                                                               analysis and design to explore further architectural improve-
+                             Attn      GDN         DSA sparse   Geo.           ments. These roles are complementary: the former organizes
+Configuration                bwd     prefill fwd      fwd       mean           architecture changes, while the latter makes an existing op-
+Full ForgeKernel            +0.6%        −1.5%         +2.0%    +0.4%          timized artifact the starting point for further architecture
+No milestone template     +16.2%†       −16.2%         +1.4%    −0.4%          exploration.
+First milestone only        −1.0%        −4.7%         −1.2%    −2.3%
+No SASS (NCU kept)         −10.2%       +16.2%         −5.1%    −0.3%             Architecture-agent-driven replanning: GQA.. The first
+No knowledge base           +0.3%       −16.4%         +6.2%    −3.8%
+                                                                               GQA attention-forward self-evolution round illustrates how
+                                                                               the architecture agent coordinates interdependent changes.
+                                                                               The initial implementation assigns one query block to each
+  Disassembly information. Removing SASS while retain-                         thread block (CTA), which then exits. Rather than propos-
+ing NCU profiling reduces performance on attention back-                       ing only local code changes, the architecture agent changes
+ward and DSA sparse attention forward, whereas GDN prefill                     this to persistent execution, so that the same CTA processes
+forward exceeds the full system.                                               multiple query blocks. It organizes cross-block state man-
+                                                                               agement and Q-data prefetching into a staged plan for the
+   Knowledge base. Knowledge reuse is widespread (Fig-                         coding agent to implement.
+ure 6a). Nearly all configurations in the SM90 provenance                         The coding agent first implements the persistent loop and
+cohort adopt external knowledge. The most common adop-                         cross-block state management, obtaining a local performance
+tion range is 6–10 distinct entries, while the highest reaches                 gain of approximately +0.8%. It then adds Q double buffering
+26–30: operators typically draw on multiple entries, and                       to load the next query block’s data early, obtaining a further
+the extent of reuse varies substantially, consistent with the                  local gain of approximately +6.1%. Both steps undergo cor-
+differing ablation effects.                                                    rectness checks and separate performance measurements;
+   Reuse also crosses operator boundaries in both directions                   their local gains cannot be directly added.
+(Figure 6b). In the DSA–GQA and GEMM–MHA cases, new                               The round ultimately improves performance over the
+mechanisms developed by a knowledge recipient are adopted                      preceding generation by +9.9% (Table 2), including other
+in subsequent runs of the original contributor, establishing                   changes; this gain cannot be attributed entirely to the two
+cross-operator knowledge feedback. The knowledge base                          steps above. The case highlights how separating architec-
+therefore serves as a shared, evolving collection of hard-                     ture from coding supports coordinated planning: the initial
+ware mechanisms. Counting rules and the detailed source–                       structural change delivers only a modest gain, but enables
+recipient matrix are provided in Appendix E.                                   subsequent pipeline optimization, with the coding agent
+                                                                               implementing the interdependent changes in dependency
+4.5   Case Studies: Two Mechanisms for Architecture                            order.
+      Changes
+The two cases illustrate the roles of the architecture agent                     Architecture reassessment through self-evolution:
+and self-evolution in architecture changes. By separating                      DSA.. The DSA sparse attention-forward case examines
+architecture from coding, the architecture agent explicitly                    how an existing optimized artifact becomes the starting
+plans and revises interdependent architectural decisions. The                  point for a new round of architecture analysis. The initial
+                                                                         9
+Yaojian Chen, Dazhi Peng, Yiyun Zheng, Zhui Zhu, Shengye Xiang, Leshan Li, Zhen Li, Xianglong Deng, Haojun Sun, Qingfeng He, Shangzhan Li, Yifei Shen,
+Preprint, 2026, arXiv                                                                                    Lin Gan, Yuxuan Li, Xu Han, and Zhiyuan Liu
+
+        (a) External knowledge adoption                                       (b) Reciprocal knowledge reuse
+
+
+                         26–30 entries
+                                                      0–5 entries                        Fixed-container reuse     Elementwise
+                                                                                        Handoff synchronization latency scheduling
+                 21–25 entries
+                                      8.7%
+                                              17.4%                               DSA sparse                GQA bwd                     DSA sparse
+                                  8.7%                                             attn fwd                  (8:1)                       attn fwd
+             16–20 entries
+                               8.7%
+                                                                                          TMA epilogue stores            WGMMA
+                               13.0%                                                     Accumulator writeback         deferred wait
+               11–15 entries                   43.5%                                   FP16                                                   FP16
+                                                                                                            MHA bwd
+                                                                                       GEMM                                                   GEMM
+                                                       6–10 entries
+
+
+
+
+                                      Figure 6. External-knowledge adoption and reciprocal reuse.
+
+implementation uses non-persistent execution with one                           gen-0 (sealed): non-persistent, grid 8192, 1 CTA/SM
+resident CTA per SM. After this implementation becomes
+                                                                                load       KV trips (MMA)     store   load         KV trips (MMA)            store
+the reference, the next round obtains approximately 4.5%
+gain within the original architecture, after which further                                                   CTA boundary:
+                                                                                                            no MMA in flight
+adjustments provide no effective improvement. Updating
+the reference does not require retaining the preceding                          gen-1: persistent loop, grid = #SMs (D0.1 reopened)
+
+generation’s architecture, allowing the system to reassess its                  load       KV trips (MMA)     store
+                                                                                                                      item n’s write-out overlaps
+                                                                                                                      item n+1’s Q load and first KV fills
+computation organization rather than only tune parameters                                                     load           KV trips (MMA)         store
+within that structure.
+   Through diagnostic experiments, the architecture agent                                                                                                    saved
+
+finds that each CTA’s query load, initial KV fills, and final                                                                                       time on one SM
+
+output store lack computation from adjacent work items to
+overlap with. A probe removing output stores changes per-                     Figure 7. DSA sparse attention-forward architecture change
+formance by approximately 6.0%, helping isolate uncovered                     (schematic, not to scale).
+overhead; this probe is diagnostic, not a complete candidate
+implementation. The system therefore adopts a persistent
+loop, overlapping one work item’s output store with the next                  and compiler for GPU kernels, enabling developers to express
+item’s loads (Figure 7), and ultimately obtains a gain of +7.2%               and implement computation partitioning and data organiza-
+over the preceding generation (Table 2). This case illustrates                tion [23, 24]. Beyond supporting developers in expressing
+the role of reference updates in self-evolution: retaining an                 designs, another line of work explores automating design
+existing artifact as a performance reference while reopening                  choices. For example, Mirage jointly searches algebraic and
+optimization through renewed diagnosis and architecture                       scheduling transformations through a unified representation
+analysis, rather than fixing its structure as a constraint on                 spanning kernels, thread blocks, and threads [27].
+subsequent runs.                                                                 LLM-based operator generation and optimization.
+                                                                              Prior work improves operator generation through feedback-
+5    Related Work                                                             driven iteration, evolutionary search, and model training.
+   Operator optimization and programming infrastruc-                          GEAK generates Triton kernels through a feedback-driven
+ture. High-performance operator implementations require                       reasoning loop [25]. STARK and Astra combine multi-agent
+computation and data access to be organized according to                      collaboration with search, profiling, and planning [9, 26];
+computational characteristics and target hardware. FlashAt-                   AlphaEvolve combines LLMs with automated evaluation
+tention uses tiling to reduce device-memory accesses in at-                   for evolutionary search [16]. These methods focus on code
+tention [6], while FlashInfer provides customizable, efficient                iteration within a single run, without treating architectural
+attention implementations for LLM inference serving [29].                     decisions as separately revisable from measurements or
+Translating such designs into efficient code requires appro-                  using accepted kernels as references for a new round of
+priate programming abstractions and compiler support: CUT-                    architectural analysis.
+LASS provides composable high-performance computational                          Kevin incorporates multi-turn implementation and execu-
+components, and Triton provides a programming language                        tion feedback into reinforcement learning, while CUDA-L1
+                                                                         10
+ForgeKernel: Self-Evolving Kernels                                                                                         Preprint, 2026, arXiv
+
+
+uses contrastive reinforcement learning to improve CUDA                  Cross-hardware design reuse. Hardware mechanisms
+optimization [1, 12]. Training changes the model that emits           in the knowledge base depend on specific architectures
+code, not the revision of architectural decisions during opti-        and applicability conditions; transfer to other hardware
+mization.                                                             requires adaptation and validation. Future work will inves-
+   EGG fixes the algorithmic structure before hardware                tigate mechanism abstraction, adaptation, and validation
+tuning, without revisiting it based on subsequent mea-                for cross-hardware reuse while retaining target-specific
+surements [10]. CuBridge adapts expert attention kernels              optimization.
+to target operators through an executable intermediate
+representation, retaining the expert implementation’s struc-          7    Conclusion
+ture [15]. AKO optimizes kernels through a multi-agent                We presented ForgeKernel, a self-evolving agent for kernel
+workflow, with a human orchestrator redirecting stalled
+                                                                      optimization. ForgeKernel separates architectural design
+searches [14]. Structural choices or search redirections
+                                                                      from code implementation and revises work partitioning,
+in these workflows are not explicit architectural decision            dataflow, and pipeline organization based on performance
+revisions triggered by measurements.                                  feedback. Across runs, it uses validated kernels as new
+   Another line of work retains prior experience and uses             references and accumulates hardware mechanisms validated
+it to guide later generation. KernelClaw stores reusable ex-          by independent probes in a shared knowledge base. Ref-
+pert optimization knowledge in long-term memory and uses
+                                                                      erence updates enable further architectural reassessment,
+short-term memory to avoid repeated backtracking within               while knowledge reuse carries optimization experience
+a run, replacing the model’s implicit heuristics with expert          across runs and operators; together, they support continued
+knowledge [22]. KLineage progressively simplifies expert              self-evolution.
+implementations through validated steps, distilling each step            With self-evolution and knowledge reuse, ForgeKernel
+into a skill with explicit applicability conditions for subse-        achieves a geometric-mean speedup of 1.10× over refer-
+quent code generation [31]. Both retain knowledge or skills
+                                                                      ence implementations from expert libraries and other kernel-
+obtained from the expert side and use them to guide code              generation systems across 29 configurations covering 27 op-
+generation. They do not store hardware mechanisms vali-               erators on NVIDIA Hopper and Blackwell GPUs. On Ascend,
+dated by independent probes during optimization as knowl-             it outperforms the per-operator public best on the public case
+edge shared across operators, and later runs do not cite such         set of all 8 level-4 operators in the CANN-Bench Season 1
+entries when setting architectural decisions.
+                                                                      final leaderboard, with a geometric-mean performance gain
+   ForgeKernel separates architectural design from code im-
+                                                                      of +25.1%. Public submissions generated by ForgeKernel rank
+plementation, organizing milestone plans around explicit ar-          first on all three CANN-Bench 2.0 solution leaderboards (As-
+chitectural decisions and revising those decisions in response        cend 910C, 950DT, and 950PR) and on the SOL-ExecBench
+to measurement feedback. When structural bottlenecks limit            FlashInfer-Bench leaderboard as of 2026-10-30.
+performance, the system revisits computation partitioning,
+dataflow, or pipeline organization rather than only tuning
+within a fixed architecture. For knowledge reuse, ForgeKer-           References
+                                                                       [1] Carlo Baronio, Pietro Marsella, Ben Pan, Simon Guo, and Silas Al-
+nel distills hardware mechanisms during optimization, vali-
+                                                                           berti. 2025. Kevin: Multi-Turn RL for Generating CUDA Kernels.
+dates them through independent probes on the target hard-                  arXiv:2507.11948
+ware, and stores them in a knowledge base shared across                [2] CANNBench. 2026. CANNBench Public Leaderboard. https://
+operators and input shapes to guide architectural design                   cannbench.com/leaderboard. CANN-Bench 2.0 solution snapshot
+and implementation planning in subsequent runs. Existing                   as of 2026-10-30: ForgeKernel ranks first on the Ascend 910C, 950DT,
+implementations can also become new references: their ar-                  and 950PR leaderboards. Historical Season 1, version 1.1, A3 (As-
+                                                                           cend 910C) result: ForgeKernel: total score 8566.1110; standard/hidden
+chitectures are reassessed through measurement rather than                 scores 4362.7547/4203.3563, passed cases 1060/1060 and 4185/4240,
+carried forward by directly inheriting their source code.                  geometric-mean speedups 1.7591600842 and 1.8543285162. Accessed
+                                                                           2026-10-30.
+                                                                       [3] Shiyi Cao, Ziming Mao, Joseph E. Gonzalez, and Ion Stoica. 2026. K-
+6    Limitations and Future Work                                           Search: LLM Kernel Generation via Co-Evolving Intrinsic World Model.
+                                                                           arXiv:2602.19128
+   Architecture exploration and local optima. ForgeK-                  [4] Terry Chen, Bing Xu, and Kirthi Devleker. 2025. Automating GPU Ker-
+ernel revisits existing architectures through explicit plan-               nel Generation with DeepSeek-R1 and Inference Time Scaling. NVIDIA
+ning and feedback-driven revision, but exploration is limited              Developer Blog. https://developer.nvidia.com/blog/automating-gpu-
+by the agents’ ability to generate candidates, and optimiza-               kernel-generation-with-deepseek-r1-and-inference-time-scaling/.
+tion may settle at local optima. Future work will investi-             [5] Yaojian Chen, Dazhi Peng, Zhui Zhu, Leshan Li, Haojun Sun, Yiyun
+                                                                           Zheng, Qingfeng He, Shangzhan Li, Xianglong Deng, Yifei Shen,
+gate planning strategies that broaden the architecture search              Shengye Xiang, Zhen Li, Lin Gan, Yuxuan Li, Xu Han, and Zhiyuan
+space and increase candidate diversity while preserving au-                Liu. 2026. JustGoal: With Only a Goal, the AI Baseline Is Above the
+tonomous exploration and generalization.                                   Expert Kernels. arXiv:2610.36434
+                                                                 11
+Yaojian Chen, Dazhi Peng, Yiyun Zheng, Zhui Zhu, Shengye Xiang, Leshan Li, Zhen Li, Xianglong Deng, Haojun Sun, Qingfeng He, Shangzhan Li, Yifei Shen,
+Preprint, 2026, arXiv                                                                                    Lin Gan, Yuxuan Li, Xu Han, and Zhiyuan Liu
+
+ [6] Tri Dao, Daniel Y. Fu, Stefano Ermon, Atri Rudra, and Christopher Ré.         [25] Jianghui Wang, Vinay Joshi, Saptarshi Majumder, et al. 2025. GEAK:
+     2022. FlashAttention: Fast and Memory-Efficient Exact Attention with               Introducing Triton Kernel AI Agent & Evaluation Benchmarks.
+     IO-Awareness. In Advances in Neural Information Processing Systems                 arXiv:2507.23194
+     (NeurIPS).                                                                    [26] Anjiang Wei, Tianran Sun, Yogesh Seenichamy, et al. 2025. Astra:
+ [7] DeepSeek-AI. 2024. DeepSeek-V2: A Strong, Economical, and Efficient                A Multi-Agent System for GPU Kernel Performance Optimization.
+     Mixture-of-Experts Language Model. arXiv:2405.04434                                arXiv:2509.07506
+ [8] DeepSeek-AI. 2025. DeepSeek-V3.2-Exp: Boosting Long-Context Effi-             [27] Mengdi Wu, Xinhao Cheng, Shengyu Liu, et al. 2025. Mirage: A
+     ciency with DeepSeek Sparse Attention. https://github.com/deepseek-                Multi-Level Superoptimizer for Tensor Programs. In 19th USENIX
+     ai/DeepSeek-V3.2-Exp/blob/main/DeepSeek_V3_2.pdf. Tech report,                     Symposium on Operating Systems Design and Implementation (OSDI).
+     September 2025.                                                                    arXiv:2405.05751.
+ [9] Juncheng Dong, Yang Yang, Tao Liu, et al. 2025. STARK: Strategic              [28] Songlin Yang, Jan Kautz, and Ali Hatamizadeh. 2024. Gated Delta
+     Team of Agents for Refining Kernels. arXiv:2510.16996                              Networks: Improving Mamba2 with Delta Rule. arXiv:2412.06464
+[10] Yaochen Han, Ke Fan, Hongxu Jiang, et al. 2026. EGG: An Expert-                    ICLR 2025.
+     Guided Agent Framework for Kernel Generation. arXiv:2606.26758                [29] Zihao Ye, Lequn Chen, Ruihang Lai, Wuwei Lin, Yineng Zhang,
+[11] Kimi Team. 2025. Kimi Linear: An Expressive, Efficient Attention Ar-               Stephanie Wang, Tianqi Chen, Baris Kasikci, Vinod Grover, Arvind
+     chitecture. arXiv:2510.26692 Introduces Kimi Delta Attention (KDA).                Krishnamurthy, and Luis Ceze. 2025. FlashInfer: Efficient and Cus-
+[12] Xiaoya Li, Albert Wang, Guoyin Wang, Jiwei Li, and Chris Shum. 2026.               tomizable Attention Engine for LLM Inference Serving. In Proceed-
+     CUDA-L1: Improving CUDA Optimization via Contrastive Reinforce-                    ings of Machine Learning and Systems (MLSys). Best Paper Award.
+     ment Learning. In International Conference on Learning Representations             arXiv:2501.01005.
+     (ICLR). arXiv:2507.14111.                                                     [30] Zihao Ye, Yingyi Huang, Hongyi Jin, Bohan Hou, Junru Shao, Zhong-
+[13] Sihao Liu, Ligeng Zhu, et al. 2026. Kernel Design Agents (KDA):                    ming Yu, Jinqi Chen, Meghan Cowan, Shiyi Cao, Shanli Xing,
+     An Agent-Centric Workflow for High-Performance CUDA Kernels.                       Hanfeng Chen, Vinod Grover, Tianqi Chen, and Luis Ceze. 2026.
+     https://github.com/NVlabs/kda. NVIDIA and MIT HAN Lab; software                    CAKE: Compiler-Agent Co-Design for Frontier Kernel Evolution.
+     release.                                                                           arXiv:2608.12629
+[14] Mao Luo, Hongbin Li, Feng Lin, Hanling Yi, and Zhe Huang. 2026.               [31] Shuoming Zhang, Qiuchu Yu, Yangyu Zhang, et al. 2026. KLineage:
+     Agentic Kernel Optimization: Generating State-of-the-Art GPU Ker-                  Recovering the Missing When of Kernel Optimization by Deoptimizing
+     nels Without Hand-Written CUDA. arXiv:2608.14560                                   Experts. arXiv:2605.28213
+[15] Xing Ma, Yangjie Zhou, Wu Sun, et al. 2026. CuBridge: An LLM-Based            [32] Dongyun Zou, Yixin Dong, Junxian Guo, et al. 2026. KDA-v0.5
+     Framework for Understanding and Reconstructing High-Performance                    Kernels for the MLSys 2026 FlashInfer AI Kernel Generation Con-
+     Attention Kernels. arXiv:2605.05023 ACL 2026.                                      test. https://github.com/mit-han-lab/mlsys2026-flashinfer-contest-
+[16] Alexander Novikov, Ngân Vũ, Marvin Eisenberger, et al. 2025. Al-                  solution. Speedups over the contest winners re-measured by the
+     phaEvolve: A coding agent for scientific and algorithmic discovery.                authors under the flashinfer-bench CUPTI protocol, not by the contest
+     arXiv:2506.13131                                                                   evaluator. Accessed 2026-09.
+[17] NVIDIA Corporation. 2022. NVIDIA H100 Tensor Core GPU Ar-
+     chitecture Whitepaper. https://resources.nvidia.com/en-us-hopper-
+     architecture/nvidia-h100-tensor-c. Accessed 2026-09.                          A     Correctness Judges
+[18] NVIDIA Corporation. 2024. NVIDIA Blackwell Architecture Technical
+     Overview. https://resources.nvidia.com/en-us-blackwell-architecture.          Correctness validation first follows the official or benchmark
+     Accessed 2026-09.                                                             tolerance test associated with each operator source. Oper-
+[19] NVIDIA Corporation. 2026. Parallel Thread Execution ISA, Version 9.4.         ators covered by FlashInfer-Bench, including those in the
+     https://docs.nvidia.com/cuda/parallel-thread-execution/. wgmma.mma_           SOL-ExecBench FlashInfer-Bench collection, use FlashInfer-
+     async, cp.async.bulk.tensor (TMA), and tcgen05 sections. Ac-
+                                                                                   Bench’s tolerance tests; FlashAttention operators use the
+     cessed 2026-09.
+[20] NVIDIA Research. 2026. SOL-ExecBench: FlashInfer-Bench Leader-                official FlashAttention tolerance tests; other operators use
+     board.       https://research.nvidia.com/benchmarks/sol-execbench/            the criterion associated with their source. Within this source
+     leaderboard/collection/4/B200. B200 collection leaderboard, evalua-           mapping, the concrete judges include DeepGEMM’s aggre-
+     tion stack v1.1. Submission 76892 (ForgeKernel): SOL Score 0.815204,          gate criterion for GEMMs, a relative max-abs bound for atten-
+     Fast1 647/660, solved 26/26, Avg Speedup 5.5403. Accessed 2026-10-30.
+                                                                                   tion gradients, and a scaled tolerance plus a cosine bound for
+[21] Jay Shah, Ganesh Bikshandi, Ying Zhang, Vijay Thakkar, Pradeep Ra-
+     mani, and Tri Dao. 2024. FlashAttention-3: Fast and Accurate Attention        the GDN and KDA (Kimi Delta Attention [11]) state kernels,
+     with Asynchrony and Low-precision. arXiv:2407.08608                           whose small outputs would pass a fixed absolute tolerance
+[22] Qitong Sun, Jun Han, Tianlin Li, et al. 2026. KernelClaw: A Multi-            trivially. The GDN judges further add correlated-key and
+     Agent Framework for GPU Kernel Optimization with Dual-Memory                  long-memory inputs that catch state-decay shortcuts.
+     Mechanisms. arXiv:2603.10085
+[23] Vijay Thakkar, Pradeep Ramani, Cris Cecka, Aniket Shivam, Honghao
+     Lu, Ethan Yan, Jack Kosaian, Mark Hoemmen, Haicheng Wu, Andrew                B     Reference Versions and Entry Points
+     Kerr, et al. 2026. CUTLASS: CUDA Templates for Linear Algebra
+                                                                                   Library references are FlashAttention-4 (CuTe DSL),
+     Subroutines. https://github.com/NVIDIA/cutlass. Version 4.8; includes
+     CuTe layout algebra and the Python CuTe-DSL. Accessed 2026-09.                cuDNN 9 with cuDNN-frontend 1.28, DeepGEMM, FlashMLA,
+[24] Philippe Tillet, Hsiang-Tsung Kung, and David Cox. 2019. Triton:              FlashInfer and FlashQLA, and are measured at these
+     An Intermediate Language and Compiler for Tiled Neural Network                entry points: FlashAttention-4’s forward and _flash_
+     Computations. In Proceedings of the 3rd ACM SIGPLAN International             attn_bwd, FlashInfer’s fused chunk_gated_delta_rule,
+     Workshop on Machine Learning and Programming Languages (MAPL).                FlashQLA’s TileLang backward, DeepGEMM’s fp8_fp4_
+     DOI: 10.1145/3315508.3329973.
+                                                                                   mqa_logits, FlashMLA’s flash_mla_sparse_fwd, and
+                                                                              12
+ForgeKernel: Self-Evolving Kernels                                                                                  Preprint, 2026, arXiv
+
+
+cuDNN-frontend’s CuTe DSL radix top-𝑘, sparse_attention_               records. Thus the snapshot does not independently certify
+backward, indexer_backward (three kernels summed), and                 final-code retention for every entry, and zero denotes no qual-
+the sparse_attn + sparse_indexer score-recompute com-                  ifying recorded adoption. The two examples in Figure 6(b)
+position. CANN-Bench 1.1.2 supplies the Ascend baselines;              show selected entries from the recorded exchanges, not an
+its public repository releases through v1.0.0 as of this               exhaustive list or a causal performance attribution.
+writing.
+
+C     Campaign Shapes
+Table 4 lists the problem shape of every task and optimization
+run of the main paper.
+
+D     Per-Task Public-Benchmark Speedups
+Tables 5 and 6 list all 53 CANN-Bench Season 1 A3 oper-
+ators and all 26 SOL-ExecBench FlashInfer-Bench kernels,
+respectively. All values are speedup ratios against the cor-
+responding benchmark baseline; values below one indicate
+slowdowns and are retained.
+   For CANN-Bench, we report the standard-set, hidden-set,
+and combined speedups from the Season 1 final results,
+checked on 2026-10-15. The combined column uses the
+benchmark’s weighted geometric mean with standard/hid-
+den weights 0.2/0.8. Reported ratios are rounded to three
+decimals; they do not imply that all hidden cases passed.
+GRU and LSTM use hardware-bound-derived baselines
+rather than reference implementations [2].
+   For SOL-ExecBench, we use ForgeKernel’s per-kernel
+leaderboard entries on B200 with evaluation stack v1.1,
+accessed on 2026-10-30. Each ratio is the geometric-mean
+speedup across that kernel’s workloads against the official
+Scoring Baseline, not the Reference Implementation or SOL
+Bound. The geometric mean across all 26 kernel ratios is
+5.54× [20].
+
+E    Knowledge-Reuse Provenance
+Figure 8 aggregates the SM90 run snapshot by source and
+adopting operator configuration. Each cell counts distinct
+external entries; repeated use across runs is deduplicated.
+White cells have no qualifying record, and gray cells de-
+note self-reuse, which is excluded. All 23 recipient configura-
+tions are retained, including the zero-adoption configuration;
+source rows without any qualifying outgoing reuse are omit-
+ted. The cohort follows the original provenance plot: MHA
+and GQA attention variants are separated, and MHA forward
+is not a recipient because it is outside that plot’s evaluated
+configuration set. This is a provenance cohort, not a census
+of every evaluated task.
+   Entry origins come from recorded birth cells, falling back
+to the earliest run of the originating operator. The original
+run-group ordering and temporal exclusions are retained.
+Adoption uses the milestone-citation and decision-delivery
+snapshot, rather than mere retrieval. Where commit lineage
+is available, delivery is checked against the best correct im-
+plementation; otherwise the extractor falls back to process
+                                                                  13
+Yaojian Chen, Dazhi Peng, Yiyun Zheng, Zhui Zhu, Shengye Xiang, Leshan Li, Zhen Li, Xianglong Deng, Haojun Sun, Qingfeng He, Shangzhan Li, Yifei Shen,
+Preprint, 2026, arXiv                                                                                    Lin Gan, Yuxuan Li, Xu Han, and Zhiyuan Liu
+
+                                     Table 4. Input shapes for the evaluated tasks and optimization runs.
+
+             Operator                 GPU      Shape
+             /goal agent ceiling
+             attn_fwd_gqa             H100     B=2 S=4096 H_Q=16/H_KV=1 D=128 bf16 causal
+             fa_bwd_gqa               H100     B=10 N=4096 H_Q=16/H_KV=2 D=64 fp16 causal
+             gdn_prefill_fwd          H100     N=8192 h_qk=16/h_v=32 d=128 bf16
+             gdn_prefill_bwd          H100     N=8192 h_qk=16/h_v=32 d=128 bf16
+             dsa_indexer_fwd          H100     s_q=4096 s_kv=32768 H=64 D=128 fp8
+             dsa_indexer_topk         H100     logits fp32 [4096 x 32768] k=1024
+             dsa_sparse_fwd           H100     s_q=4096 s_kv=32768 h=128 d=512 topk=1024
+             dsa_sparse_bwd           H100     s_q=32768 s_kv=8192 h=128 d=512 topk=1024
+             dsa_score_recompute      H100     s_q=32768 s_kv=8192 topk=1024
+             dsa_indexer_bwd          H100     s_q=32768 s_kv=8192 h=64 d=128 topk=1024
+             ForgeKernel optimization runs
+             attn_fwd (GQA 16:1)        H100   B=2 S=4096 H=16/1 D=128 bf16 causal
+             attn_bwd (MHA)             H100   B=10 N=4096 H=16 D=64 fp16 causal
+             attn_bwd (GQA 8:1)         H100   B=10 N=4096 H=16/2 D=64 fp16 causal
+             fp8_gemm                   H100   M=N=K=4096 blk 128
+             fp8_grouped_gemm           H100   G=8 N=K=4096 blk 128
+             gemm (fp16)                H100   M=N=K=8192 fp16
+             conv2d_fwd                 H100   N=128 C=K=256 28x28 3x3 s1
+             conv2d_wgrad               H100   N=128 C=K=256 28x28 3x3 s1
+             conv2d_dgrad               H100   N=128 C=K=256 56x56 3x3 s2
+             conv3d_fwd                 H100   N=8 C=K=256 8x28x28 3x3x3
+             dsa_indexer_fwd            H100   s_q=4096 s_kv=32768 H=64 D=128 fp8
+             dsa_indexer_topk           H100   4096x32768 fp32 k=1024
+             dsa_sparse_fwd             H100   s_q=4096 s_kv=32768 h=128 d=512 topk=1024
+             dsa_sparse_bwd             H100   s_q=32768 s_kv=8192 h=128 d=512 topk=1024
+             dsa_score_recompute        H100   s_q=32768 s_kv=8192 topk=1024
+             dsa_indexer_bwd            H100   s_q=32768 s_kv=8192 H=64 D=128 topk=1024
+             gdn_prefill_fwd            H100   N=8192 h=16/32 d=128 bf16
+             gdn_prefill_bwd            H100   N=8192 h=16/32 d=128 bf16
+             gqa_paged_decode           H100   workload 7a7fc288 (61535 pages)
+             mla_paged_decode           H100   workload 5bef8d88 (B=64; 75145 tokens)
+             mla_paged_prefill          H100   workload fe63f292 (B=18; 15883 q)
+             trimul                     H100   S=1024 D=384 H=128 (case 6)
+             attn_bwd (MHA)             B200   B=8 N=4096 H=16 D=128 bf16 causal
+             fp4_grouped_gemm           B200   G=8 M=4096/group N=K=4096
+             sparse_mla_prefill         B200   s_q=4096 s_kv=32768 H_Q=128 H_KV=1 D=512 topk=1024 bf16 attn_sink
+             fused_attn_rope_cast       B200   s_q=4096 s_kv=32768 H_Q=128 H_KV=1 D=512 rope=64 topk=1024 n_wv_group=16 bf16->fp8 attn_sink q_
+                                               norm
+             dsa_sparse_attn_paged    B200     workload 564007ac (T=8; 8462 pages)
+             gdn_prefill_varlen       B200     workload a9540651 (T=8192 N=20)
+             recurrent_kda_prefill    B200     T=8192 H=96 K=V=128 bf16
+
+
+
+
+                                                                              14
+ForgeKernel: Self-Evolving Kernels                                                                                            Preprint, 2026, arXiv
+
+
+         Table 5. Per-operator CANN-Bench Season 1 A3 speedups (×) against the benchmark baseline on Ascend 910C.
+
+Operator                      Level   Standard   Hidden     Combined            Operator                   Level   Standard   Hidden     Combined
+Gelu                           L1        0.910     3.263           2.527        DepthwiseConv2D             L3        1.905    1.143          1.266
+SwiGlu                         L1        2.113     4.013           3.530        TopK                        L3        1.286    0.855          0.927
+ForeachNorm                    L1        2.088     3.707           3.305        MoeFinalizeRouting          L3        2.306    3.229          3.019
+Sigmoid                        L1        0.972     4.679           3.417        Dilation2D                  L3        2.086    1.190          1.331
+Exp                            L1        2.717     4.624           4.157        MhcSinkhorn                 L3        3.188    2.603          2.711
+MaskedScale                    L1        2.652     4.837           4.289        StridedSlice                L3        3.667    3.958          3.898
+Mish                           L1        2.369     3.965           3.577        DequantSwigluQuant          L3        2.512    3.744          3.457
+ForeachAddcdivScalar           L1        1.804     4.997           4.076        WeightQuantBatchMatmul      L3        1.299    2.143          1.939
+GridSampler3D                  L2        1.343     0.861           0.941        EngramGateFusion            L3        0.988    0.968          0.972
+Cummin                         L2        1.285     1.032           1.078        Conv3DBackpropFilter        L3        1.758    1.104          1.212
+Gcd                            L2        5.704     3.296           3.678        Unique                      L3        1.487    0.589          0.709
+DynamicQuant                   L2        2.270     5.754           4.777        GroupedMatmul               L3        1.868    2.406          2.287
+CrossEntropyLoss               L2        2.253     1.691           1.791        Conv2D                      L3        1.019    1.078          1.066
+ApplyRotaryPosEmb              L2        2.510     2.216           2.272        AdaptiveAvgPool3D           L3        3.478    3.074          3.151
+GroupNorm                      L2        1.589     2.132           2.011        MoeReRouting                L3        2.015    3.201          2.918
+Softmax                        L2        1.840     2.380           2.261        Transpose                   L3        1.213    1.913          1.746
+RmsNorm                        L2        1.709     3.032           2.703        ROIAlign                    L3        0.842    0.631          0.669
+Scatter                        L2        1.028     0.363           0.447        QuantMatmul                 L3        1.146    1.808          1.651
+Gather                         L2        2.512     2.407           2.428        GroupedMatmulSwigluQuant    L4        2.418    1.967          2.050
+UnsortedSegmentSum             L2        1.585     1.669           1.652        LSTM                        L4        0.450    0.147          0.184
+ResizeBilinear                 L2        5.962    10.397           9.302        MLA                         L4        1.139    1.649          1.532
+ArgMax                         L2        2.921     2.926           2.925        GRU                         L4        0.546    0.218          0.262
+ApplyAdamW                     L2        1.965     4.378           3.730        MlaProlog                   L4        1.562    1.198          1.263
+Maximum                        L2        1.570     4.117           3.395        MHA                         L4        1.198    1.112          1.128
+NMS                            L3        3.191     0.981           1.242        SparseFlashAttention        L4        1.461    0.207          0.306
+MoeGatingTopKSoftmax           L3        1.931     1.478           1.559        GQA                         L4        1.184    1.423          1.371
+AddRmsNormDynamicQuant         L3        2.459     3.250           3.074
+
+
+ Table 6. Per-kernel SOL-ExecBench FlashInfer-Bench speedups against Scoring Baseline on B200 (evaluation stack v1.1).
+
+Kernel                                                                                                                                 Speedup ( × )
+001_fused_add_rmsnorm_h2048                                                                                                                  1.4651
+002_fused_add_rmsnorm_h4096                                                                                                                  4.4455
+003_fused_add_rmsnorm_h7168                                                                                                                  1.8506
+004_gemm_n128_k2048                                                                                                                          2.4275
+005_gemm_n256_k7168                                                                                                                          2.3825
+006_gemm_n2048_k4096                                                                                                                         1.4514
+007_gemm_n4096_k4096                                                                                                                         1.3595
+008_gemm_n4096_k14336                                                                                                                        1.5171
+009_gemm_n5120_k2048                                                                                                                         1.1265
+010_gemm_n6144_k4096                                                                                                                         1.2387
+011_gemm_n28672_k4096                                                                                                                        1.3481
+012_gqa_paged_decode_h32_kv4_d128_ps1                                                                                                       16.1650
+013_gqa_paged_decode_h32_kv8_d128_ps1                                                                                                        9.9521
+014_gqa_paged_prefill_causal_h32_kv4_d128_ps1                                                                                              159.3385
+015_gqa_paged_prefill_causal_h32_kv8_d128_ps1                                                                                              133.7091
+016_gqa_ragged_prefill_causal_h32_kv4_d128                                                                                                  17.5878
+017_gqa_ragged_prefill_causal_h32_kv8_d128                                                                                                  16.0272
+018_mla_paged_decode_h16_ckv512_kpe64_ps1                                                                                                   31.9883
+019_mla_paged_prefill_causal_h16_ckv512_kpe64_ps1                                                                                           93.2019
+020_moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048                                                                            28.1198
+021_rmsnorm_h128                                                                                                                             2.3360
+022_rmsnorm_h512                                                                                                                             2.3813
+023_rmsnorm_h1536                                                                                                                            4.8512
+024_rmsnorm_h2048                                                                                                                            2.4907
+025_rmsnorm_h4096                                                                                                                            2.7274
+026_rmsnorm_h7168                                                                                                                           3.6834
+
+
+
+
+                                                                           15
+Yaojian Chen, Dazhi Peng, Yiyun Zheng, Zhui Zhu, Shengye Xiang, Leshan Li, Zhen Li, Xianglong Deng, Haojun Sun, Qingfeng He, Shangzhan Li, Yifei Shen,
+Preprint, 2026, arXiv                                                                                    Lin Gan, Yuxuan Li, Xu Han, and Zhiyuan Liu
+
+                                                            Source operator → adopting operator
+          Conv2D fwd
+     DSA indexer fwd
+    DSA indexer top-k
+DSA sparse attn bwd
+ DSA sparse attn fwd
+           FP16 GEMM
+            FP8 GEMM
+  FP8 grouped GEMM
+       GDN prefill fwd
+       GQA bwd (8:1)
+       GQA fwd (16:1)
+             MHA bwd
+                           nv 2D     inp  u2D
+                                            tg   fw  d
+                                   we
+                                  Co   igh  tg   ra
+                                                 r add
+                            DS A  ind nv
+                                       ex  3D    fw  d
+                           DSDS
+                              A A  ind  ex er
+                                            er  bw   d
+                       DS
+                       DS A sc orind
+                                  er ex  er   t ofw
+                                                  p-kd
+                           A sp ar se ec om    p ut
+                      nvDS A  sp ar se
+                                   FP
+                                       at
+                                        at
+                                       16
+                                           tn
+                                            tn  bw
+                                                 f w
+                                                     e
+                                                     d
+                                                     d
+                                            GE
+                    Co   FP 8g  ro upFP 8G     E MM
+                                                 MM
+                         2D   GD  N  pred
+                                        efi GE   MM
+                              GD
+                               GQ  N  pr efill b
+                                              ll fwd
+                        GQ         A  bw          wd
+                       nv  A de
+                              GQ co
+                                  A de
+                                     fw  (
+                                         d(
+                                           d(
+                                           p ag
+                                              16
+                                                8:1
+                                                 ed  )
+                                                     )
+                      CoML A      ML   MH
+                                       A  deA   b  :1)
+                                                  wd
+                             Co
+                         ML  de
+                             A prco de   (p  agco  de
+                                  efi ll ( pa  geed  )
+                                                    d)
+                                             Tri Mu   l
+
+
+                                                                              Distinct external knowledge entries
+                         0              3               6               9
+
+
+                                   Figure 8. Sources and recipients of reused hardware knowledge.
+
+
+
+
+                                                                         16
+
