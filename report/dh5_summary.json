@@ -1,0 +1,79 @@
+{
+  "original": {
+    "h_core": {
+      "accuracy": 0.62,
+      "parse_fail": 0.0178,
+      "mean_resp_chars": 259.7
+    },
+    "h_full": {
+      "accuracy": 0.6933,
+      "parse_fail": 0.0044,
+      "mean_resp_chars": 280.1
+    },
+    "sys": {
+      "accuracy": 0.7022,
+      "parse_fail": 0.0267,
+      "mean_resp_chars": 311.5
+    }
+  },
+  "external": {
+    "h_core": {
+      "accuracy": 0.58,
+      "parse_fail": 0.02,
+      "mean_resp_chars": 276.4,
+      "n": 200,
+      "elapsed_min": 27.9
+    },
+    "h_full": {
+      "accuracy": 0.585,
+      "parse_fail": 0.035,
+      "mean_resp_chars": 298.0,
+      "n": 200,
+      "elapsed_min": 34.0
+    },
+    "sys": {
+      "accuracy": 0.595,
+      "parse_fail": 0.005,
+      "mean_resp_chars": 327.7,
+      "n": 200,
+      "elapsed_min": 43.0
+    }
+  },
+  "h_core": {
+    "original_accuracy": 0.62,
+    "external_accuracy": 0.58,
+    "mixed_accuracy": 0.6077,
+    "parse_fail_original": 0.0178,
+    "parse_fail_external": 0.02
+  },
+  "h_full": {
+    "original_accuracy": 0.6933,
+    "external_accuracy": 0.585,
+    "mixed_accuracy": 0.66,
+    "parse_fail_original": 0.0044,
+    "parse_fail_external": 0.035
+  },
+  "sys": {
+    "original_accuracy": 0.7022,
+    "external_accuracy": 0.595,
+    "mixed_accuracy": 0.6692,
+    "parse_fail_original": 0.0267,
+    "parse_fail_external": 0.005
+  },
+  "base_h0": {
+    "original_accuracy": 0.6,
+    "external_accuracy": 0.535,
+    "mixed_accuracy": 0.58
+  },
+  "d_h0": {
+    "original_accuracy": 0.6289,
+    "external_accuracy": 0.595,
+    "mixed_accuracy": 0.6185
+  },
+  "synergy": {
+    "sys_vs_w_only": 0.0507,
+    "sys_vs_h_full": 0.0092,
+    "sys_above_max_single": true
+  },
+  "finished_at": "2026-11-12 06:09:09"
+}
