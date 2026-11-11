@@ -16,7 +16,8 @@ from . import config
 
 
 def build_train_config(
-    data_dir: Path, adapter_dir: Path, iters: int, lr: float, seed: int
+    data_dir: Path, adapter_dir: Path, iters: int, lr: float, seed: int,
+    lora_scale: float = 20.0,
 ) -> dict:
     """生成 mlx_lm lora 的 config dict（镜像用户 lora/config.yaml）。"""
     return {
@@ -26,7 +27,7 @@ def build_train_config(
         "fine_tune_type": "lora",
         "optimizer": "adam",
         "num_layers": 16,
-        "lora_parameters": {"rank": 8, "dropout": 0.0, "scale": 20.0},
+        "lora_parameters": {"rank": 8, "dropout": 0.0, "scale": float(lora_scale)},
         "batch_size": 2,
         "grad_accumulation_steps": 4,
         "max_seq_length": 1024,
@@ -51,6 +52,7 @@ def train(
     seed: int = 0,
     log_file: Path | None = None,
     timeout: float | None = None,
+    lora_scale: float = 20.0,
 ) -> dict:
     """运行一次 LoRA 训练。data_dir 需含 train.jsonl + valid.jsonl。"""
     import yaml
@@ -60,7 +62,7 @@ def train(
     adapter_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_file or adapter_dir.parent / "train.log"
 
-    cfg = build_train_config(data_dir, adapter_dir, iters, lr, seed)
+    cfg = build_train_config(data_dir, adapter_dir, iters, lr, seed, lora_scale=lora_scale)
     cfg_path = adapter_dir.parent / "lora_config.yaml"
     with open(cfg_path, "w") as f:
         yaml.dump(cfg, f, allow_unicode=True)
