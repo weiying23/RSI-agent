@@ -1,0 +1,34 @@
+{
+  "sys": {
+    "original_accuracy": 0.7267,
+    "external_accuracy": 0.57,
+    "mixed_accuracy": 0.6785,
+    "parse_fail_original": 0.0333,
+    "parse_fail_external": 0.01
+  },
+  "h6": {
+    "tag": "h6_kshots3",
+    "genome": {
+      "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+      "k_shots": 3,
+      "shot_policy": "hard_win",
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "max_tokens": 512,
+      "retry_k": 3,
+      "format_retry": 1,
+      "self_consistency_k": 2
+    },
+    "summary": {
+      "n": 30,
+      "accuracy": 0.7333,
+      "mean_resp_chars": 326.5,
+      "multi_boxed_rate": 0.0,
+      "parse_fail_rate": 0.0333,
+      "no_reasoning_rate": 0.0,
+      "composite": 0.725,
+      "elapsed_min": 8.3
+    }
+  },
+  "finished_at": "2026-11-13 06:14:26"
+}
