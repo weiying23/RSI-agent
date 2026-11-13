@@ -112,6 +112,11 @@ footer{color:var(--muted);font-size:12.5px;padding:26px 0 40px;border-top:1px so
 .tsum{font-size:12.8px;color:#475062;background:#f6f7fb;border-left:3px solid var(--accent);
   border-radius:0 8px 8px 0;padding:8px 12px;margin:8px 0 20px;line-height:1.65}
 .tsum b{color:var(--accent)}
+
+/* flow */
+.flow{margin:16px 0 4px}
+.flow svg{width:100%;height:auto;display:block}
+.flow text{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
 </style>
 </head>
 <body>
@@ -156,14 +161,14 @@ footer{color:var(--muted);font-size:12.5px;padding:26px 0 40px;border-top:1px so
     <tbody>
       <tr><td>改什么</td><td>经验能持续改写系统的哪类资产——权重、记忆、技能、工具或工作流；只改一类，还是 harness 与权重协同。改哪类、怎么组合，就得到哪种 RSI</td><td>STaR（权重）、Reflexion（记忆）、Voyager（技能）、AFlow（工作流）；Self-HPO、CoEvo-RSI（协同）</td></tr>
       <tr><td>拿什么经验、何时生效</td><td>改进信号是否由系统自己生产（成功轨迹、失败经验、自提任务、自博弈、自裁判）；信号是回合内即改，还是跨任务、跨代积累——前者只是适应，后者才算自改进</td><td>STaR / CFOE / Absolute Zero / SPIN / Self-Rewarding；Reflexion（回合内）、DGM（跨代）</td></tr>
-      <tr><td>改到哪一层算递归</td><td>“怎么改”本身是否也被这条回路改写；只改产物叫迭代，改到做改进的那套流程才叫递归。审计论文的检验办法：同起点、同预算，用晚版的改进流程替换早版重跑，看是否产出更好的系统</td><td>Audit（2610.27610）；DGM、Gödel Agent、Skill∞、LM2LM</td></tr>
+      <tr><td>改到哪一层算递归</td><td>做改进的那套流程是否也被改；只改产物叫迭代，改到做改进的流程才叫递归。审计论文的检验办法：同起点、同预算，用晚版的改进流程替换早版重跑，看是否产出更好的系统</td><td>Audit（2610.27610）；DGM、Gödel Agent、Skill∞、LM2LM</td></tr>
       <tr><td>什么证据才算数</td><td>能否在固定预算内自主协同优化数据、训练器与 harness，并用同起点、同预算的对照来证明；预算内闭环才算数</td><td>VibeTraining-Bench、RSI Arena、Audit</td></tr>
     </tbody>
   </table></div>
   <p class="tsum"><b>小结</b>·差别在到底改了什么。系统里负责把经验变成改动的，说到底是几段提示词、几段代码、一套“试什么、留什么、丢什么”的筛选规则。宽口径：这些是人写死的，循环只往技能库、记忆、harness、权重里写改动；严口径：循环改的就是这几段提示词和代码——下一轮做改进用的，就是被改过的新版本。前者把工具磨快、几轮到头；后者把磨工具的手艺练上去，才可能一轮比一轮涨得多。</p>
 
   <h3>问题二 · L0–L3：分层标准与判据</h3>
-  <p class="qnote">分层标准只有一条：<b>看被改写的是哪一层资产、这一层下一轮还会不会被再次改写</b>。改运行时资产（提示/记忆/技能/控制流）是 L0；改进入训练的数据是 L1；改权重、且新权重成为下一代生成器是 L2；改“怎么改”本身（搜索算子/评估函数/元技能/做改进的那段代码）是 L3。层级与模型大小、分数高低无关。</p>
+  <p class="qnote">分层标准只有一条：<b>看被改写的是哪一层资产、这一层下一轮还会不会被再次改写</b>。改运行时资产（提示/记忆/技能/控制流）是 L0；改进入训练的数据是 L1；改权重、且新权重成为下一代生成器是 L2；改做改进的那段代码（搜索算子/评估函数/元技能）是 L3。层级与模型大小、分数高低无关。</p>
   <div class="tbl-wrap"><table>
     <thead><tr><th style="width:11%">层级</th><th style="width:25%">被改写的资产</th><th style="width:50%">判定要点（谁改、怎么验证）</th><th style="width:14%">典型代表</th></tr></thead>
     <tbody>
@@ -184,7 +189,7 @@ footer{color:var(--muted);font-size:12.5px;padding:26px 0 40px;border-top:1px so
       <tr><td>记教训：失败之后用文字写下错在哪、下次怎么做，下次带着这份教训重试。</td><td><span class="b b-l0">L0</span></td><td>提示词里的教训文本。不动权重也不动代码，这是最便宜的改法。</td><td>文本没法自动验证，只能靠裁判。判失败才写，成功不写。</td><td>下轮拼进提示词，靠模型读懂教训来改行为。</td><td>教训质量完全依赖裁判，信号只有成败没有细节；改动只存在上下文里，换任务带不走。</td></tr>
       <tr><td>试流程：把做事的流程写成代码，自动试很多套不同的流程，挑验证集上得分最高的那套。</td><td><span class="b b-l0">L0</span></td><td>做事的流程本身，写成代码。流程是结构，结构才能被搜索。</td><td>候选流程拿到验证集上跑分，分数回填搜索。</td><td>整套换用得分最高的那套流程。</td><td>跑分不等于真有用，评分不准时搜索专挑取巧流程；每代候选都要真跑验证集，算力开销大。</td></tr>
       <tr><td>自己练：模型自己出题自己答，用验证器只留做对的样本，再拿这些样本微调自己的参数。</td><td><span class="b b-l2">L1+L2</span></td><td>权重。只有参数上的改动才能跨任务带走。</td><td>改权重要靠数据，所以先用验证器筛出确定做对的样本，只留通过者。</td><td>用筛过的样本微调，能力进参数，什么任务都能用。</td><td>一切押在验证器上，验证器可作弊，错误会被放大进参数；训练要 GPU，单轮成本最高。</td></tr>
-      <tr><td>改“怎么改进”：把负责做改进的那段流程代码也当成被改对象，每轮修改它、验证它、换上更好的版本。</td><td><span class="b b-l3">L3</span></td><td>做改进的那段流程代码本身。等于把改进机器当成被改对象。</td><td>新老版本在沙箱里同台跑基准，比前版好才保留进档案。</td><td>下一轮整个换被改过的新版本来跑。</td><td>判“改进流程好不好”的信号最难造，没有外部评分就只剩自我欺骗；必须沙箱加人工监督。</td></tr>
+      <tr><td>连改进脚本也改：把负责做改进的那段代码本身当成被改对象，每轮修改它、验证它、换上更好的版本。</td><td><span class="b b-l3">L3</span></td><td>做改进的那段流程代码本身。等于把改进机器当成被改对象。</td><td>新老版本在沙箱里同台跑基准，比前版好才保留进档案。</td><td>下一轮整个换被改过的新版本来跑。</td><td>判“改进流程好不好”的信号最难造，没有外部评分就只剩自我欺骗；必须沙箱加人工监督。</td></tr>
       <tr><td>两层轮流改：外层设置和内层权重轮流进化，一层搜出来的设置用来训练另一层。</td><td><span class="b b-dual">L0+L2</span></td><td>外层设置和内层权重，轮流当被改对象。</td><td>外层靠硬任务集赛马选设置，内层在选定设置下训练。</td><td>搜出的设置拿来训权重，新权重暴露的新失败交给下一轮外层去解决。</td><td>两层信号不同源，容易互相抵消；需要晋升门和双种子统计防回归，工程量最重。</td></tr>
       <tr><td>定标准：自己不做任何改进，专门规定“怎么证明变强了”的证据标准，替其他六族把关。</td><td><span class="b b-eval">不占层</span></td><td>不改任何东西，产出的是证据标准。</td><td>把别人的主张拆开，逐条对照证据。</td><td>不生效。它规定其他六族怎么证明自己变强。</td><td>不做改进、没有直接收益，只有标准和审计结论。</td></tr>
     </tbody>
@@ -194,7 +199,7 @@ footer{color:var(--muted);font-size:12.5px;padding:26px 0 40px;border-top:1px so
     <p><b>记教训</b>：① 一轮结束后由裁判给成败；② 失败则让模型写下错在第几步、为什么、下次怎么做；③ 教训追加进上下文记忆（通常只留最近 1–3 条），下一轮直接拼进提示词；④ 成功即停、不写记忆，避免噪声污染。验证信号的质量决定教训质量。</p>
     <p><b>试流程</b>：① 把做事流程写成可执行代码或图（节点是步骤，边是数据流）；② 用树搜索、进化算子或元 agent 在代码空间采样新结构；③ 每个候选在验证集上跑分，分数回填搜索；④ 最优若干进档案，防止后续搜索遗忘。搜索空间必须可执行、评估必须便宜可靠。</p>
     <p><b>自己练</b>：① 当前模型对题目采样多条解答；② 用可执行验证器（单测/答案比对）过滤，只留通过者；③ 通过样本做 SFT 或 RL 更新权重；④ 新权重回到第①步，生成更难、更多样的数据，形成代际循环。验证器不可作弊，且要防训练/评测污染。</p>
-    <p><b>改“怎么改进”</b>：① 把 agent 自身代码、生成技能的那套技能或改进策略设为可编辑对象；② 让模型提出修改补丁，在沙箱里跑基准验证；③ 只保留有实证增益的修改进档案（DGM 式），或让 RL 直接学会“提改进方案”（LM2LM 式）；④ 下一轮做改进用的，就是被改过的新版本。</p>
+    <p><b>连改进脚本也改</b>：① 把 agent 自身代码、生成技能的那套技能或改进策略设为可编辑对象；② 让模型提出修改补丁，在沙箱里跑基准验证；③ 只保留有实证增益的修改进档案（DGM 式），或让 RL 直接学会“提改进方案”（LM2LM 式）；④ 下一轮做改进用的，就是被改过的新版本。</p>
     <p><b>两层轮流改</b>：① H 步（改外层设置）固定权重，让模型提出 harness 变体（提示/工具/控制流/参数），在硬任务集上评；② 选出最优设置后 P 步（改权重）做 RL/SFT 更新；③ 权重变化后失败模式变了，下一轮 H 步重新瞄准；④ 归档加晋升门防止回归。交替、互相瞄准，不是并行堆叠。</p>
     <p><b>定标准</b>：① 把论文主张拆成“产物更好”与“改进流程更好”两类；② 对后者要求同起点、同预算，用晚版流程替换早版重跑再比，以及多次全环重跑；③ 用防作弊基准（隔离容器、禁网、隐藏测试）挡 reward hacking；④ 按主张逐条报告证据等级。没有“改进流程变好”证据的“RSI”只能算迭代。</p>
   </div></details>
@@ -218,7 +223,86 @@ footer{color:var(--muted);font-size:12.5px;padding:26px 0 40px;border-top:1px so
       <tr><td>对齐研究·生产规模</td><td>AAR 在 Claude Sonnet 4：<b>无显著增益</b></td><td>小尺度收益不可外推</td></tr>
     </tbody>
   </table></div>
-  <p class="tsum"><b>小结</b>·最稳的涨点来自<b>经验复用</b>：把一次成功变成可检索的资产（技能库、反思记忆），代码、网页、探索类任务最明显；<br>· <b>结构搜索</b>与<b>数据自举</b>次之：前者把编排当搜索空间、成本低迁移好，后者只学验证正确的样本、上限由验证器决定；<br>· <b>权重更新</b>让能力进参数、跨任务更稳，但验证器一弱就会放大错误；<br>· <b>改“怎么改进”</b>收益最大，也最依赖沙箱和外部收益函数，否则自我欺骗；<br>· <b>双通道</b>把 harness 对准权重的失败面，增益可超单通道之和，但需双种子和配对检验挡噪声；<br>· <b>预算、并行、人类反馈</b>能关差距，不等于能力内化——基准涨分与人类偏好并不总一致；<br>· <b>劣化也有规律</b>：没有外部裁决的自主训练会滑向取巧，非参数更新不隔离会遗忘，小尺度收益外推到大模型常失效。</p>
+  <p class="tsum"><b>小结</b>·最稳的涨点来自<b>经验复用</b>：把一次成功变成可检索的资产（技能库、反思记忆），代码、网页、探索类任务最明显；<br>· <b>结构搜索</b>与<b>数据自举</b>次之：前者把编排当搜索空间、成本低迁移好，后者只学验证正确的样本、上限由验证器决定；<br>· <b>权重更新</b>让能力进参数、跨任务更稳，但验证器一弱就会放大错误；<br>· <b>连改进脚本也改</b>收益最大，也最依赖沙箱和外部收益函数，否则自我欺骗；<br>· <b>双通道</b>把 harness 对准权重的失败面，增益可超单通道之和，但需双种子和配对检验挡噪声；<br>· <b>预算、并行、人类反馈</b>能关差距，不等于能力内化——基准涨分与人类偏好并不总一致；<br>· <b>劣化也有规律</b>：没有外部裁决的自主训练会滑向取巧，非参数更新不隔离会遗忘，小尺度收益外推到大模型常失效。</p>
+
+  <div class="card">
+    <h3>综合结论：RSI 应该是什么样</h3>
+    <p>40 篇文献合起来看，一个站得住的 RSI 不是某个单点技术，而是一个<b>带验收的循环</b>。拆开就五条：</p>
+    <ul class="tight">
+      <li><b>两条腿走路</b>：给模型的配置（提示、工具、流程）和模型本身轮流改，各自瞄准对方刚暴露的失败模式。只改一边，收益很快见顶。</li>
+      <li><b>裁判要不会说谎</b>：判断“变好了”不能靠模型自己打分，要靠能直接执行对错的程序，跑单测、对答案。自己说自己好，不算数。</li>
+      <li><b>回路里要有刹车</b>：新版接班前，必须在一批从没参与改进的题上赢过现任，还要多次重跑确认不是运气；好版本都存档，退步了能退回去。</li>
+      <li><b>验收在回路外面</b>：一批题全程锁死，只在验收时用，考的是没见过的题还会不会；再来一批别的来源的题，考的是换种出法还灵不灵，并且不许倒退。在回路里测自己，等于让学生给自己打分。</li>
+      <li><b>再往上走只有一道门</b>：连“提议什么、怎么筛、怎么训”的那套脚本本身也变成被改对象。它一改，必须关在沙箱里、用外部的判分程序验收，否则就是自己哄自己。</li>
+    </ul>
+
+<div class="flow">
+<svg viewBox="0 0 980 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RSI 循环流程图">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5b6474"/></marker>
+    <marker id="arwP" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker>
+  </defs>
+
+  <!-- ⑥ 外部验收 -->
+  <rect x="330" y="16" width="460" height="66" rx="10" fill="#e6f7ef" stroke="#34d399"/>
+  <text x="560" y="44" text-anchor="middle" font-size="14" font-weight="bold" fill="#047857">⑥ 外部验收（每代一次）</text>
+  <text x="560" y="66" text-anchor="middle" font-size="12" fill="#047857">用一直锁着的题考它没见过的；用别处来的题考它，不许倒退</text>
+
+  <!-- 起点 -->
+  <rect x="150" y="120" width="300" height="46" rx="23" fill="#f2f4f8" stroke="#334155" stroke-width="1.5"/>
+  <text x="300" y="149" text-anchor="middle" font-size="14" font-weight="bold" fill="#1b2230">当前系统：一个模型 + 一套配置</text>
+
+  <!-- ① -->
+  <rect x="150" y="196" width="300" height="46" rx="10" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="300" y="225" text-anchor="middle" font-size="13.5">① 跑任务，攒下做对和做错的记录</text>
+
+  <!-- ② H 步 -->
+  <rect x="110" y="272" width="380" height="70" rx="10" fill="#eef1f5" stroke="#94a3b8"/>
+  <text x="300" y="300" text-anchor="middle" font-size="14" font-weight="bold" fill="#475569">② 改配置，不动模型</text>
+  <text x="300" y="324" text-anchor="middle" font-size="12" fill="#475569">模型自己提几套新配置，逐套跑分，赢了才换</text>
+
+  <!-- ③ P 步 -->
+  <rect x="110" y="372" width="380" height="70" rx="10" fill="#e8efff" stroke="#60a5fa"/>
+  <text x="300" y="400" text-anchor="middle" font-size="14" font-weight="bold" fill="#1d4ed8">③ 补课：自己出题自己解</text>
+  <text x="300" y="424" text-anchor="middle" font-size="12" fill="#1d4ed8">只留做全对的题，攒成新教材</text>
+
+  <!-- ④ 重训 -->
+  <rect x="110" y="472" width="380" height="56" rx="10" fill="#e8efff" stroke="#60a5fa"/>
+  <text x="300" y="506" text-anchor="middle" font-size="14" font-weight="bold" fill="#1d4ed8">④ 拿新教材把模型重训一遍</text>
+
+  <!-- ⑤ 上位 -->
+  <rect x="150" y="560" width="300" height="46" rx="23" fill="#f2f4f8" stroke="#334155" stroke-width="1.5"/>
+  <text x="300" y="589" text-anchor="middle" font-size="14" font-weight="bold" fill="#1b2230">⑤ 新模型 + 新配置出炉</text>
+
+  <!-- 主干箭头 -->
+  <line x1="300" y1="166" x2="300" y2="193" stroke="#5b6474" stroke-width="1.6" marker-end="url(#arw)"/>
+  <line x1="300" y1="242" x2="300" y2="269" stroke="#5b6474" stroke-width="1.6" marker-end="url(#arw)"/>
+  <line x1="300" y1="342" x2="300" y2="369" stroke="#5b6474" stroke-width="1.6" marker-end="url(#arw)"/>
+  <line x1="300" y1="442" x2="300" y2="469" stroke="#5b6474" stroke-width="1.6" marker-end="url(#arw)"/>
+  <line x1="300" y1="528" x2="300" y2="557" stroke="#5b6474" stroke-width="1.6" marker-end="url(#arw)"/>
+
+  <!-- ⑤ → ⑥ 送验收 -->
+  <path d="M450,583 H940 V49 H794" fill="none" stroke="#5b6474" stroke-width="1.6" marker-end="url(#arw)"/>
+  <text x="560" y="573" font-size="11.5" fill="#5b6474">送外部验收</text>
+
+  <!-- ⑥ → 起点：过门才上位 -->
+  <path d="M330,49 H60 V143 H146" fill="none" stroke="#5b6474" stroke-width="1.6" marker-end="url(#arw)"/>
+  <text x="76" y="40" font-size="11.5" fill="#5b6474">过门才上位；不过门，现任继续</text>
+
+  <!-- ⑦ 虚线外环 -->
+  <rect x="620" y="272" width="310" height="256" rx="10" fill="#faf7ff" stroke="#7c3aed" stroke-dasharray="7 5"/>
+  <text x="775" y="304" text-anchor="middle" font-size="14" font-weight="bold" fill="#6d28d9">⑦ 更狠一步：连干活的脚本也改</text>
+  <text x="775" y="330" text-anchor="middle" font-size="12" fill="#6d28d9">把②③④里干活的那套脚本本身也改掉。</text>
+  <text x="775" y="352" text-anchor="middle" font-size="12" fill="#6d28d9">改完先关隔离环境里试，</text>
+  <text x="775" y="374" text-anchor="middle" font-size="12" fill="#6d28d9">成绩用外部判分程序量。</text>
+  <line x1="616" y1="307" x2="494" y2="307" stroke="#7c3aed" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arwP)"/>
+  <line x1="616" y1="407" x2="494" y2="407" stroke="#7c3aed" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arwP)"/>
+  <line x1="616" y1="500" x2="494" y2="500" stroke="#7c3aed" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arwP)"/>
+</svg>
+</div>
+
+    <p class="small muted">读法：②③④是每代的改进回路，⑥是外面的验收闸门，⑦改的是②③④的脚本。</p>
+  </div>
 </section>
 
 <!-- ============ 1. 定义分类 ============ -->
