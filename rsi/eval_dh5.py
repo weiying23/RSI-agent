@@ -44,9 +44,9 @@ def build_variants(h5: Genome, shots: list[dict], d_adapter: Path) -> list[dict]
     ]
 
 
-def eval_original(variants: list[dict], out_dir: Path, py: str) -> dict:
+def eval_original(variants: list[dict], out_dir: Path, py: str, eval_n: int = 450) -> dict:
     spec = {
-        "eval_n": 450,
+        "eval_n": int(eval_n),
         "reps": 1,
         "seed": 20261112,
         "call_timeout_sec": 90,
