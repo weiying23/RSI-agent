@@ -1,0 +1,1698 @@
+{
+  "start": {
+    "w": "v18_w2",
+    "h": "v18_h2"
+  },
+  "h3": {
+    "tag": "sc3",
+    "genome": {
+      "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+      "k_shots": 3,
+      "shot_policy": "hard_win",
+      "temperature": 0.6,
+      "top_p": 0.9,
+      "max_tokens": 384,
+      "retry_k": 3,
+      "format_retry": 1,
+      "self_consistency_k": 3
+    },
+    "search": {
+      "baseline": {
+        "genome": {
+          "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+          "k_shots": 3,
+          "shot_policy": "hard_win",
+          "temperature": 0.6,
+          "top_p": 0.9,
+          "max_tokens": 384,
+          "retry_k": 3,
+          "format_retry": 1,
+          "self_consistency_k": 2
+        },
+        "summary": {
+          "n": 75,
+          "accuracy": 0.3467,
+          "mean_resp_chars": 247.4,
+          "multi_boxed_rate": 0.0,
+          "parse_fail_rate": 0.0533,
+          "no_reasoning_rate": 0.0,
+          "composite": 0.3334,
+          "pass_at_k": 0.4,
+          "solved_shots": [
+            {
+              "pid": "6a65561e1e0d9859",
+              "question": "一个数的 93% 是 26877/100，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意，有：\n\n\\[0.93x = \\frac{26877}{100}\\]\n\n为求 \\(x\\)，解方程：\n\n\\[\nx = \\frac{\\frac{26877}{100}}{0.93}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{26877}{100} \\times \\frac{1}{0.93}\n\\]\n\n\\[\nx = \\frac{26877}{93}\n\\]\n\n简化分数：\n\n\\[\nx = 289\n\\]\n\n因此，这个数是 \\(\\boxed{289}\\)。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "37475dcfd257faac",
+              "question": "计算：25 × 9 × 19 × 29 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[25 \\times 9 = 225\\]\n\n然后继续计算结果：\n\n\\[225 \\times 19 = 4275\\]\n\n最后计算：\n\n\\[4275 \\times 29 = 123975\\]\n\n因此，\\(\\boxed{123975}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "8217414e05feaff7",
+              "question": "计算：15/22 + 14/19 + 1/2 = ？",
+              "solution": "首先计算每个分数的值：\n\n\\[\n\\frac{15}{22} = 0.68181818\\ldots\n\\]\n\\[\n\\frac{14}{19} = 0.736842105\\ldots\n\\]\n\\[\n\\frac{1}{2} = 0.5\n\\]\n\n然后将它们相加：\n\n\\[\n0.68181818\\ldots + 0.736842105\\ldots + 0.5 = 1.918660285\\ldots\n\\]\n\n因此，\\(\\boxed{1.918660285}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "0c1148c2ddf01d6c",
+              "question": "计算：6 × 27 × 24 × 9 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[6 \\times 27 = =乘法结果为：\n\n\\[162 \\times 24 =乘法结果为：\n\n\\[3888 \\times 9 = 34992\\]\n\n所以，最终的答案是 \\(\\boxed{34992}\\)。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "8c9a5be181b08141",
+              "question": "一辆汽车以每小时 79 千米的速度行驶了 0.5 小时，共行驶了多少千米？",
+              "solution": "要计算汽车行驶的距离，可以使用距离公式，即 \\(距离 = 速度 \\times 时间\\)。\n\n给定的速度是每小时 79 千米，时间是 0.5 小时，所以：\n\n\\[\n距离 = 79 \\times 0.5 = 39.5\n\\]\n\n因此，汽车共行驶了 \\(\\boxed{39.5}\\) 千米。",
+              "difficulty": 5,
+              "template": "travel",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "dd0bb14a3300a49a",
+              "question": "求这4个数的平均数：40、143、25、169。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[40 + 143 + 25 + 169 = 377\\]\n\n然后计算平均数：\n\n\\[\\frac{377}{4} = 94.25\\]\n\n因此，这四个数的平均数是 \\(\\boxed{94.25}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "6a36c14cbc7e94c0",
+              "question": "计算：4/5 + 1/2 + 1/11 = ？",
+              "solution": "要计算 \\(\\frac{4}{5} + \\frac{1}{2} + \\frac{1}{11}\\)，首先需要找到一个共同的分母。分母 5, 2, 和 11 的最小公倍数是 110。然后将每个分数转换为以 110 为分母的等价分数。\n\n\\[\n\\frac{4}{5} = \\frac{4 \\times 22}{5 \\times 22} = \\frac{88}{110}\n\\]\n\\[\n\\frac{1}{2} = \\frac{1 \\times 55}{2 \\times 55} = \\frac{55}{110}\n\\]\n\\[\n\\frac{1}{11} = \\frac{1 \\times 10}{11 \\times 10} = \\frac{10}{110}\n\\]\n\n现在可以将它们相加：\n\n\\[\n\\frac{88}{110} + \\frac{55}{110} + \\frac{10}{110} = \\frac{88 + 55 + 10}{110} = \\frac{153}{110}\n\\]\n\n所以，\\(\\boxed{\\frac{153}{110}}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "968eaae9e64a7734",
+              "question": "求 122 和 94 和 126 的最大公约数。",
+              "solution": "为找到 122, 94, 和 126 的最大公约数（GCD），首先我们需要找到每个数的质因数分解：\n\n- \\(122 = 2 \\times 61\\)\n- \\(94 = 2 \\times 47\\)\n- \\(126 = 2 \\times 3^2 \\times 7\\)\n\n接下来，找到所有质因数中相同的最大小数。在上述分解中，只有 \\(2\\) 出现在所有三个数的分解中。因此，最大公约数就是这些共同质因数的乘积，即 \\(\\boxed{2}\\)。",
+              "difficulty": 5,
+              "template": "gcd",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "43075fb8a060d43d",
+              "question": "一件商品打九五折后的售价是 1197 元，它的原价是多少元？",
+              "solution": "设原价为 \\(x\\) 元。\n\n打九五折即为原价的 \\(95\\%\\)，所以有方程：\n\n\\[0.95x = 1197\\]\n\n为求原价 \\(x\\)，解方程：\n\n\\[\nx = \\frac{1197}{0.95}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{1197}{0.95} = 1260\n\\]\n\n因此，原价是 \\(\\boxed{1260}\\) 元。",
+              "difficulty": 5,
+              "template": "discount",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "6684ad3a5976206d",
+              "question": "笼子里有鸡和兔共 94 只，一共有 260 条腿。兔有多少只？",
+              "solution": "设鸡有 \\(x\\) 只，那么兔子有 \\(94 - x\\) 只。鸡有 2 条腿，兔子有 4 条腿。根据题意可以得到的等式为：\n\n\\[2x + 4(94 - x) = 260\\]\n\n解这个方程，我们得到：\n\n\\[2x + 376 - 4x = 260\\]\n\\[-2x = 260 - 376\\]\n\\[-2x = -116\\]\n\\[x = 58\\]\n\n所以鸡有 58 只，那么兔子有 \\(94 - 58 = 36\\) 只。\n\n因此，兔子的数量是 \\(\\boxed{36}\\)。",
+              "difficulty": 5,
+              "template": "chicken_rabbit",
+              "success_rate": 1.0,
+              "gen": 1
+            }
+          ]
+        }
+      },
+      "max512": {
+        "genome": {
+          "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+          "k_shots": 3,
+          "shot_policy": "hard_win",
+          "temperature": 0.6,
+          "top_p": 0.9,
+          "max_tokens": 512,
+          "retry_k": 3,
+          "format_retry": 1,
+          "self_consistency_k": 2
+        },
+        "summary": {
+          "n": 75,
+          "accuracy": 0.3467,
+          "mean_resp_chars": 275.1,
+          "multi_boxed_rate": 0.0,
+          "parse_fail_rate": 0.0,
+          "no_reasoning_rate": 0.0,
+          "composite": 0.3467,
+          "pass_at_k": 0.4,
+          "solved_shots": [
+            {
+              "pid": "6a65561e1e0d9859",
+              "question": "一个数的 93% 是 26877/100，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意，有：\n\n\\[0.93x = \\frac{26877}{100}\\]\n\n为求 \\(x\\)，解方程：\n\n\\[\nx = \\frac{\\frac{26877}{100}}{0.93}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{26877}{100 \\times 0.93} = \\frac{26877}{93}\n\\]\n\n简化分数：\n\n\\[\nx = \\frac{26877}{93} = 289\n\\]\n\n因此，这个数是 \\(\\boxed{289}\\)。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "37475dcfd257faac",
+              "question": "计算：25 × 9 × 19 × 29 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[25 \\times 9 = 225\\]\n\n然后继续计算结果：\n\n\\[225 \\times 19 = 4275\\]\n\n最后计算：\n\n\\[4275 \\times 29 = 123975\\]\n\n因此，\\(\\boxed{123975}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "85f670bc937edb98",
+              "question": "计算：1/6 + 2/19 + 9/22 = ？",
+              "solution": "为了计算 \\(\\frac{1}{6} + \\frac{2}{19} + \\frac{9}{22}\\)，首先需要找到一个共同的分母。分母 6, 19, 和 22 的最小公倍数是 \\(6 \\times 19 \\times 22 = 2508\\)。\n\n然后将每个分数转换为以 2508 为分母的等价分数：\n\n\\[\n\\frac{1}{6} = \\frac{1 \\times 418}{6 \\times 418} = \\frac{418}{2508}\n\\]\n\\[\n\\frac{2}{19} = \\frac{2 \\times 132}{19 \\times 132} = \\frac{264}{2508}\n\\]\n\\[\n\\frac{9}{22} = \\frac{9 \\times 114}{22 \\times 114} = \\frac{1026}{2508}\n\\]\n\n现在可以将它们相加：\n\n\\[\n\\frac{418}{2508} + \\frac{264}{2508} + \\frac{1026}{2508} = \\frac{418 + 264 + 1026}{2508} = \\frac{1708}{2508}\n\\]\n\n简化这个分数，我们可以找到最大公约数，但是 \\(\\frac{1708}{2508}\\) 无法进一步简化为更简单的分数。因此，\\(\\boxed{\\frac{1708}{2508}}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "0c1148c2ddf01d6c",
+              "question": "计算：6 × 27 × 24 × 9 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[6 \\times 27 = =乘法结果为：\n\n\\[162 \\times 24 =乘法结果为：\n\n\\[3888 \\times 9 = 34992\\]\n\n所以，最终的答案是 \\(\\boxed{34992}\\)。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "8c9a5be181b08141",
+              "question": "一辆汽车以每小时 79 千米的速度行驶了 0.5 小时，共行驶了多少千米？",
+              "solution": "要计算汽车行驶的距离，我们可以使用距离公式，即 \\(距离 = 速度 \\times 时间\\)。\n\n给定的速度是每小时 79 千米，时间为 0.5 小时，所以：\n\n\\[\n距离 = 79 \\times 0.5 = 39.5\n\\]\n\n因此，汽车共行驶了 \\(\\boxed{39.5}\\) 千米。",
+              "difficulty": 5,
+              "template": "travel",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "dd0bb14a3300a49a",
+              "question": "求这4个数的平均数：40、143、25、169。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[40 + 143 + 25 + 169 = 377\\]\n\n然后计算平均数：\n\n\\[\\frac{377}{4} = 94.25\\]\n\n因此，这四个数的平均数是 \\(\\boxed{94.25}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "6a36c14cbc7e94c0",
+              "question": "计算：4/5 + 1/2 + 1/11 = ？",
+              "solution": "要计算 \\(\\frac{4}{5} + \\frac{1}{2} + \\frac{1}{11}\\)，首先需要找到一个共同的分母。分母 5, 2, 和 11 的最小公倍数是 110。然后将每个分数转换为以 110 为分母的等价分数。\n\n\\[\n\\frac{4}{5} = \\frac{4 \\times 22}{5 \\times 22} = \\frac{88}{110}\n\\]\n\\[\n\\frac{1}{2} = \\frac{1 \\times 55}{2 \\times 55} = \\frac{55}{110}\n\\]\n\\[\n\\frac{1}{11} = \\frac{1 \\times 10}{11 \\times 10} = \\frac{10}{110}\n\\]\n\n现在可以将它们相加：\n\n\\[\n\\frac{88}{110} + \\frac{55}{110} + \\frac{10}{110} = \\frac{88 + 55 + 10}{110} = \\frac{153}{110}\n\\]\n\n所以，\\(\\boxed{\\frac{153}{110}}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "968eaae9e64a7734",
+              "question": "求 122 和 94 和 126 的最大公约数。",
+              "solution": "为找到 122, 94, 和 126 的最大公约数（GCD），我们首先找到每个数的质因数分解：\n\n- \\(122 = 2 \\times 61\\)\n- \\(94 = 2 \\times 47\\)\n- \\(126 = 2 \\times 3^2 \\times 7\\)\n\n接下来，找到所有质因数中相同的最大小数。在上述分解中，只有 \\(2\\) 出现在所有三个数的分解中。因此，最大公约数就是这些共同质因数的乘积，即 \\(\\boxed{2}\\)。",
+              "difficulty": 5,
+              "template": "gcd",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "43075fb8a060d43d",
+              "question": "一件商品打九五折后的售价是 1197 元，它的原价是多少元？",
+              "solution": "设原价为 \\(x\\) 元。\n\n打九五折即为原价的 \\(95\\%\\)，所以有方程：\n\n\\[0.95x = 1197\\]\n\n为求原价 \\(x\\)，解方程：\n\n\\[\nx = \\frac{1197}{0.95}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{1197}{0.95} = 1260\n\\]\n\n因此，原价是 \\(\\boxed{1260}\\) 元。",
+              "difficulty": 5,
+              "template": "discount",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "6684ad3a5976206d",
+              "question": "笼子里有鸡和兔共 94 只，一共有 260 条腿。兔有多少只？",
+              "solution": "设鸡有 \\(x\\) 只，那么兔子有 \\(94 - x\\) 只。鸡有 2 条腿，兔子有 4 条腿。根据题意可以得到的等式为：\n\n\\[2x + 4(94 - x) = 260\\]\n\n解这个方程，我们得到：\n\n\\[2x + 376 - 4x = 260\\]\n\\[-2x = 260 - 376\\]\n\\[-2x = -116\\]\n\\[x = 58\\]\n\n所以鸡有 58 只，那么兔子有 \\(94 - 58 = 36\\) 只。\n\n因此，兔子的数量是 \\(\\boxed{36}\\)。",
+              "difficulty": 5,
+              "template": "chicken_rabbit",
+              "success_rate": 1.0,
+              "gen": 1
+            }
+          ]
+        }
+      },
+      "sc3": {
+        "genome": {
+          "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+          "k_shots": 3,
+          "shot_policy": "hard_win",
+          "temperature": 0.6,
+          "top_p": 0.9,
+          "max_tokens": 384,
+          "retry_k": 3,
+          "format_retry": 1,
+          "self_consistency_k": 3
+        },
+        "summary": {
+          "n": 75,
+          "accuracy": 0.3733,
+          "mean_resp_chars": 274.0,
+          "multi_boxed_rate": 0.0,
+          "parse_fail_rate": 0.0133,
+          "no_reasoning_rate": 0.0,
+          "composite": 0.37,
+          "pass_at_k": 0.48,
+          "solved_shots": [
+            {
+              "pid": "6a65561e1e0d9859",
+              "question": "一个数的 93% 是 26877/100，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意，有：\n\n\\[0.93x = \\frac{26877}{100}\\]\n\n为求 \\(x\\)，解方程：\n\n\\[\nx = \\frac{26877}{100} \\div 0.93\n\\]\n\n首先计算 \\(\\frac{26877}{100}\\)：\n\n\\[\n\\frac{26877}{100} = 268.77\n\\]\n\n然后计算 \\(x\\)：\n\n\\[\nx = 268.77 \\div 0.93\n\\]\n\n\\[\nx = 289\n\\]\n\n因此，这个数是 \\(\\boxed{289}\\)。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "37475dcfd257faac",
+              "question": "计算：25 × 9 × 19 × 29 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[25 \\times 9 = 225\\]\n\n然后继续计算结果：\n\n\\[225 \\times 19 = 4275\\]\n\n最后计算：\n\n\\[4275 \\times 29 = 123975\\]\n\n所以，\\(\\boxed{123975}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "85f670bc937edb98",
+              "question": "计算：1/6 + 2/19 + 9/22 = ？",
+              "solution": "为了计算 \\(\\frac{1}{6} + \\frac{2}{19} + \\frac{9}{22}\\)，首先需要找到一个共同的分母。分母 6, 19, 和 22 的最小公倍数（LCM）是 \\(6 \\times 19 \\times 22 = 2508\\)。\n\n然后，将每个分数转换为以 2508 为分母的等价分数：\n\n\\[\n\\frac{1}{6} = \\frac{1 \\times 418}{6 \\times 418} = \\frac{418}{2508}\n\\]\n\\[\n\\frac{2}{19} = \\frac{2 \\times 132}{19 \\times 132} = \\frac{264}{2508}\n\\]\n\\[\n\\frac{9}{22} = \\frac{9 \\times 114}{22 \\times 114} = \\frac{1026}{2508}\n\\]\n\n现在可以将它们相加：\n\n\\[\n\\frac{418}{2508} + \\frac{264}{2508} + \\frac{1026}{2508} = \\frac{418 + 264 + 1026}{2508} = \\frac{1708}{2508}\n\\]\n\n这个分数可以简化为最简形式：\n\n\\[\n\\frac{1708}{2508} = \\frac{427}{627}\n\\]\n\n所以，\\(\\boxed{\\frac{427}{627}}\\) 是",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "8217414e05feaff7",
+              "question": "计算：15/22 + 14/19 + 1/2 = ？",
+              "solution": "首先计算每个分数的和：\n\n\\[\n\\frac{15}{22} + \\frac{14}{19}\n\\]\n\n为了相加，需要一个共同的分母。计算分母的最小公倍数（LCM）为 \\(22 \\times 19 = 418\\)。然后转换分数：\n\n\\[\n\\frac{15}{22} = \\frac{15 \\times 19}{22 \\times 19} = \\frac{285}{418}\n\\]\n\\[\n\\frac{14}{19} = \\frac{14 \\times 22}{19 \\times 22} = \\frac{308}{418}\n\\]\n\n现在可以相加：\n\n\\[\n\\frac{285}{418} + \\frac{308}{418} = \\frac{593}{418}\n\\]\n\n然后加上 \\(\\frac{1}{2}\\)：\n\n\\[\n\\frac{593}{418} + \\frac{1}{2} = \\frac{593}{418} + \\frac{1}{2} = \\frac{593}{418} + \\frac{209}{418} = \\frac{802}{418}\n\\]\n\n简化分数 \\(\\frac{802}{418}\\)：\n\n\\[\n\\frac{802}{418} = \\frac{401}{209}\n\\]\n\n所以，最终的答案是 \\(\\boxed{\\frac{401}{209}}\\)。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "0c1148c2ddf01d6c",
+              "question": "计算：6 × 27 × 24 × 9 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[6 \\times 27 = =乘法结果为：\n\n\\[6 \\times 27 =乘法结果为：\n\n\\[162 \\times 24 =乘法结果为：\n\n\\[3888 \\times 9 = 34992\\]\n\n因此，\\(\\boxed{34992}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "8c9a5be181b08141",
+              "question": "一辆汽车以每小时 79 千米的速度行驶了 0.5 小时，共行驶了多少千米？",
+              "solution": "要计算汽车行驶的距离，我们可以使用距离公式，即 \\(距离 = 速度 \\times 时间\\)。\n\n给定的速度是每小时 79 千米，时间为 0.5 小时，所以：\n\n\\[\n距离 = 79 \\times 0.5 = 39.5\n\\]\n\n因此，共行驶了 \\(\\boxed{39.5}\\) 千米。",
+              "difficulty": 5,
+              "template": "travel",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "dd0bb14a3300a49a",
+              "question": "求这4个数的平均数：40、143、25、169。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[40 + 143 + 25 + 169 = 377\\]\n\n然后计算平均数：\n\n\\[\\frac{377}{4} = 94.25\\]\n\n因此，这四个数的平均数是 \\(\\boxed{94.25}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "6a36c14cbc7e94c0",
+              "question": "计算：4/5 + 1/2 + 1/11 = ？",
+              "solution": "为了计算 \\(\\frac{4}{5} + \\frac{1}{2} + \\frac{1}{11}\\)，首先需要找到一个共同的分母。分母 5, 2, 和 11 的最小公倍数是 110。然后将每个分数转换为以 110 为分母的等价分数。\n\n\\[\n\\frac{4}{5} = \\frac{4 \\times 22}{5 \\times 22} = \\frac{88}{110}\n\\]\n\\[\n\\frac{1}{2} = \\frac{1 \\times 55}{2 \\times 55} = \\frac{55}{110}\n\\]\n\\[\n\\frac{1}{11} = \\frac{1 \\times 10}{11 \\times 10} = \\frac{10}{110}\n\\]\n\n现在可以将它们相加：\n\n\\[\n\\frac{88}{110} + \\frac{55}{110} + \\frac{10}{110} = \\frac{88 + 55 + 10}{110} = \\frac{153}{110}\n\\]\n\n所以，\\(\\boxed{\\frac{153}{110}}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "968eaae9e64a7734",
+              "question": "求 122 和 94 和 126 的最大公约数。",
+              "solution": "为找到 122, 94, 和 126 的最大公约数（GCD），我们首先找到每个数的质因数分解：\n\n- \\(122 = 2 \\times 61\\)\n- \\(94 = 2 \\times 47\\)\n- \\(126 = 2 \\times 3^2 \\times 7\\)\n\n接下来，找到所有质因数中相同的最大小数。在上述分解中，只有 2 出现在所有三个数的分解中。因此，最大公约数就是这些共同质因数的乘积，即 \\(\\boxed{2}\\)。",
+              "difficulty": 5,
+              "template": "gcd",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "43075fb8a060d43d",
+              "question": "一件商品打九五折后的售价是 1197 元，它的原价是多少元？",
+              "solution": "设原价为 \\(x\\) 元。\n\n打九五折即为原价的 \\(95\\%\\)，所以有方程：\n\n\\[0.95x = 1197\\]\n\n为求原价 \\(x\\)，解方程：\n\n\\[\nx = \\frac{1197}{0.95}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{1197}{0.95} = 1260\n\\]\n\n因此，原价是 \\(\\boxed{1260}\\) 元。",
+              "difficulty": 5,
+              "template": "discount",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "7716670d41fac5b5",
+              "question": "一个数的 51% 是 43707/100，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意，有：\n\n\\[0.51x = \\frac{43707}{100}\\]\n\n为求 \\(x\\)，解方程：\n\n\\[\nx = \\frac{\\frac{43707}{100}}{0.51}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{43707}{100} \\times \\frac{1}{0.51} = 43707 \\times \\frac{1}{51} = 857\n\\]\n\n因此，这个数是 \\(\\boxed{857}\\)。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "6684ad3a5976206d",
+              "question": "笼子里有鸡和兔共 94 只，一共有 260 条腿。兔有多少只？",
+              "solution": "设鸡有 \\(x\\) 只，那么兔子有 \\(94 - x\\) 只。鸡有 2 条腿，兔子有 4 条腿。根据题意可以得到的等式为：\n\n\\[2x + 4(94 - x) = 260\\]\n\n解这个方程，我们得到：\n\n\\[2x + 376 - 4x = 260\\]\n\\[-2x = 260 - 376\\]\n\\[-2x = -116\\]\n\\[x = 58\\]\n\n所以鸡有 58 只，那么兔子有 \\(94 - 58 = 36\\) 只。\n\n因此，兔子的数量是 \\(\\boxed{36}\\)。",
+              "difficulty": 5,
+              "template": "chicken_rabbit",
+              "success_rate": 1.0,
+              "gen": 1
+            }
+          ]
+        }
+      },
+      "temp05": {
+        "genome": {
+          "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+          "k_shots": 3,
+          "shot_policy": "hard_win",
+          "temperature": 0.5,
+          "top_p": 0.9,
+          "max_tokens": 384,
+          "retry_k": 3,
+          "format_retry": 1,
+          "self_consistency_k": 2
+        },
+        "summary": {
+          "n": 75,
+          "accuracy": 0.3733,
+          "mean_resp_chars": 257.0,
+          "multi_boxed_rate": 0.0,
+          "parse_fail_rate": 0.08,
+          "no_reasoning_rate": 0.0,
+          "composite": 0.3533,
+          "pass_at_k": 0.44,
+          "solved_shots": [
+            {
+              "pid": "6a65561e1e0d9859",
+              "question": "一个数的 93% 是 26877/100，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意，有：\n\n\\[0.93x = \\frac{26877}{100}\\]\n\n为求 \\(x\\)，解方程：\n\n\\[\nx = \\frac{26877}{100} \\div 0.93\n\\]\n\n首先计算 \\(\\frac{26877}{100}\\)：\n\n\\[\n\\frac{26877}{100} = 268.77\n\\]\n\n然后计算 \\(x\\)：\n\n\\[\nx = 268.77 \\div 0.93\n\\]\n\n\\[\nx = 289\n\\]\n\n因此，这个数是 \\(\\boxed{289}\\)。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "37475dcfd257faac",
+              "question": "计算：25 × 9 × 19 × 29 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[25 \\times 9 = 225\\]\n\n然后继续计算结果：\n\n\\[225 \\times 19 = 4275\\]\n\n最后计算：\n\n\\[4275 \\times 29 = 123975\\]\n\n因此，\\(\\boxed{123975}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "1a2df3f9405dc251",
+              "question": "计算：13 × 26 × 18 × 24 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[13 \\times 26 = =乘法为：\\[13 \\times 26 =于 3 = 338\\]\n\n然后继续计算结果：\n\n\\[338 \\times 18 = 6084\\]\n\n最后计算：\n\n\\[6084 \\times 24 = 146016\\]\n\n所以，最终的答案是 \\(\\boxed{146016}\\)。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "0c1148c2ddf01d6c",
+              "question": "计算：6 × 27 × 24 × 9 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[6 \\times 27 = =乘法：\n\n\\[6 \\times 27 = = 162\\]\n\n然后继续计算：\n\n\\[162 \\times 24 = 3888\\]\n\n最后计算：\n\n\\[3888 \\times 9 = 34992\\]\n\n所以，最终的答案是 \\(\\boxed{34992}\\)。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "8c9a5be181b08141",
+              "question": "一辆汽车以每小时 79 千米的速度行驶了 0.5 小时，共行驶了多少千米？",
+              "solution": "要计算汽车行驶的距离，我们可以使用距离公式，即 \\(距离 = 速度 \\times 时间\\)。\n\n给定的速度是每小时 79 千米，时间为 0.5 小时，所以：\n\n\\[\n距离 = 79 \\times 0.5 = 39.5\n\\]\n\n因此，汽车共行驶了 \\(\\boxed{39.5}\\) 千米。",
+              "difficulty": 5,
+              "template": "travel",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "dd0bb14a3300a49a",
+              "question": "求这4个数的平均数：40、143、25、169。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[40 + 143 + 25 + 169 = 377\\]\n\n然后计算平均数：\n\n\\[\\frac{377}{4} = 94.25\\]\n\n因此，这四个数的平均数是 \\(\\boxed{94.25}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "6a36c14cbc7e94c0",
+              "question": "计算：4/5 + 1/2 + 1/11 = ？",
+              "solution": "要计算 \\(\\frac{4}{5} + \\frac{1}{2} + \\frac{1}{11}\\)，首先需要找到一个共同的分母。分母 5, 2, 和 11 的最小公倍数是 110。然后将每个分数转换为以 110 为分母的等价分数。\n\n\\[\n\\frac{4}{5} = \\frac{4 \\times 22}{5 \\times 22} = \\frac{88}{110}\n\\]\n\\[\n\\frac{1}{2} = \\frac{1 \\times 55}{2 \\times 55} = \\frac{55}{110}\n\\]\n\\[\n\\frac{1}{11} = \\frac{1 \\times 10}{11 \\times 10} = \\frac{10}{110}\n\\]\n\n现在可以将它们相加：\n\n\\[\n\\frac{88}{110} + \\frac{55}{110} + \\frac{10}{110} = \\frac{88 + 55 + 10}{110} = \\frac{153}{110}\n\\]\n\n所以，\\(\\boxed{\\frac{153}{110}}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "968eaae9e64a7734",
+              "question": "求 122 和 94 和 126 的最大公约数。",
+              "solution": "为找到 122, 94, 和 126 的最大公约数（GCD），我们首先找到每个数的质因数分解：\n\n- \\(122 = 2 \\times 61\\)\n- \\(94 = 2 \\times 47\\)\n- \\(126 = 2 \\times 3^2 \\times 7\\)\n\n接下来，找到所有质因数中相同的最大小数。在上述分解中，只有 2 出现在所有三个数的分解中。因此，最大公约数就是这些共同质因数的乘积，即 \\(\\boxed{2}\\)。",
+              "difficulty": 5,
+              "template": "gcd",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "43075fb8a060d43d",
+              "question": "一件商品打九五折后的售价是 1197 元，它的原价是多少元？",
+              "solution": "设原价为 \\(x\\) 元。\n\n打九五折即为原价的 \\(95\\%\\)，所以有方程：\n\n\\[0.95x = 1197\\]\n\n为求原价 \\(x\\)，解方程：\n\n\\[\nx = \\frac{1197}{0.95}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{1197}{0.95} = 1260\n\\]\n\n因此，原价是 \\(\\boxed{1260}\\) 元。",
+              "difficulty": 5,
+              "template": "discount",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "6684ad3a5976206d",
+              "question": "笼子里有鸡和兔共 94 只，一共有 260 条腿。兔有多少只？",
+              "solution": "设鸡有 \\(x\\) 只，那么兔子有 \\(94 - x\\) 只。鸡有 2 条腿，兔子有 4 条腿。根据题意可以得到的等式为：\n\n\\[2x + 4(94 - x) = 260\\]\n\n展开并简化方程：\n\n\\[2x + 376 - 4x = 260\\]\n\\[-2x + 376 = 260\\]\n\\[-2x = 260 - 376\\]\n\\[-2x = -116\\]\n\\[x = \\frac{116}{2}\\]\n\\[x = 58\\]\n\n所以鸡有 58 只，那么兔子有 \\(94 - 58 = 36\\) 只。\n\n因此，兔子的数量是 \\(\\boxed{36}\\)。",
+              "difficulty": 5,
+              "template": "chicken_rabbit",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "0e1bd93ea385ed3c",
+              "question": "一个长方形长 87 厘米，宽 55 厘米。若把宽增加 24 厘米，新长方形的面积是多少平方厘米？",
+              "solution": "原来的长方形面积是 \\(87 \\times 55\\) 平方厘米。\n\n当宽增加 24 厘米后，新的宽是 \\(55 + 24 = 79\\) 厘米。\n\n新的长方形面积是 \\(87 \\times 79\\) 平方厘米。\n\n计算得到的新面积是：\n\n\\[\n87 \\times 79 = 6873\n\\]\n\n因此，新长方形的面积是 \\(\\boxed{6873}\\) 平方厘米。",
+              "difficulty": 5,
+              "template": "rect_area",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            }
+          ]
+        }
+      },
+      "k2_hard": {
+        "genome": {
+          "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+          "k_shots": 2,
+          "shot_policy": "hard_win",
+          "temperature": 0.6,
+          "top_p": 0.9,
+          "max_tokens": 384,
+          "retry_k": 3,
+          "format_retry": 1,
+          "self_consistency_k": 2
+        },
+        "summary": {
+          "n": 75,
+          "accuracy": 0.3467,
+          "mean_resp_chars": 251.9,
+          "multi_boxed_rate": 0.0,
+          "parse_fail_rate": 0.0533,
+          "no_reasoning_rate": 0.0,
+          "composite": 0.3334,
+          "pass_at_k": 0.44,
+          "solved_shots": [
+            {
+              "pid": "6a65561e1e0d9859",
+              "question": "一个数的 93% 是 26877/100，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意，有：\n\n\\[0.93x = \\frac{26877}{100}\\]\n\n为求 \\(x\\)，解方程：\n\n\\[\nx = \\frac{26877}{100} \\div 0.93\n\\]\n\n首先计算 \\(\\frac{26877}{100}\\):\n\n\\[\n\\frac{26877}{100} = 268.77\n\\]\n\n然后计算 \\(x\\):\n\n\\[\nx = 268.77 \\div 0.93\n\\]\n\n\\[\nx = 289\n\\]\n\n因此，这个数是 \\(\\boxed{289}\\)。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "37475dcfd257faac",
+              "question": "计算：25 × 9 × 19 × 29 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[25 \\times 9 = 225\\]\n\n然后继续计算结果：\n\n\\[225 \\times 19 = 4275\\]\n\n最后计算：\n\n\\[4275 \\times 29 = 123975\\]\n\n因此，\\(\\boxed{123975}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "0c1148c2ddf01d6c",
+              "question": "计算：6 × 27 × 24 × 9 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[6 \\times 27 =乘法结果为 162\\]\n\n然后继续计算：\n\n\\[162 \\times 24 = 3888\\]\n\n最后计算：\n\n\\[3888 \\times 9 = 34992\\]\n\n所以，\\(\\boxed{34992}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "8c9a5be181b08141",
+              "question": "一辆汽车以每小时 79 千米的速度行驶了 0.5 小时，共行驶了多少千米？",
+              "solution": "要计算汽车行驶的距离，我们可以使用距离公式，即 \\(距离 = 速度 \\times 时间\\)。\n\n给定的速度是每小时 79 千米，时间是 0.5 小时，所以：\n\n\\[距离 = 79 \\times 0.5 = 39.5\\]\n\n因此，汽车共行驶了 \\(\\boxed{39.5}\\) 千米。",
+              "difficulty": 5,
+              "template": "travel",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "dd0bb14a3300a49a",
+              "question": "求这4个数的平均数：40、143、25、169。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[40 + 143 + 25 + 169 = 377\\]\n\n然后计算平均数：\n\n\\[\\frac{377}{4} = 94.25\\]\n\n因此，这四个数的平均数是 \\(\\boxed{94.25}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "6a36c14cbc7e94c0",
+              "question": "计算：4/5 + 1/2 + 1/11 = ？",
+              "solution": "要计算 \\(\\frac{4}{5} + \\frac{1}{2} + \\frac{1}{11}\\)，首先需要找到一个共同的分母。分母 5, 2, 和 11 的最小公倍数是 110。然后将每个分数转换为以 110 为分母的等价分数。\n\n\\[\n\\frac{4}{5} = \\frac{4 \\times 22}{5 \\times 22} = \\frac{88}{110}\n\\]\n\\[\n\\frac{1}{2} = \\frac{1 \\times 55}{2 \\times 55} = \\frac{55}{110}\n\\]\n\\[\n\\frac{1}{11} = \\frac{1 \\times 10}{11 \\times 10} = \\frac{10}{110}\n\\]\n\n现在可以将它们相加：\n\n\\[\n\\frac{88}{110} + \\frac{55}{110} + \\frac{10}{110} = \\frac{88 + 55 + 10}{110} = \\frac{153}{110}\n\\]\n\n所以，\\(\\boxed{\\frac{153}{110}}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "968eaae9e64a7734",
+              "question": "求 122 和 94 和 126 的最大公约数。",
+              "solution": "为找到 122, 94, 和 126 的最大公约数（GCD），我们首先找到每个数的质因数分解：\n\n- 122 的质因数分解为 $2 \\times 61$\n- 94 的质因数分解为 $2 \\times 47$\n- 126 的质因数分解为 $2 \\times 3^2 \\times 7$\n\n接下来，找到所有质因数中相同的最大小数。在上述分解中，只有 2 出现在所有三个数的分解中。因此，最大公约数就是这些共同质因数的乘积，即 $\\boxed{2}$。",
+              "difficulty": 5,
+              "template": "gcd",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "43075fb8a060d43d",
+              "question": "一件商品打九五折后的售价是 1197 元，它的原价是多少元？",
+              "solution": "设原价为 \\( x \\) 元。\n\n打九五折即为原价的 \\(95\\%\\)，所以有方程：\n\n\\[0.95x = 1197\\]\n\n为求原价 \\(x\\)，解方程：\n\n\\[\nx = \\frac{1197}{0.95}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{1197}{0.95} = 1260\n\\]\n\n因此，原价是 \\(\\boxed{1260}\\) 元。",
+              "difficulty": 5,
+              "template": "discount",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "7716670d41fac5b5",
+              "question": "一个数的 51% 是 43707/100，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意，有：\n\n\\[0.51x = \\frac{43707}{100}\\]\n\n为求 \\(x\\)，解方程：\n\n\\[\nx = \\frac{\\frac{43707}{100}}{0.51}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{43707}{100} \\times \\frac{1}{0.51}\n\\]\n\n\\[\nx = \\frac{43707}{100} \\times \\frac{100}{51}\n\\]\n\n\\[\nx = \\frac{43707}{51}\n\\]\n\n\\[\nx = 857\n\\]\n\n因此，\\(\\boxed{857}\\) 是答案。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "6684ad3a5976206d",
+              "question": "笼子里有鸡和兔共 94 只，一共有 260 条腿。兔有多少只？",
+              "solution": "设鸡有 \\(x\\) 只，那么兔子有 \\(94 - x\\) 只。鸡有 2 条腿，兔子有 4 条腿。根据题意可以得到的等式为：\n\n\\[2x + 4(94 - x) = 260\\]\n\n解这个方程，我们得到：\n\n\\[2x + 376 - 4x = 260\\]\n\\[-2x = 260 - 376\\]\n\\[-2x = -116\\]\n\\[x = 58\\]\n\n所以鸡有 58 只，那么兔子有 \\(94 - 58 = 36\\) 只。\n\n因此，\\(\\boxed{36}\\) 是答案。",
+              "difficulty": 5,
+              "template": "chicken_rabbit",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "0e1bd93ea385ed3c",
+              "question": "一个长方形长 87 厘米，宽 55 厘米。若把宽增加 24 厘米，新长方形的面积是多少平方厘米？",
+              "solution": "原来的长方形面积是 \\(87 \\times 55\\) 平方厘米。\n\n当宽增加 24 厘米后，新长方形的宽变为 \\(55 + 24 = 79\\) 厘米。\n\n新的长方形面积是 \\(87 \\times 79\\) 平方厘米。\n\n计算得到的新面积是 \\(\\boxed{6873}\\) 平方厘米。",
+              "difficulty": 5,
+              "template": "rect_area",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            }
+          ]
+        }
+      },
+      "top_p095": {
+        "genome": {
+          "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+          "k_shots": 3,
+          "shot_policy": "hard_win",
+          "temperature": 0.6,
+          "top_p": 0.95,
+          "max_tokens": 384,
+          "retry_k": 3,
+          "format_retry": 1,
+          "self_consistency_k": 2
+        },
+        "summary": {
+          "n": 75,
+          "accuracy": 0.3467,
+          "mean_resp_chars": 255.5,
+          "multi_boxed_rate": 0.0,
+          "parse_fail_rate": 0.0667,
+          "no_reasoning_rate": 0.0,
+          "composite": 0.33,
+          "pass_at_k": 0.4,
+          "solved_shots": [
+            {
+              "pid": "6a65561e1e0d9859",
+              "question": "一个数的 93% 是 26877/100，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意，有：\n\n\\[0.93x = \\frac{26877}{100}\\]\n\n为求 \\(x\\)，解方程：\n\n\\[\nx = \\frac{26877}{100} \\div 0.93\n\\]\n\n首先计算 \\(\\frac{26877}{100}\\)：\n\n\\[\n\\frac{26877}{100} = 268.77\n\\]\n\n然后计算 \\(x\\)：\n\n\\[\nx = 268.77 \\div 0.93\n\\]\n\n\\[\nx = 289\n\\]\n\n因此，这个数是 \\(\\boxed{289}\\)。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "37475dcfd257faac",
+              "question": "计算：25 × 9 × 19 × 29 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[25 \\times 9 = 225\\]\n\n然后继续计算结果：\n\n\\[225 \\times 19 = 4275\\]\n\n最后计算：\n\n\\[4275 \\times 29 = 123975\\]\n\n因此，\\(\\boxed{123975}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "8217414e05feaff7",
+              "question": "计算：15/22 + 14/19 + 1/2 = ？",
+              "solution": "首先计算每个分数的和：\n\n\\[\n\\frac{15}{22} + \\frac{14}{19} = \\frac{15 \\cdot 19 + 14 \\cdot 22}{22 \\cdot 19} = \\frac{285 + 308}{418} = \\frac{593}{418}\n\\]\n\n然后加上 \\(\\frac{1}{2}\\)：\n\n\\[\n\\frac{593}{418} + \\frac{1}{2} = \\frac{593}{418} + \\frac{1}{2} = \\frac{593}{418} + \\frac{418}{836} = \\frac{593 \\cdot 2 + 418}{836} = \\frac{1186 + 418}{836} = \\frac{1604}{836}\n\\]\n\n简化分数 \\(\\frac{1604}{836}\\)：\n\n\\[\n\\frac{1604}{836} = \\frac{802}{418} = \\frac{401}{209}\n\\]\n\n所以，最终的答案是 \\(\\boxed{\\frac{401}{209}}\\)。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "0c1148c2ddf01d6c",
+              "question": "计算：6 × 27 × 24 × 9 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[6 \\times 27 = =乘法结果为：\n\n\\[162 \\times 24 =乘法结果为：\n\n\\[3888 \\times 9 = 34992\\]\n\n因此，最终的答案是 \\(\\boxed{34992}\\)。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "8c9a5be181b08141",
+              "question": "一辆汽车以每小时 79 千米的速度行驶了 0.5 小时，共行驶了多少千米？",
+              "solution": "要计算汽车行驶的距离，我们可以使用距离公式，即 \\(距离 = 速度 \\times 时间\\)。\n\n给定的速度是每小时 79 千米，时间是 0.5 小时，所以：\n\n\\[\n距离 = 79 \\times 0.5 = 39.5\n\\]\n\n因此，汽车共行驶了 \\(\\boxed{39.5}\\) 千米。",
+              "difficulty": 5,
+              "template": "travel",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "dd0bb14a3300a49a",
+              "question": "求这4个数的平均数：40、143、25、169。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[40 + 143 + 25 + 169 = 377\\]\n\n然后计算平均数：\n\n\\[\\frac{377}{4} = 94.25\\]\n\n因此，这四个数的平均数是 \\(\\boxed{94.25}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "6a36c14cbc7e94c0",
+              "question": "计算：4/5 + 1/2 + 1/11 = ？",
+              "solution": "要计算 \\(\\frac{4}{5} + \\frac{1}{2} + \\frac{1}{11}\\)，首先需要找到一个共同的分母。分母 5, 2, 和 11 的最小公倍数是 110。然后将每个分数转换为以 110 为分母的等价分数。\n\n\\[\n\\frac{4}{5} = \\frac{4 \\times 22}{5 \\times 22} = \\frac{88}{110}\n\\]\n\\[\n\\frac{1}{2} = \\frac{1 \\times 55}{2 \\times 55} = \\frac{55}{110}\n\\]\n\\[\n\\frac{1}{11} = \\frac{1 \\times 10}{11 \\times 10} = \\frac{10}{110}\n\\]\n\n现在可以将它们相加：\n\n\\[\n\\frac{88}{110} + \\frac{55}{110} + \\frac{10}{110} = \\frac{88 + 55 + 10}{110} = \\frac{153}{110}\n\\]\n\n所以，\\(\\boxed{\\frac{153}{110}}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "968eaae9e64a7734",
+              "question": "求 122 和 94 和 126 的最大公约数。",
+              "solution": "为找到 122, 94, 和 126 的最大公约数（GCD），我们首先找到每个数的质因数分解：\n\n- \\(122 = 2 \\times 61\\)\n- \\(94 = 2 \\times 47\\)\n- \\(126 = 2 \\times 3^2 \\times 7\\)\n\n接下来，找到所有质因数中相同的最大小数。在上述分解中，只有 \\(2\\) 出现在所有三个数的分解中。因此，最大公约数就是这些共同质因数的乘积，即 \\(\\boxed{2}\\)。",
+              "difficulty": 5,
+              "template": "gcd",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "43075fb8a060d43d",
+              "question": "一件商品打九五折后的售价是 1197 元，它的原价是多少元？",
+              "solution": "设原价为 \\(x\\) 元。\n\n打九五折即为原价的 \\(95\\%\\)，所以有方程：\n\n\\[0.95x = 1197\\]\n\n为求原价 \\(x\\)，解方程：\n\n\\[\nx = \\frac{1197}{0.95}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{1197}{0.95} = 1260\n\\]\n\n因此，原价是 \\(\\boxed{1260}\\) 元。",
+              "difficulty": 5,
+              "template": "discount",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "6684ad3a5976206d",
+              "question": "笼子里有鸡和兔共 94 只，一共有 260 条腿。兔有多少只？",
+              "solution": "设鸡有 \\(x\\) 只，那么兔子有 \\(94 - x\\) 只。鸡有 2 条腿，兔子有 4 条腿。根据题意可以得到的等式为：\n\n\\[2x + 4(94 - x) = 260\\]\n\n解这个方程，我们得到：\n\n\\[2x + 376 - 4x = 260\\]\n\\[-2x = 260 - 376\\]\n\\[-2x = -116\\]\n\\[x = 58\\]\n\n所以鸡有 58 只，那么兔子有 \\(94 - 58 = 36\\) 只。\n\n因此，兔子的数量是 \\(\\boxed{36}\\)。",
+              "difficulty": 5,
+              "template": "chicken_rabbit",
+              "success_rate": 1.0,
+              "gen": 1
+            }
+          ]
+        }
+      }
+    }
+  },
+  "h4": {
+    "tag": "k2_hard",
+    "genome": {
+      "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+      "k_shots": 2,
+      "shot_policy": "hard_win",
+      "temperature": 0.6,
+      "top_p": 0.9,
+      "max_tokens": 384,
+      "retry_k": 3,
+      "format_retry": 1,
+      "self_consistency_k": 3
+    },
+    "search": {
+      "baseline": {
+        "genome": {
+          "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+          "k_shots": 3,
+          "shot_policy": "hard_win",
+          "temperature": 0.6,
+          "top_p": 0.9,
+          "max_tokens": 384,
+          "retry_k": 3,
+          "format_retry": 1,
+          "self_consistency_k": 3
+        },
+        "summary": {
+          "n": 75,
+          "accuracy": 0.4133,
+          "mean_resp_chars": 229.1,
+          "multi_boxed_rate": 0.0,
+          "parse_fail_rate": 0.0267,
+          "no_reasoning_rate": 0.0,
+          "composite": 0.4066,
+          "pass_at_k": 0.52,
+          "solved_shots": [
+            {
+              "pid": "aecc7b1fb5c372c8",
+              "question": "求这4个数的平均数：177、150、164、88。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数。\n\n首先计算总和：\n\n\\[177 + 150 + 164 + 88 = 579\\]\n\n然后计算平均数：\n\n\\[\\frac{579}{4} = 144.75\\]\n\n因此，这四个数的平均数是 \\(\\boxed{144.75}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "831cc63744449577",
+              "question": "求 40 和 24 和 26 的最小公倍数。",
+              "solution": "要找到 40, 24, 和 26 的最小公倍数（LCM），我们首先找到这些数的最大公约数（GCD），但是由于我们要找的是最小公倍数，所以让我们先找到每个数的质因数分解：\n\n- \\(40 = 2^3 \\times 5\\)\n- \\(24 = 2^3 \\times 3\\)\n- \\(26 = 2 \\times 13\\)\n\n接下来，找到每个数中最高次幂的质因数，并将它们相乘来得到最小公倍数。\n\n- 对于 \\(2\\)，最高次幂是 \\(2^3\\)。\n- 对于 \\(5\\)，最高次幂是 \\(5^1\\)。\n- 对于 \\(3\\)，最高次幂是 \\(3^1\\)。\n- 对于 \\(13\\)，最高次幂是 \\(13^1\\)。\n\n因此，最小公倍数是：\n\n\\[\n2^3 \\times 3 \\times 5 \\times 13 =\n\\]\n\n计算这个值：\n\n\\[\n8 \\times 3 \\times 5 \\times 13 = 24 \\times 5 \\times 13 ==120 \\times 13 = 1560\n\\]\n\n所以，最小公倍数是 \\(\\boxed{1560}\\)。",
+              "difficulty": 5,
+              "template": "lcm",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "9383300c6b48e854",
+              "question": "计算：21/22 + 2/9 + 10/23 = ？",
+              "solution": "首先计算每个分数：\n\n\\[\n\\frac{21}{22} = 1 - \\frac{1}{22} = 1 - 0.0454545\\ldots \\approx 0.954545\\ldots\n\\]\n\n\\[\n\\frac{2}{9} = 0.22222\\ldots\n\\]\n\n\\[\n\\frac{10}{23} \\approx 0.4347826\\ldots\n\\]\n\n然后将它们相加：\n\n\\[\n0.954545\\ldots + 0.22222\\ldots + 0.4347826\\ldots \\approx 1.61155\n\\]\n\n所以，\\(\\boxed{1.61155}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "0cadcf75811b2306",
+              "question": "一个数的 72% 是 8982/25，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意有：\n\n\\[0.72x = \\frac{8982}{25}\\]\n\n首先计算右边的值：\n\n\\[\\frac{8982}{25} = 359.28\\]\n\n所以：\n\n\\[0.72x = 359.28\\]\n\n解 \\(x\\)：\n\n\\[\nx = \\frac{359.28}{0.72}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{359.28}{0.72} = 499\n\\]\n\n因此，这个数是 \\(\\boxed{499}\\)。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "51287594e2d0a7e7",
+              "question": "求 34 和 15 和 12 的最小公倍数。",
+              "solution": "要找到 34, 15, 和 12 的最小公倍数（LCM），首先找到这些数的最大公约数（GCD），但首先找到每个数的质因数分解：\n\n- \\(34 = 2 \\times 17\\)\n- \\(15 = 3 \\times 5\\)\n- \\(12 = 2^2 \\times 3\\)\n\n接下来，找到每个数中最高次幂的质因数，然后将它们相乘来得到最小公倍数。\n\n- 对于 \\(2\\)，最高次幂为 \\(2^2\\)。\n- 对于 \\(3\\)，最高次幂为 \\(3^1\\)。\n- 对于 \\(5\\)，最高次幂为 \\(5^1\\)。\n- 对于 \\(17\\)，最高次幂为 \\(17^1\\)。\n\n因此，最小公倍数为：\n\n\\[\n2^2 \\times 3 \\times 5 \\times 17 =\n\\]\n\n计算这个值：\n\n\\[\n4 \\times 3 \\times 5 \\times 17 =  = 12 \\times 5 \\times 17 =  = 60 \\times 17 = 1020\n\\]\n\n所以，\\(\\boxed{1020}\\) 是答案。",
+              "difficulty": 5,
+              "template": "lcm",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "eab0fe4c25e93507",
+              "question": "一件商品打六五折后的售价是 962 元，它的原价是多少元？",
+              "solution": "设原价为 \\(x\\) 元。\n\n打六五折即为原价的 \\(65\\%\\)，所以有方程：\n\n\\[0.65x = 962\\]\n\n为求原价 \\(x\\)，解方程：\n\n\\[\nx = \\frac{962}{0.65}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{962}{0.65} = 1480\n\\]\n\n因此，原价是 \\(\\boxed{1480}\\) 元。",
+              "difficulty": 5,
+              "template": "discount",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "4d169b8ff162140f",
+              "question": "一个长方形长 23 厘米，宽 16 厘米。若把宽增加 19 厘米，新长方形的面积是多少平方厘米？",
+              "solution": "原来的长方形面积是 \\(23 \\times 16\\) 平方厘米。\n\n当宽增加 19 厘米后，新的宽是 \\(16 + 19 = 35\\) 厘米。\n\n新的长方形面积是 \\(23 \\times 35\\) 平方厘米。\n\n计算得到的新面积是 \\(\\boxed{805}\\) 平方厘米。",
+              "difficulty": 5,
+              "template": "rect_area",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "90dec6286341f243",
+              "question": "计算：10/13 - 7/10 + 1/2 = ？",
+              "solution": "要计算 \\(\\frac{10}{13} - \\frac{7}{10} + \\frac{1}{2}\\)，首先需要找到一个共同的分母。分母 13, 10, 和 2 的最小公倍数是 130。然后将每个分数转换为以 130 为分母的等价分数。\n\n\\[\n\\frac{10}{13} = \\frac{100}{130}\n\\]\n\\[\n\\frac{7}{10} = \\frac{91}{130}\n\\]\n\\[\n\\frac{1}{2} = \\frac{65}{130}\n\\]\n\n现在可以计算：\n\n\\[\n\\frac{100}{130} - \\frac{91}{130} + \\frac{65}{130} = \\frac{100 - 91 + 65}{130} = \\frac{74}{130}\n\\]\n\n这个分数可以简化为：\n\n\\[\n\\frac{74}{130} = \\frac{37}{65}\n\\]\n\n所以，\\(\\boxed{\\frac{37}{65}}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "a3c5dd38875100d4",
+              "question": "求这4个数的平均数：79、108、34、193。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[79 + 108 + 34 + 193 = 414\\]\n\n然后计算平均数：\n\n\\[\\frac{414}{4} = 103.5\\]\n\n因此，这四个数的平均数是 \\(\\boxed{103.5}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "49a90d638f5cfe26",
+              "question": "笼子里有鸡和兔共 88 只，一共有 248 条腿。兔有多少只？",
+              "solution": "设鸡有 \\(x\\) 只，那么兔子有 \\(88 - x\\) 只。鸡有 2 条腿，兔子有 4 条腿。根据题意可以得到的等式为：\n\n\\[2x + 4(88 - x) = 248\\]\n\n解这个方程，我们得到：\n\n\\[2x + 352 - 4x = 248\\]\n\\[-2x = 248 - 352\\]\n\\[-2x = -104\\]\n\\[x = 52\\]\n\n所以鸡有 52 只，那么兔子有 \\(88 - 52 = 36\\) 只。\n\n因此，兔子的数量是 \\(\\boxed{36}\\)。",
+              "difficulty": 5,
+              "template": "chicken_rabbit",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "07d815bf839687a1",
+              "question": "一辆汽车以每小时 123 千米的速度行驶了 2.5 小时，共行驶了多少千米？",
+              "solution": "要计算汽车行驶的距离，可以使用距离公式，即 \\(距离 = 速度 \\times 时间\\)。\n\n给定的速度是每小时 123 千米，时间为 2.5 小时，所以：\n\n\\[\n距离 = 123 \\times 2.5 = 307.5\n\\]\n\n因此，汽车共行驶了 \\(\\boxed{307.5}\\) 千米。",
+              "difficulty": 5,
+              "template": "travel",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "4aa4de1c92652904",
+              "question": "计算：21 × 24 × 9 × 23 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[21 \\times 24 = =乘法结果为：\n\n\\[504\\]\n\n然后继续计算：\n\n\\[504 \\times 9 = 4536\\]\n\n最后计算：\n\n\\[4536 \\times 23 = 104328\\]\n\n所以，\\(\\boxed{104328}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "338747114683ea99",
+              "question": "求 128 和 94 和 122 的最大公约数。",
+              "solution": "要找到 128, 94, 和 122 的最大公约数（GCD），我们首先找到每个数的质因数分解：\n\n- \\(128 = 2^7\\)\n- \\(94 = 2 \\times 47\\)\n- \\(122 = 2 \\times 61\\)\n\n接下来，找到所有质因数中相同的最大小数。在上述分解中，只有 2 出现在所有三个数的分解中。因此，最大公约数就是这些共同质因数的乘积，即 \\(\\boxed{2}\\)。",
+              "difficulty": 5,
+              "template": "gcd",
+              "success_rate": 1.0,
+              "gen": 1
+            }
+          ]
+        }
+      },
+      "max512": {
+        "genome": {
+          "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+          "k_shots": 3,
+          "shot_policy": "hard_win",
+          "temperature": 0.6,
+          "top_p": 0.9,
+          "max_tokens": 512,
+          "retry_k": 3,
+          "format_retry": 1,
+          "self_consistency_k": 3
+        },
+        "summary": {
+          "n": 75,
+          "accuracy": 0.4533,
+          "mean_resp_chars": 240.7,
+          "multi_boxed_rate": 0.0,
+          "parse_fail_rate": 0.0,
+          "no_reasoning_rate": 0.0,
+          "composite": 0.4533,
+          "pass_at_k": 0.56,
+          "solved_shots": [
+            {
+              "pid": "aecc7b1fb5c372c8",
+              "question": "求这4个数的平均数：177、150、164、88。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[177 + 150 + 164 + 88 = 579\\]\n\n然后计算平均数：\n\n\\[\\frac{579}{4} = 144.75\\]\n\n因此，这四个数的平均数是 \\(\\boxed{144.75}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "831cc63744449577",
+              "question": "求 40 和 24 和 26 的最小公倍数。",
+              "solution": "要找到 40, 24, 和 26 的最小公倍数（LCM），我们首先找到这些数的最大公约数（GCD），但注意到最小公倍数的计算需要质因数分解。\n\n首先分解每个数的质因数：\n\n- \\(40 = 2^3 \\times 5\\)\n- \\(24 = 2^3 \\times 3\\)\n- \\(26 = 2 \\times 13\\)\n\n接下来，找到每个数中最高次幂的质因数，然后将它们相乘来得到最小公倍数。\n\n- 对于 \\(2\\)，最高次幂为 \\(2^3\\)。\n- 对于 \\(3\\)，最高次幂为 \\(3^1\\)。\n- 对于 \\(5\\)，最高次幂为 \\(5^1\\)。\n- 对于 \\(13\\)，最高次幂为 \\(13^1\\)。\n\n因此，最小公倍数为：\n\n\\[\n2^3 \\times 3 \\times 5 \\times 13 =\n\\]\n\n计算这个值：\n\n\\[\n8 \\times 3 \\times 5 \\times 13 = 24 \\times 65 ==1560\n\\]\n\n所以，最小公倍数是 \\(\\boxed{1560}\\)。",
+              "difficulty": 5,
+              "template": "lcm",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "d9bd8f2ac9c881b2",
+              "question": "一个数的 39% 是 1131/5，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意，有：\n\n\\[0.39x = \\frac{1131}{5}\\]\n\n为求 \\(x\\)，解方程：\n\n\\[\nx = \\frac{\\frac{1131}{5}}{0.39}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{1131}{5} \\times \\frac{1}{0.39}\n\\]\n\n\\[\nx = \\frac{1131}{5} \\times \\frac{100}{39}\n\\]\n\n\\[\nx = \\frac{1131 \\times 100}{5 \\times 39}\n\\]\n\n\\[\nx = \\frac{113100}{195}\n\\]\n\n简化分数：\n\n\\[\nx = \\frac{113100}{195} = 580\n\\]\n\n因此，这个数是 \\(\\boxed{580}\\)。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "253f32610fd5f13a",
+              "question": "计算：23 × 25 × 24 × 21 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[23 \\times 25 =乘法 \\times 24 \\times 21\\]\n\n\\[= 575 \\times 24 \\times 21\\]\n\n\\[= 13800 \\times 21\\]\n\n\\[= 289800\\]\n\n所以，\\(\\boxed{289800}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "0cadcf75811b2306",
+              "question": "一个数的 72% 是 8982/25，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意有：\n\n\\[0.72x = \\frac{8982}{25}\\]\n\n首先计算右边的值：\n\n\\[\\frac{8982}{25} = 359.28\\]\n\n所以方程变为：\n\n\\[0.72x = 359.28\\]\n\n解 \\(x\\)：\n\n\\[\nx = \\frac{359.28}{0.72}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{359.28}{0.72} = 499\n\\]\n\n因此，这个数是 \\(\\boxed{499}\\)。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "51287594e2d0a7e7",
+              "question": "求 34 和 15 和 12 的最小公倍数。",
+              "solution": "要找到 34, 15, 和 12 的最小公倍数（LCM），我们首先找到这些数的最大公约数（GCD），但是由于我们要找到的是最小公倍数，而不仅仅是公约数，所以让我们先找到每个数的质因数分解：\n\n- \\(34 = 2 \\times 17\\)\n- \\(15 = 3 \\times 5\\)\n- \\(12 = 2^2 \\times 3\\)\n\n接下来，找到每个数中最高次幂的质因数，然后将它们相乘来得到最小公倍数。\n\n对于 \\(34, 15, 12\\)，我们需要的最小公倍数将是 \\(2^2 \\times 3 \\times 5 \\times 17\\)。\n\n计算这个乘积：\n\n\\[\n2^2 = 4\n\\]\n\\[\n4 \\times 3 = 12\n\\]\n\\[\n12 \\times 5 = 60\n\\]\n\\[\n60 \\times 17 = 1020\n\\]\n\n因此，最小公倍数是 \\(\\boxed{1020}\\)。",
+              "difficulty": 5,
+              "template": "lcm",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "eab0fe4c25e93507",
+              "question": "一件商品打六五折后的售价是 962 元，它的原价是多少元？",
+              "solution": "设原价为 \\(x\\) 元。\n\n打六五折即为原价的 \\(65\\%\\)，所以有方程：\n\n\\[0.65x = 962\\]\n\n为求原价 \\(x\\)，解方程：\n\n\\[\nx = \\frac{962}{0.65}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{962}{0.65} = 1480\n\\]\n\n因此，原价是 \\(\\boxed{1480}\\) 元。",
+              "difficulty": 5,
+              "template": "discount",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "4d169b8ff162140f",
+              "question": "一个长方形长 23 厘米，宽 16 厘米。若把宽增加 19 厘米，新长方形的面积是多少平方厘米？",
+              "solution": "原来的长方形面积是 \\(23 \\times 16 = 368\\) 平方厘米。\n\n当宽增加 19 厘米后，新的宽是 \\(16 + 19 = 35\\) 厘米。\n\n新的长方形面积是 \\(23 \\times 35 = 805\\) 平方厘米。\n\n因此，新长方形的面积是 \\(\\boxed{805}\\) 平方厘米。",
+              "difficulty": 5,
+              "template": "rect_area",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "90dec6286341f243",
+              "question": "计算：10/13 - 7/10 + 1/2 = ？",
+              "solution": "要计算 \\(\\frac{10}{13} - \\frac{7}{10} + \\frac{1}{2}\\)，首先需要找到一个共同的分母。分母 13, 10, 和 2 的最小公倍数是 130。然后将每个分数转换为以 130 为分母的等价分数：\n\n\\[\n\\frac{10}{13} = \\frac{100}{130}\n\\]\n\\[\n\\frac{7}{10} = \\frac{91}{130}\n\\]\n\\[\n\\frac{1}{2} = \\frac{65}{130}\n\\]\n\n现在可以计算：\n\n\\[\n\\frac{100}{130} - \\frac{91}{130} + \\frac{65}{130} = \\frac{100 - 91 + 65}{130} = \\frac{74}{130}\n\\]\n\n这个分数可以简化为：\n\n\\[\n\\frac{74}{130} = \\frac{37}{65}\n\\]\n\n因此，\\(\\boxed{\\frac{37}{65}}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "a3c5dd38875100d4",
+              "question": "求这4个数的平均数：79、108、34、193。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[79 + 108 + 34 + 193 = 414\\]\n\n然后计算平均数：\n\n\\[\\frac{414}{4} = 103.5\\]\n\n因此，这四个数的平均数是 \\(\\boxed{103.5}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "49a90d638f5cfe26",
+              "question": "笼子里有鸡和兔共 88 只，一共有 248 条腿。兔有多少只？",
+              "solution": "设鸡有 \\(x\\) 只，那么兔子有 \\(88 - x\\) 只。鸡有 2 条腿，兔子有 4 条腿。根据题意可以得到的等式为：\n\n\\[2x + 4(88 - x) = 248\\]\n\n解这个方程，我们得到：\n\n\\[2x + 352 - 4x = 248\\]\n\\[-2x = 248 - 352\\]\n\\[-2x = -104\\]\n\\[x = 52\\]\n\n所以鸡有 52 只，那么兔子有 \\(88 - 52 = 36\\) 只。\n\n因此，兔子的数量是 \\(\\boxed{36}\\)。",
+              "difficulty": 5,
+              "template": "chicken_rabbit",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "07d815bf839687a1",
+              "question": "一辆汽车以每小时 123 千米的速度行驶了 2.5 小时，共行驶了多少千米？",
+              "solution": "要计算汽车行驶的距离，可以使用距离公式，即 \\(距离 = 速度 \\times 时间\\)。\n\n给定的速度是每小时 123 千米，时间为 2.5 小时，所以：\n\n\\[\n距离 = 123 \\times 2.5 = 307.5\n\\]\n\n因此，汽车共行驶了 \\(\\boxed{307.5}\\) 千米。",
+              "difficulty": 5,
+              "template": "travel",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "4aa4de1c92652904",
+              "question": "计算：21 × 24 × 9 × 23 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[21 \\times 24 = \\\\[21 \\times 24 =\\)\\[=504\\]\n\n然后继续计算：\n\n\\[504 \\times 9 = 4536\\]\n\n最后计算：\n\n\\[4536 \\times 23 = 104328\\]\n\n所以，\\(\\boxed{104328}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "338747114683ea99",
+              "question": "求 128 和 94 和 122 的最大公约数。",
+              "solution": "为找到 128, 94, 和 122 的最大公约数（GCD），我们首先找到每个数的质因数分解：\n\n- \\(128 = 2^7\\)\n- \\(94 = 2 \\times 47\\)\n- \\(122 = 2 \\times 61\\)\n\n接下来，找到所有质因数中相同的最大小数。在上述分解中，只有 2 出现在所有三个数的分解中。因此，最大公约数就是这些共同质因数的乘积，即 \\(\\boxed{2}\\)。",
+              "difficulty": 5,
+              "template": "gcd",
+              "success_rate": 1.0,
+              "gen": 1
+            }
+          ]
+        }
+      },
+      "sc3": {
+        "genome": {
+          "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+          "k_shots": 3,
+          "shot_policy": "hard_win",
+          "temperature": 0.6,
+          "top_p": 0.9,
+          "max_tokens": 384,
+          "retry_k": 3,
+          "format_retry": 1,
+          "self_consistency_k": 3
+        },
+        "summary": {
+          "n": 75,
+          "accuracy": 0.4667,
+          "mean_resp_chars": 236.3,
+          "multi_boxed_rate": 0.0,
+          "parse_fail_rate": 0.0133,
+          "no_reasoning_rate": 0.0,
+          "composite": 0.4634,
+          "pass_at_k": 0.56,
+          "solved_shots": [
+            {
+              "pid": "aecc7b1fb5c372c8",
+              "question": "求这4个数的平均数：177、150、164、88。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[177 + 150 + 164 + 88 = 579\\]\n\n然后计算平均数：\n\n\\[\\frac{579}{4} = 144.75\\]\n\n因此，这四个数的平均数是 \\(\\boxed{144.75}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "831cc63744449577",
+              "question": "求 40 和 24 和 26 的最小公倍数。",
+              "solution": "要找到 40, 24, 和 26 的最小公倍数（LCM），我们首先找到这些数的最大公约数（GCD），但首先找到每个数的质因数分解：\n\n- \\(40 = 2^3 \\times 5\\)\n- \\(24 = 2^3 \\times 3\\)\n- \\(26 = 2 \\times 13\\)\n\n接下来，找到每个数中最高次幂的质因数，然后将它们相乘来得到最小公倍数。\n\n- 对于 \\(2\\)，最高次幂为 \\(2^3\\)。\n- 对于 \\(3\\)，最高次幂为 \\(3^1\\)。\n- 对于 \\(5\\)，最高次幂为 \\(5^1\\)。\n- 对于 \\(13\\)，最高次幂为 \\(13^1\\)。\n\n因此，最小公倍数为：\n\n\\[\n2^3 \\times 3 \\times 5 \\times 13 =\n\\]\n\n计算这个值：\n\n\\[\n8 \\times 3 \\times 5 \\times 13 = 24 \\times 5 \\times 13 =\n\\[\n= 120 \\times 13 = 1560\n\\]\n\n所以，最小公倍数是 \\(\\boxed{1560}\\)。",
+              "difficulty": 5,
+              "template": "lcm",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "d9bd8f2ac9c881b2",
+              "question": "一个数的 39% 是 1131/5，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意有：\n\n\\[0.39x = \\frac{1131}{5}\\]\n\n为求 \\(x\\)，解方程：\n\n\\[\nx = \\frac{\\frac{1131}{5}}{0.39}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{1131}{5 \\times 0.39}\n\\]\n\n\\[\nx = \\frac{1131}{1.95}\n\\]\n\n\\[\nx = 580\n\\]\n\n因此，这个数是 \\(\\boxed{580}\\)。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "253f32610fd5f13a",
+              "question": "计算：23 × 25 × 24 × 21 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[23 \\times 25 = =乘法可以这样计算：\n\n\\[23 \\times 25 = = 575\\]\n\n然后继续计算：\n\n\\[575 \\times 24 = 13800\\]\n\n最后计算：\n\n\\[13800 \\times 21 = 289800\\]\n\n因此，\\(\\boxed{289800}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "0cadcf75811b2306",
+              "question": "一个数的 72% 是 8982/25，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意有：\n\n\\[0.72x = \\frac{8982}{25}\\]\n\n首先计算右边的值：\n\n\\[\\frac{8982}{25} = 359.28\\]\n\n所以：\n\n\\[0.72x = 359.28\\]\n\n解 \\(x\\)：\n\n\\[\nx = \\frac{359.28}{0.72}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{359.28}{0.72} = 499\n\\]\n\n因此，这个数是 \\(\\boxed{499}\\)。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "51287594e2d0a7e7",
+              "question": "求 34 和 15 和 12 的最小公倍数。",
+              "solution": "要找到 34, 15, 和 12 的最小公倍数（LCM），我们首先找到这些数的最大公约数（GCD），但首先找到每个数的质因数分解：\n\n- 34 的质因数分解为 $2 \\times 17$\n- 15 的质因数分解为 $3 \\times 5$\n- 12 的质因数分解为 $2^2 \\times 3$\n\n接下来，找到每个数中最高次幂的质因数，然后将它们相乘来得到最小公倍数。\n\n- 对于 2，最高次幂为 $2^2$\n- 对于 3，最高次幂为 $3$\n- 对于 5，最高次幂为 $5$\n- 对于 17，最高次幂为 $17$\n\n因此，最小公倍数为：\n\n\\[\n2^2 \\times 3 \\times 5 \\times 17 = =\n\\[\n4 \\times 3 \\times 5 \\times 17 =\n\\]\n\\[\n= 12 \\times 5 \\times 17\n\\]\n\\[\n= 60 \\times 17\n\\]\n\\[\n= 1020\n\\]\n\n所以，\\(\\boxed{1020}\\) 是答案。",
+              "difficulty": 5,
+              "template": "lcm",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "eab0fe4c25e93507",
+              "question": "一件商品打六五折后的售价是 962 元，它的原价是多少元？",
+              "solution": "设原价为 \\(x\\) 元。\n\n打六五折即为原价的 \\(65\\%\\)，所以有方程：\n\n\\[0.65x = 962\\]\n\n为求原价 \\(x\\)，解方程：\n\n\\[\nx = \\frac{962}{0.65}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{962}{0.65} = 1480\n\\]\n\n因此，原价是 \\(\\boxed{1480}\\) 元。",
+              "difficulty": 5,
+              "template": "discount",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "4d169b8ff162140f",
+              "question": "一个长方形长 23 厘米，宽 16 厘米。若把宽增加 19 厘米，新长方形的面积是多少平方厘米？",
+              "solution": "原来的长方形面积是 \\(23 \\times 16 = 368\\) 平方厘米。\n\n当宽增加 19 厘米后，新的宽是 \\(16 + 19 = 35\\) 厘米。\n\n新的长方形面积是 \\(23 \\times 35 = 805\\) 平方厘米。\n\n因此，新长方形的面积是 \\(\\boxed{805}\\) 平方厘米。",
+              "difficulty": 5,
+              "template": "rect_area",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "90dec6286341f243",
+              "question": "计算：10/13 - 7/10 + 1/2 = ？",
+              "solution": "要计算 \\(\\frac{10}{13} - \\frac{7}{10} + \\frac{1}{2}\\)，首先需要找到一个共同的分母。分母 13, 10, 和 2 的最小公倍数是 130。我们将每个分数转换为以 130 为分母的等价分数。\n\n\\[\n\\frac{10}{13} = \\frac{100}{130}\n\\]\n\\[\n\\frac{7}{10} = \\frac{91}{130}\n\\]\n\\[\n\\frac{1}{2} = \\frac{65}{130}\n\\]\n\n现在可以计算：\n\n\\[\n\\frac{100}{130} - \\frac{91}{130} + \\frac{65}{130} = \\frac{100 - 91 + 65}{130} = \\frac{74}{130}\n\\]\n\n这个分数可以简化为：\n\n\\[\n\\frac{74}{130} = \\frac{37}{65}\n\\]\n\n所以，\\(\\boxed{\\frac{37}{65}}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "a3c5dd38875100d4",
+              "question": "求这4个数的平均数：79、108、34、193。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[79 + 108 + 34 + 193 = 414\\]\n\n然后计算平均数：\n\n\\[\\frac{414}{4} = 103.5\\]\n\n因此，这四个数的平均数是 \\(\\boxed{103.5}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "49a90d638f5cfe26",
+              "question": "笼子里有鸡和兔共 88 只，一共有 248 条腿。兔有多少只？",
+              "solution": "设鸡有 \\(x\\) 只，那么兔子有 \\(88 - x\\) 只。鸡有 2 条腿，兔子有 4 条腿。根据题意可以得到的等式为：\n\n\\[2x + 4(88 - x) = 248\\]\n\n解这个方程，我们得到：\n\n\\[2x + 352 - 4x = 248\\]\n\\[-2x = 248 - 352\\]\n\\[-2x = -104\\]\n\\[x = 52\\]\n\n所以鸡有 52 只，那么兔子有 \\(88 - 52 = 36\\) 只。\n\n因此，兔子的数量是 \\(\\boxed{36}\\)。",
+              "difficulty": 5,
+              "template": "chicken_rabbit",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "07d815bf839687a1",
+              "question": "一辆汽车以每小时 123 千米的速度行驶了 2.5 小时，共行驶了多少千米？",
+              "solution": "要计算汽车行驶的距离，可以使用距离公式，即 \\(距离 = 速度 \\times 时间\\)。\n\n给定的速度是每小时 123 千米，时间为 2.5 小时，所以：\n\n\\[\n距离 = 123 \\times 2.5 = 307.5\n\\]\n\n因此，汽车共行驶了 \\(\\boxed{307.5}\\) 千米。",
+              "difficulty": 5,
+              "template": "travel",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "4aa4de1c92652904",
+              "question": "计算：21 × 24 × 9 × 23 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[21 \\times 24 =乘法结果为 504\\]\n\n然后继续计算：\n\n\\[504 \\times 9 = 4536\\]\n\n最后计算：\n\n\\[4536 \\times 23 = 104328\\]\n\n因此，\\(\\boxed{104328}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "338747114683ea99",
+              "question": "求 128 和 94 和 122 的最大公约数。",
+              "solution": "要找到 128, 94, 和 122 的最大公约数（GCD），我们首先找到每个数的质因数分解：\n\n- \\(128 = 2^7\\)\n- \\(94 = 2 \\times 47\\)\n- \\(122 = 2 \\times 61\\)\n\n接下来，找到所有质因数中相同的最大小数。在上述分解中，只有 2 出现在所有三个数的分解中。因此，最大公约数就是这些共同质因数的乘积，即 \\(\\boxed{2}\\)。",
+              "difficulty": 5,
+              "template": "gcd",
+              "success_rate": 1.0,
+              "gen": 1
+            }
+          ]
+        }
+      },
+      "temp05": {
+        "genome": {
+          "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+          "k_shots": 3,
+          "shot_policy": "hard_win",
+          "temperature": 0.5,
+          "top_p": 0.9,
+          "max_tokens": 384,
+          "retry_k": 3,
+          "format_retry": 1,
+          "self_consistency_k": 3
+        },
+        "summary": {
+          "n": 75,
+          "accuracy": 0.44,
+          "mean_resp_chars": 234.1,
+          "multi_boxed_rate": 0.0,
+          "parse_fail_rate": 0.0,
+          "no_reasoning_rate": 0.0,
+          "composite": 0.44,
+          "pass_at_k": 0.52,
+          "solved_shots": [
+            {
+              "pid": "aecc7b1fb5c372c8",
+              "question": "求这4个数的平均数：177、150、164、88。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数。\n\n首先计算总和：\n\n\\[177 + 150 + 164 + 88 = 579\\]\n\n然后计算平均数：\n\n\\[\\frac{579}{4} = 144.75\\]\n\n因此，这四个数的平均数是 \\(\\boxed{144.75}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "831cc63744449577",
+              "question": "求 40 和 24 和 26 的最小公倍数。",
+              "solution": "要找到 40, 24, 和 26 的最小公倍数（LCM），我们首先找到这些数的最大公约数（GCD），但是由于我们要找的是最小公倍数，所以我们需要找到这些数的最小公倍数。为此，我们首先找到每个数的质因数分解：\n\n- \\(40 = 2^3 \\times 5\\)\n- \\(24 = 2^3 \\times 3\\)\n- \\(26 = 2 \\times 13\\)\n\n接下来，找到每个数中最高次幂的质因数，然后将它们相乘来得到最小公倍数。\n\n- 对于 \\(2\\)，最高次幂是 \\(2^3\\)。\n- 对于 \\(3\\)，最高次幂是 \\(3^1\\)。\n- 对于 \\(5\\)，最高次幂是 \\(5^1\\)。\n- 对于 \\(13\\)，最高次幂是 \\(13^1\\)。\n\n因此，最小公倍数是：\n\n\\[\n2^3 \\times 3^1 \\times 5^1 \\times 13^1 = 8 \\times 3 \\times 5 \\times 13 = 1560\n\\]\n\n所以，\\(\\boxed{1560}\\) 是答案。",
+              "difficulty": 5,
+              "template": "lcm",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "9a214fcba6645e58",
+              "question": "求 130 和 108 和 120 的最大公约数。",
+              "solution": "要找到 130, 108, 和 120 的最大公约数（GCD），我们首先找到每个数的质因数分解：\n\n- \\(130 = 2 \\times 5 \\times 13\\)\n- \\(108 = 2^2 \\times 3^3\\)\n- \\(120 = 2^3 \\times 3 \\times 5\\)\n\n接下来，找到所有质因数中相同的最大小数。在上述分解中，只有 \\(2\\) 出现在所有三个数的分解中。因此，最大公约数就是这些共同质因数的乘积，即 \\(\\boxed{2}\\)。",
+              "difficulty": 5,
+              "template": "gcd",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "253f32610fd5f13a",
+              "question": "计算：23 × 25 × 24 × 21 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[23 \\times 25 =乘法 \\times 24 \\times 21\\]\n\n\\[= 575 \\times 24 \\times 21\\]\n\n\\[= 13800 \\times 21\\]\n\n\\[= 289800\\]\n\n所以，\\(\\boxed{289800}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "51287594e2d0a7e7",
+              "question": "求 34 和 15 和 12 的最小公倍数。",
+              "solution": "要找到 34, 15, 和 12 的最小公倍数（LCM），我们首先找到这些数的最大公约数（GCD），但首先找到每个数的质因数分解：\n\n- \\(34 = 2 \\times 17\\)\n- \\(15 = 3 \\times 5\\)\n- \\(12 = 2^2 \\times 3\\)\n\n接下来，找到每个数中最高次幂的质因数，然后将它们相乘来得到最小公倍数。\n\n- 对于 \\(2\\)，最高次幂为 \\(2^2\\)。\n- 对于 \\(3\\)，最高次幂为 \\(3^1\\)。\n- 对于 \\(5\\)，最高次幂为 \\(5^1\\)。\n- 对于 \\(17\\)，最高次幂为 \\(17^1\\)。\n\n因此，最小公倍数为：\n\n\\[\n2^2 \\times 3 \\times 5 \\times 17 =\n\\]\n\n计算这个值：\n\n\\[\n4 \\times 3 \\times 5 \\times 17 =  = 12 \\times 5 \\times 17 == 60 \\times 17 = 1020\n\\]\n\n所以，\\(\\boxed{1020}\\) 是答案。",
+              "difficulty": 5,
+              "template": "lcm",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "eab0fe4c25e93507",
+              "question": "一件商品打六五折后的售价是 962 元，它的原价是多少元？",
+              "solution": "设原价为 \\(x\\) 元。\n\n打六五折即为原价的 \\(65\\%\\)，所以有方程：\n\n\\[0.65x = 962\\]\n\n为求原价 \\(x\\)，解方程：\n\n\\[\nx = \\frac{962}{0.65}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{962}{0.65} = 1480\n\\]\n\n因此，原价是 \\(\\boxed{1480}\\) 元。",
+              "difficulty": 5,
+              "template": "discount",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "4d169b8ff162140f",
+              "question": "一个长方形长 23 厘米，宽 16 厘米。若把宽增加 19 厘米，新长方形的面积是多少平方厘米？",
+              "solution": "原来的长方形面积是 \\(23 \\times 16 = 368\\) 平方厘米。\n\n当宽增加 19 厘米后，新的宽是 \\(16 + 19 = 35\\) 厘米。\n\n新的长方形面积是 \\(23 \\times 35 = 805\\) 平方厘米。\n\n因此，新长方形的面积是 \\(\\boxed{805}\\) 平方厘米。",
+              "difficulty": 5,
+              "template": "rect_area",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "90dec6286341f243",
+              "question": "计算：10/13 - 7/10 + 1/2 = ？",
+              "solution": "要计算 \\(\\frac{10}{13} - \\frac{7}{10} + \\frac{1}{2}\\)，首先需要找到一个共同的分母。分母 13, 10, 和 2 的最小公倍数是 130。然后将每个分数转换为以 130 为分母的等价分数。\n\n\\[\n\\frac{10}{13} = \\frac{100}{130}\n\\]\n\\[\n\\frac{7}{10} = \\frac{91}{130}\n\\]\n\\[\n\\frac{1}{2} = \\frac{65}{130}\n\\]\n\n现在可以计算：\n\n\\[\n\\frac{100}{130} - \\frac{91}{130} + \\frac{65}{130} = \\frac{100 - 91 + 65}{130} = \\frac{74}{130}\n\\]\n\n简化分数：\n\n\\[\n\\frac{74}{130} = \\frac{37}{65}\n\\]\n\n所以，\\(\\boxed{\\frac{37}{65}}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "a3c5dd38875100d4",
+              "question": "求这4个数的平均数：79、108、34、193。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[79 + 108 + 34 + 193 = 414\\]\n\n然后计算平均数：\n\n\\[\\frac{414}{4} = 103.5\\]\n\n因此，这四个数的平均数是 \\(\\boxed{103.5}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "49a90d638f5cfe26",
+              "question": "笼子里有鸡和兔共 88 只，一共有 248 条腿。兔有多少只？",
+              "solution": "设鸡有 \\(x\\) 只，那么兔子有 \\(88 - x\\) 只。鸡有 2 条腿，兔子有 4 条腿。根据题意可以得到的等式为：\n\n\\[2x + 4(88 - x) = 248\\]\n\n解这个方程，我们得到：\n\n\\[2x + 352 - 4x = 248\\]\n\\[-2x = 248 - 352\\]\n\\[-2x = -104\\]\n\\[x = 52\\]\n\n所以鸡有 52 只，那么兔子有 \\(88 - 52 = 36\\) 只。\n\n因此，兔子的数量是 \\(\\boxed{36}\\)。",
+              "difficulty": 5,
+              "template": "chicken_rabbit",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "07d815bf839687a1",
+              "question": "一辆汽车以每小时 123 千米的速度行驶了 2.5 小时，共行驶了多少千米？",
+              "solution": "要计算汽车行驶的距离，我们可以使用距离公式，即 \\(距离 = 速度 \\times 时间\\)。\n\n给定的速度是每小时 123 千米，时间为 2.5 小时，所以：\n\n\\[\n距离 = 123 \\times 2.5 = 307.5\n\\]\n\n因此，汽车共行驶了 \\(\\boxed{307.5}\\) 千米。",
+              "difficulty": 5,
+              "template": "travel",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "4aa4de1c92652904",
+              "question": "计算：21 × 24 × 9 × 23 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[21 \\times 24 = =乘法的计算结果为：\n\n\\[21 \\times 24 =乘法的计算结果为：\n\n\\[504 \\times 9 = 4536\\]\n\n然后继续计算：\n\n\\[4536 \\times 23 = 104328\\]\n\n因此，\\(\\boxed{104328}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "338747114683ea99",
+              "question": "求 128 和 94 和 122 的最大公约数。",
+              "solution": "要找到 128, 94, 和 122 的最大公约数（GCD），我们首先找到每个数的质因数分解：\n\n- \\(128 = 2^7\\)\n- \\(94 = 2 \\times 47\\)\n- \\(122 = 2 \\times 61\\)\n\n接下来，找到所有质因数中相同的最大小数。在上述分解中，只有 2 出现在所有三个数的分解中。因此，最大公约数就是这些共同质因数的乘积，即 \\(\\boxed{2}\\)。",
+              "difficulty": 5,
+              "template": "gcd",
+              "success_rate": 1.0,
+              "gen": 1
+            }
+          ]
+        }
+      },
+      "k2_hard": {
+        "genome": {
+          "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+          "k_shots": 2,
+          "shot_policy": "hard_win",
+          "temperature": 0.6,
+          "top_p": 0.9,
+          "max_tokens": 384,
+          "retry_k": 3,
+          "format_retry": 1,
+          "self_consistency_k": 3
+        },
+        "summary": {
+          "n": 75,
+          "accuracy": 0.52,
+          "mean_resp_chars": 229.1,
+          "multi_boxed_rate": 0.0,
+          "parse_fail_rate": 0.0,
+          "no_reasoning_rate": 0.0,
+          "composite": 0.52,
+          "pass_at_k": 0.6,
+          "solved_shots": [
+            {
+              "pid": "aecc7b1fb5c372c8",
+              "question": "求这4个数的平均数：177、150、164、88。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[177 + 150 + 164 + 88 = 579\\]\n\n然后计算平均数：\n\n\\[\\frac{579}{4} = 144.75\\]\n\n因此，这四个数的平均数是 \\(\\boxed{144.75}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "831cc63744449577",
+              "question": "求 40 和 24 和 26 的最小公倍数。",
+              "solution": "要找到 40, 24, 和 26 的最小公倍数（LCM），我们首先找到这些数的最大公约数（GCD），但首先找到每个数的质因数分解：\n\n- \\(40 = 2^3 \\times 5\\)\n- \\(24 = 2^3 \\times 3\\)\n- \\(26 = 2 \\times 13\\)\n\n接下来，找到每个数中最高次幂的质因数，然后将它们相乘来得到最小公倍数。\n\n- 对于 \\(2\\)，最高次幂为 \\(2^3\\)。\n- 对于 \\(3\\)，最高次幂为 \\(3^1\\)。\n- 对于 \\(5\\)，最高次幂为 \\(5^1\\)。\n- 对于 \\(13\\)，最高次幂为 \\(13^1\\)。\n\n因此，最小公倍数为：\n\\[2^3 \\times 3^1 \\times 5^1 \\times 13^1 = 8 \\times 3 \\times 5 \\times 13 = 1560\\]\n\n所以，\\(\\boxed{1560}\\) 是答案。",
+              "difficulty": 5,
+              "template": "lcm",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "24074e6f4251e76b",
+              "question": "计算：15 × 13 × 10 × 18 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[15 \\times 13 = 等于 195\\]\n\n然后继续计算：\n\n\\[195 \\times 10 = 1950\\]\n\n最后计算：\n\n\\[1950 \\times 18 = 35100\\]\n\n所以，\\(\\boxed{35100}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "c0845c51495e8cf1",
+              "question": "计算：9/11 + 1/21 + 3/5 = ？",
+              "solution": "要计算 \\(\\frac{9}{11} + \\frac{1}{21} + \\frac{3}{5}\\)，首先需要找到一个共同的分母。11, 21, 和 5 的最小公倍数是 3465。然后将每个分数转换为以 3465 为分母的等价分数。\n\n\\[\n\\frac{9}{11} = \\frac{9 \\times 315}{11 \\times 315} = \\frac{2835}{3465}\n\\]\n\\[\n\\frac{1}{21} = \\frac{1 \\times 165}{21 \\times 165} = \\frac{165}{3465}\n\\]\n\\[\n\\frac{3}{5} = \\frac{3 \\times 693}{5 \\times 693} = \\frac{2079}{3465}\n\\]\n\n现在可以将它们相加：\n\n\\[\n\\frac{2835}{3465} + \\frac{165}{3465} + \\frac{2079}{3465} = \\frac{2835 + 165 + 2079}{3465} = \\frac{5079}{3465}\n\\]\n\n这个分数可以简化，但最简形式就是 \\(\\frac{5079}{3465}\\)。因此，\\(\\boxed{\\frac{5079}{3465}}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "253f32610fd5f13a",
+              "question": "计算：23 × 25 × 24 × 21 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[23 \\times 25 = = =为 575\\]\n\n然后继续计算：\n\n\\[575 \\times 24 = 13800\\]\n\n最后计算：\n\n\\[13800 \\times 21 = 289800\\]\n\n所以，\\(\\boxed{289800}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "0cadcf75811b2306",
+              "question": "一个数的 72% 是 8982/25，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意有：\n\n\\[0.72x = \\frac{8982}{25}\\]\n\n首先计算右边的值：\n\n\\[\\frac{8982}{25} = 359.28\\]\n\n所以：\n\n\\[0.72x = 359.28\\]\n\n解这个方程，我们得到：\n\n\\[x = \\frac{359.28}{0.72}\\]\n\n\\[x = 499\\]\n\n因此，这个数是 \\(\\boxed{499}\\)。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "51287594e2d0a7e7",
+              "question": "求 34 和 15 和 12 的最小公倍数。",
+              "solution": "要找到 34, 15, 和 12 的最小公倍数（LCM），我们首先找到这些数的最大公约数（GCD），但首先找到每个数的质因数分解：\n\n- \\(34 = 2 \\times 17\\)\n- \\(15 = 3 \\times 5\\)\n- \\(12 = 2^2 \\times 3\\)\n\n接下来，找到每个数中最高次幂的质因数，然后将它们相乘来得到最小公倍数。\n\n- 对于 \\(2\\)，最高次幂为 \\(2^2\\)。\n- 对于 \\(3\\)，最高次幂为 \\(3^1\\)。\n- 对于 \\(5\\)，最高次幂为 \\(5^1\\)。\n- 对于 \\(17\\)，最高次幂为 \\(17^1\\)。\n\n因此，最小公倍数为：\n\\[2^2 \\times 3 \\times 5 \\times 17 = 1020\\]\n\n所以，\\(\\boxed{1020}\\) 是答案。",
+              "difficulty": 5,
+              "template": "lcm",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "eab0fe4c25e93507",
+              "question": "一件商品打六五折后的售价是 962 元，它的原价是多少元？",
+              "solution": "设原价为 \\( x \\) 元。\n\n打六五折即为原价的 \\(65\\%\\)，所以有方程：\n\n\\[0.65x = 962\\]\n\n解这个方程，我们得到：\n\n\\[\nx = \\frac{962}{0.65}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = 1480\n\\]\n\n因此，原价是 \\(\\boxed{1480}\\) 元。",
+              "difficulty": 5,
+              "template": "discount",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "4d169b8ff162140f",
+              "question": "一个长方形长 23 厘米，宽 16 厘米。若把宽增加 19 厘米，新长方形的面积是多少平方厘米？",
+              "solution": "原来的长方形面积是 \\(23 \\times 16\\) 平方厘米。\n\n当宽增加 19 厘米后，新的宽是 \\(16 + 19 = 35\\) 厘米。\n\n新的长方形面积是 \\(23 \\times 35\\) 平方厘米。\n\n计算得到的新面积是 \\(\\boxed{805}\\) 平方厘米。",
+              "difficulty": 5,
+              "template": "rect_area",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "90dec6286341f243",
+              "question": "计算：10/13 - 7/10 + 1/2 = ？",
+              "solution": "要计算 \\(\\frac{10}{13} - \\frac{7}{10} + \\frac{1}{2}\\)，首先需要找到一个共同的分母。分母 13, 10, 和 2 的最小公倍数是 130。然后我们将每个分数转换为以 130 为分母的等价分数。\n\n\\[\n\\frac{10}{13} = \\frac{100}{130}\n\\]\n\\[\n\\frac{7}{10} = \\frac{91}{130}\n\\]\n\\[\n\\frac{1}{2} = \\frac{65}{130}\n\\]\n\n现在我们可以计算：\n\n\\[\n\\frac{100}{130} - \\frac{91}{130} + \\frac{65}{130} = \\frac{100 - 91 + 65}{130} = \\frac{74}{130}\n\\]\n\n这个分数可以简化为：\n\n\\[\n\\frac{37}{65}\n\\]\n\n所以，\\(\\boxed{\\frac{37}{65}}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "a3c5dd38875100d4",
+              "question": "求这4个数的平均数：79、108、34、193。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[79 + 108 + 34 + 193 = 414\\]\n\n然后计算平均数：\n\n\\[\\frac{414}{4} = 103.5\\]\n\n所以这四个数的平均数是 \\(\\boxed{103.5}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "49a90d638f5cfe26",
+              "question": "笼子里有鸡和兔共 88 只，一共有 248 条腿。兔有多少只？",
+              "solution": "设鸡有 \\(x\\) 只，那么兔子有 \\(88 - x\\) 只。鸡有 2 条腿，兔子有 4 条腿。根据题意可以得到的等式为：\n\n\\[2x + 4(88 - x) = 248\\]\n\n解这个方程，我们得到：\n\n\\[2x + 352 - 4x = 248\\]\n\\[-2x = 248 - 352\\]\n\\[-2x = -104\\]\n\\[x = 52\\]\n\n所以鸡有 52 只，那么兔子有 \\(88 - 52 = 36\\) 只。\n\n因此，\\(\\boxed{36}\\) 是答案。",
+              "difficulty": 5,
+              "template": "chicken_rabbit",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "07d815bf839687a1",
+              "question": "一辆汽车以每小时 123 千米的速度行驶了 2.5 小时，共行驶了多少千米？",
+              "solution": "要计算汽车行驶的距离，我们可以使用距离公式，即 \\(距离 = 速度 \\times 时间\\)。\n\n给定的速度是每小时 123 千米，时间为 2.5 小时，所以：\n\n\\[距离 = 123 \\times 2.5 = 307.5\\]\n\n因此，汽车共行驶了 \\(\\boxed{307.5}\\) 千米。",
+              "difficulty": 5,
+              "template": "travel",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "4aa4de1c92652904",
+              "question": "计算：21 × 24 × 9 × 23 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[21 \\times 24 = \\等于计算：\n\n\\[21 \\times 24 = 504\\]\n\n然后继续计算：\n\n\\[504 \\times 9 = 4536\\]\n\n最后计算：\n\n\\[4536 \\times 23 = 104328\\]\n\n因此，\\(\\boxed{104328}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "338747114683ea99",
+              "question": "求 128 和 94 和 122 的最大公约数。",
+              "solution": "为找到 128, 94, 和 122 的最大公约数（GCD），我们首先找到每个数的质因数分解：\n\n- \\(128 = 2^7\\)\n- \\(94 = 2 \\times 47\\)\n- \\(122 = 2 \\times 61\\)\n\n接下来，找到所有质因数中相同的最大小数。在上述分解中，只有 2 出现在所有三个数的分解中。因此，最大公约数就是这些共同质因数的乘积，即 \\(\\boxed{2}\\)。",
+              "difficulty": 5,
+              "template": "gcd",
+              "success_rate": 1.0,
+              "gen": 1
+            }
+          ]
+        }
+      },
+      "top_p095": {
+        "genome": {
+          "instruction": "解下面的数学题。请逐步推理，写出关键计算过程，最终答案写入 \\boxed{} 中。答案若为分数，用最简分数 a/b 表示；若为整数或小数，直接写出。",
+          "k_shots": 3,
+          "shot_policy": "hard_win",
+          "temperature": 0.6,
+          "top_p": 0.95,
+          "max_tokens": 384,
+          "retry_k": 3,
+          "format_retry": 1,
+          "self_consistency_k": 3
+        },
+        "summary": {
+          "n": 75,
+          "accuracy": 0.4267,
+          "mean_resp_chars": 238.5,
+          "multi_boxed_rate": 0.0,
+          "parse_fail_rate": 0.0,
+          "no_reasoning_rate": 0.0,
+          "composite": 0.4267,
+          "pass_at_k": 0.52,
+          "solved_shots": [
+            {
+              "pid": "aecc7b1fb5c372c8",
+              "question": "求这4个数的平均数：177、150、164、88。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数。\n\n首先计算总和：\n\n\\[177 + 150 + 164 + 88 = 579\\]\n\n然后计算平均数：\n\n\\[\\frac{579}{4} = 144.75\\]\n\n因此，这四个数的平均数是 \\(\\boxed{144.75}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "831cc63744449577",
+              "question": "求 40 和 24 和 26 的最小公倍数。",
+              "solution": "要找到 40, 24, 和 26 的最小公倍数（LCM），我们首先找到这些数的最大公约数（GCD），但首先找到每个数的质因数分解：\n\n- \\(40 = 2^3 \\times 5\\)\n- \\(24 = 2^3 \\times 3\\)\n- \\(26 = 2 \\times 13\\)\n\n接下来，找到每个数中最高次幂的质因数，然后将它们相乘来得到最小公倍数。\n\n- 对于 \\(2\\)，最高次幂是 \\(2^3\\)。\n- 对于 \\(3\\)，最高次幂是 \\(3^1\\)。\n- 对于 \\(5\\)，最高次幂是 \\(5^1\\)。\n- 对于 \\(13\\)，最高次幂是 \\(13^1\\)。\n\n因此，最小公倍数是：\n\n\\[\n2^3 \\times 3 \\times 5 \\times 13 =\n\\]\n\n计算这个值：\n\n\\[\n2^3 = 8\n\\]\n\\[\n8 \\times 3 = 24\n\\]\n\\[\n24 \\times 5 = 120\n\\]\n\\[\n120 \\times 13 = 1560\n\\]\n\n所以，最小公倍数是 \\(\\boxed{1560}\\)。",
+              "difficulty": 5,
+              "template": "lcm",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "253f32610fd5f13a",
+              "question": "计算：23 × 25 × 24 × 21 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[23 \\times 25 =乘法结果为：\\[23 \\times 25 =式法结果为：\\[575\\]\n\n接下来计算：\n\n\\[575 \\times 24 = 13800\\]\n\n最后计算：\n\n\\[13800 \\times 21 = 289800\\]\n\n所以，最终的答案是 \\(\\boxed{289800}\\)。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "0cadcf75811b2306",
+              "question": "一个数的 72% 是 8982/25，这个数是多少？",
+              "solution": "设这个数为 \\(x\\)。根据题意有：\n\n\\[0.72x = \\frac{8982}{25}\\]\n\n首先计算右边的值：\n\n\\[\\frac{8982}{25} = 359.28\\]\n\n所以：\n\n\\[0.72x = 359.28\\]\n\n为求 \\(x\\)，解方程：\n\n\\[\nx = \\frac{359.28}{0.72}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{359.28}{0.72} = 499\n\\]\n\n因此，这个数是 \\(\\boxed{499}\\)。",
+              "difficulty": 5,
+              "template": "percent",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "51287594e2d0a7e7",
+              "question": "求 34 和 15 和 12 的最小公倍数。",
+              "solution": "要找到 34, 15, 和 12 的最小公倍数（LCM），我们首先找到这些数的最大公约数（GCD），但是由于我们要找到最小公倍数，我们最好先找到每个数的质因数分解：\n\n- \\(34 = 2 \\times 17\\)\n- \\(15 = 3 \\times 5\\)\n- \\(12 = 2^2 \\times 3\\)\n\n接下来，找到每个数中最高次幂的质因数，然后将它们相乘来得到最小公倍数。\n\n- 对于 \\(2\\)，最高次幂为 \\(2^2\\)。\n- 对于 \\(3\\)，最高次幂为 \\(3^1\\)。\n- 对于 \\(5\\)，最高次幂为 \\(5^1\\)。\n- 对于 \\(17\\)，最高次幂为 \\(17^1\\)。\n\n因此，最小公倍数为：\n\n\\[\n2^2 \\times 3^1 \\times 5^1 \\times 17^1 = 4 \\times 3 \\times 5 \\times 17 =\n\\]\n\n计算这个乘积：\n\n\\[\n4 \\times 3 = 12\n\\]\n\\[\n12 \\times 5 = 60\n\\]\n\\[\n60 \\times 17 = 1020\n\\]\n\n所以，最小公倍数是 \\(\\boxed{1020}\\)。",
+              "difficulty": 5,
+              "template": "lcm",
+              "success_rate": 0.3333333333333333,
+              "gen": 1
+            },
+            {
+              "pid": "eab0fe4c25e93507",
+              "question": "一件商品打六五折后的售价是 962 元，它的原价是多少元？",
+              "solution": "设原价为 \\(x\\) 元。\n\n打六五折即为原价的 \\(65\\%\\)，所以有方程：\n\n\\[0.65x = 962\\]\n\n为求原价 \\(x\\)，解方程：\n\n\\[\nx = \\frac{962}{0.65}\n\\]\n\n计算 \\(x\\)：\n\n\\[\nx = \\frac{962}{0.65} = 1480\n\\]\n\n因此，原价是 \\(\\boxed{1480}\\) 元。",
+              "difficulty": 5,
+              "template": "discount",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "4d169b8ff162140f",
+              "question": "一个长方形长 23 厘米，宽 16 厘米。若把宽增加 19 厘米，新长方形的面积是多少平方厘米？",
+              "solution": "原来的长方形面积是 \\(23 \\times 16 = 368\\) 平方厘米。\n\n当宽增加 19 厘米后，新的宽是 \\(16 + 19 = 35\\) 厘米。\n\n新的长方形面积是 \\(23 \\times 35 = 805\\) 平方厘米。\n\n因此，新长方形的面积是 \\(\\boxed{805}\\) 平方厘米。",
+              "difficulty": 5,
+              "template": "rect_area",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "90dec6286341f243",
+              "question": "计算：10/13 - 7/10 + 1/2 = ？",
+              "solution": "要计算 \\(\\frac{10}{13} - \\frac{7}{10} + \\frac{1}{2}\\)，首先需要找到一个共同的分母。分母 13, 10, 和 2 的最小公倍数是 130。然后将每个分数转换为以 130 为分母的等价分数。\n\n\\[\n\\frac{10}{13} = \\frac{100}{130}\n\\]\n\\[\n\\frac{7}{10} = \\frac{91}{130}\n\\]\n\\[\n\\frac{1}{2} = \\frac{65}{130}\n\\]\n\n现在可以计算：\n\n\\[\n\\frac{100}{130} - \\frac{91}{130} + \\frac{65}{130} = \\frac{100 - 91 + 65}{130} = \\frac{74}{130}\n\\]\n\n简化分数：\n\n\\[\n\\frac{74}{130} = \\frac{37}{65}\n\\]\n\n因此，\\(\\boxed{\\frac{37}{65}}\\) 是答案。",
+              "difficulty": 5,
+              "template": "frac_addsub",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "a3c5dd38875100d4",
+              "question": "求这4个数的平均数：79、108、34、193。",
+              "solution": "要找到这四个数的平均数，首先计算它们的总和，然后除以数的个数（即4）。\n\n首先计算总和：\n\n\\[79 + 108 + 34 + 193 = 414\\]\n\n然后计算平均数：\n\n\\[\\frac{414}{4} = 103.5\\]\n\n因此，这四个数的平均数是 \\(\\boxed{103.5}\\)。",
+              "difficulty": 5,
+              "template": "average",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "49a90d638f5cfe26",
+              "question": "笼子里有鸡和兔共 88 只，一共有 248 条腿。兔有多少只？",
+              "solution": "设鸡有 \\(x\\) 只，那么兔子有 \\(88 - x\\) 只。鸡有 2 条腿，兔子有 4 条腿。根据题意可以得到的等式为：\n\n\\[2x + 4(88 - x) = 248\\]\n\n解这个方程，我们得到：\n\n\\[2x + 352 - 4x = 248\\]\n\\[-2x = 248 - 352\\]\n\\[-2x = -104\\]\n\\[x = 52\\]\n\n所以鸡有 52 只，那么兔子有 \\(88 - 52 = 36\\) 只。\n\n因此，兔子的数量是 \\(\\boxed{36}\\)。",
+              "difficulty": 5,
+              "template": "chicken_rabbit",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "07d815bf839687a1",
+              "question": "一辆汽车以每小时 123 千米的速度行驶了 2.5 小时，共行驶了多少千米？",
+              "solution": "要计算汽车行驶的距离，可以使用距离公式，即 \\(距离 = 速度 \\times 时间\\)。\n\n给定的速度是每小时 123 千米，时间为 2.5 小时，所以：\n\n\\[\n距离 = 123 \\times 2.5 = 307.5\n\\]\n\n因此，汽车共行驶了 \\(\\boxed{307.5}\\) 千米。",
+              "difficulty": 5,
+              "template": "travel",
+              "success_rate": 1.0,
+              "gen": 1
+            },
+            {
+              "pid": "4aa4de1c92652904",
+              "question": "计算：21 × 24 × 9 × 23 = ？",
+              "solution": "首先计算给出的乘法表达式：\n\n\\[21 \\times 24 =乘法表达式为：\\]\n\n\\[= 504 \\times 9\\]\n\n继续计算：\n\n\\[= 4536 \\times 23\\]\n\n最后计算：\n\n\\[= 104328\\]\n\n因此，\\(\\boxed{104328}\\) 是答案。",
+              "difficulty": 5,
+              "template": "mult_chain",
+              "success_rate": 0.6666666666666666,
+              "gen": 1
+            },
+            {
+              "pid": "338747114683ea99",
+              "question": "求 128 和 94 和 122 的最大公约数。",
+              "solution": "要找到 128, 94, 和 122 的最大公约数（GCD），我们首先找到每个数的质因数分解：\n\n- \\(128 = 2^7\\)\n- \\(94 = 2 \\times 47\\)\n- \\(122 = 2 \\times 61\\)\n\n接下来，找到所有质因数中相同的最大小数。在上述分解中，只有 2 出现在所有三个数的分解中。因此，最大公约数就是这些共同质因数的乘积，即 \\(\\boxed{2}\\)。",
+              "difficulty": 5,
+              "template": "gcd",
+              "success_rate": 1.0,
+              "gen": 1
+            }
+          ]
+        }
+      }
+    }
+  },
+  "gen3": {
+    "n_new": 200,
+    "n_train_added": 121,
+    "n_valid_added": 14,
+    "cumulative_train": 226
+  },
+  "gen4": {
+    "n_new": 200,
+    "n_train_added": 126,
+    "n_valid_added": 13,
+    "cumulative_train": 352
+  },
+  "shot_pool_final": 298,
+  "w3_train_seconds": 503.1,
+  "w4_train_seconds": 518.2,
+  "final": {
+    "original_accuracy": 0.6956,
+    "external_accuracy": 0.625,
+    "mixed_accuracy": 0.6739,
+    "parse_fail_original": 0.0089,
+    "parse_fail_external": 0.015
+  },
+  "attribution_100": {
+    "sys": {
+      "accuracy": 0.71,
+      "parse_fail": 0.0,
+      "mean_resp_chars": 207.6
+    },
+    "w_only": {
+      "accuracy": 0.69,
+      "parse_fail": 0.02,
+      "mean_resp_chars": 219.5
+    },
+    "h_core": {
+      "accuracy": 0.69,
+      "parse_fail": 0.03,
+      "mean_resp_chars": 252.1
+    },
+    "h_full": {
+      "accuracy": 0.59,
+      "parse_fail": 0.02,
+      "mean_resp_chars": 236.4
+    }
+  },
+  "elapsed_min": 648.2,
+  "finished_at": "2026-11-15 21:01:42"
+}
